@@ -1,1 +1,1 @@
-<h1 align="center">BoatMan Shooters</h1>
+<h1 align="center">Boat Man Shooters</h1>
