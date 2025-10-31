@@ -1,0 +1,1 @@
+This is the folder where the custom buttons, logo, etc.w ill be stored.
