@@ -7,8 +7,9 @@ from shaders import vertex_shader, fragment_shader
 class Renderer:
     def __init__(self, ctx):
         self.ctx = ctx
-        self.viewport_width = 1.0
-        self.viewport_height = 1.0
+        #changed aspect ratio to make map bigger - seems like a good size???
+        self.viewport_width = 2.5
+        self.viewport_height = 1.5
 
         self._load_boat_texture()
         self._compile_shaders()
