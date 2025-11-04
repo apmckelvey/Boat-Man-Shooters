@@ -290,7 +290,7 @@ class Renderer:
 
     def _load_boat_texture(self):
         try:
-            boat_image = pygame.image.load("boat.png").convert_alpha()
+            boat_image = pygame.image.load("../Graphics/boat.png").convert_alpha()
             self.boat_width, self.boat_height = boat_image.get_size()
             boat_data = pygame.image.tobytes(boat_image, "RGBA", True)
             print(f"Loaded boat.png ({self.boat_width}x{self.boat_height})")
