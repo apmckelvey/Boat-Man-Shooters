@@ -184,12 +184,12 @@ void main() {
     waves = floor(waves * 8.0) / 8.0;
 
     // Enhanced color palette with more depth variation
-    vec3 deepWater = vec3(0.0, 0.28, 0.65);
-    vec3 darkWater = vec3(0.05, 0.42, 0.82);
-    vec3 midWater = vec3(0.12, 0.60, 0.92);
-    vec3 lightWater = vec3(0.30, 0.78, 1.0);
-    vec3 brightWater = vec3(0.55, 0.88, 1.0);
-    vec3 foamColor = vec3(0.95, 0.98, 1.0);
+    vec3 deepWater = vec3(0.0, 0.15, 0.28);
+    vec3 darkWater = vec3(0.03, 0.25, 0.42);
+    vec3 midWater = vec3(0.08, 0.40, 0.58);
+    vec3 lightWater = vec3(0.18, 0.58, 0.72);
+    vec3 brightWater = vec3(0.30, 0.72, 0.82);
+    vec3 foamColor = vec3(0.90, 0.95, 0.98);
     
     vec3 waterColor;
     if (waves < 0.2) waterColor = deepWater;
