@@ -8,8 +8,8 @@ class Renderer:
     def __init__(self, ctx):
         self.ctx = ctx
         #changed aspect ratio to make map bigger - seems like a good size???
-        self.viewport_width = 2.5
-        self.viewport_height = 1.5
+        self.viewport_width = 2.3
+        self.viewport_height = 1.3
 
         self._load_boat_texture()
         self._compile_shaders()
