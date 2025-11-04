@@ -39,6 +39,7 @@ uniform float otherBoatSpeeds[10];
 uniform float otherBoatSwayPhases[10];
 uniform float otherBoatSwayAmps[10];
 uniform vec2 worldSize;
+uniform float boatAspect;
 
 in vec2 v_uv;
 in vec2 v_world_pos;
@@ -246,7 +247,7 @@ void main() {
 
     vec2 boatUV = v_world_pos - boatPos;
     boatUV = rotate2D(boatUV, -boatRotation + swayRotation);
-    vec2 boatTex = (boatUV / BOAT_SIZE) + 0.5;
+    vec2 boatTex = vec2(boatUV.x / (BOAT_SIZE * boatAspect), boatUV.y / BOAT_SIZE) + 0.5;
     if (boatTex.x >= 0.0 && boatTex.x <= 1.0 && boatTex.y >= 0.0 && boatTex.y <= 1.0) {
         vec4 bc = texture(boatTexture, boatTex);
         if (bc.a > 0.05) waterColor = mix(waterColor, bc.rgb, bc.a);
@@ -262,7 +263,7 @@ void main() {
         vec2 othPosSway = othPos + sway;
         vec2 othUV = v_world_pos - othPosSway;
         othUV = rotate2D(othUV, -othRot);
-        vec2 othTex = (othUV / BOAT_SIZE) + 0.5;
+        vec2 othTex = vec2(othUV.x / (BOAT_SIZE * boatAspect), othUV.y / BOAT_SIZE) + 0.5;
         if (othTex.x >= 0.0 && othTex.x <= 1.0 && othTex.y >= 0.0 && othTex.y <= 1.0) {
             vec4 oc = texture(boatTexture, othTex);
             if (oc.a > 0.05) {
@@ -292,11 +293,13 @@ class Renderer:
         try:
             boat_image = pygame.image.load("../Graphics/player.png").convert_alpha()
             self.boat_width, self.boat_height = boat_image.get_size()
+            self.boat_aspect = float(self.boat_width) / float(self.boat_height) if self.boat_height else 1.0
             boat_data = pygame.image.tobytes(boat_image, "RGBA", True)
-            print(f"Loaded boat.png ({self.boat_width}x{self.boat_height})")
+            print(f"Loaded boat.png ({self.boat_width}x{self.boat_height}), aspect={self.boat_aspect:.3f}")
         except Exception:
             print("boat.png not found — creating placeholder")
             self.boat_width, self.boat_height = 64, 64
+            self.boat_aspect = 1.0
             surf = pygame.Surface((self.boat_width, self.boat_height), pygame.SRCALPHA)
             pygame.draw.polygon(surf, (139, 69, 19), [(50, 32), (10, 20), (10, 44)])
             pygame.draw.circle(surf, (255, 255, 255), (35, 32), 8)
@@ -309,6 +312,11 @@ class Renderer:
         self.program = self.ctx.program(vertex_shader=vertex_shader, fragment_shader=fragment_shader)
         self.boat_texture.use(location=0)
         self.program['boatTexture'].value = 0
+        # Pass boat aspect ratio to shader to avoid width distortion
+        try:
+            self.program['boatAspect'].value = float(getattr(self, 'boat_aspect', 1.0))
+        except Exception:
+            pass
 
     def _create_geometry(self):
         vertices = np.array([-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0], dtype='f4')
