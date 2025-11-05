@@ -1,5 +1,5 @@
 <h1 align="center">Welcome to Boat Man Shooters 👋</h1>
-<img align="center" src="/Graphics/Logos/logo.png">
+<img align="center" src="/Logos/logo.png">
 
 ## Table of Contents
 
