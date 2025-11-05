@@ -22,7 +22,7 @@ ctx = moderngl.create_context()
 print("OpenGL context created")
 
 renderer = Renderer(ctx)
-player = Player(15.0, 15.0)
+player = Player(15, 15) #spawn (7.5, 7.5) is the middle
 network = NetworkManager(player)
 prediction = PredictionManager()
 

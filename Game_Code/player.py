@@ -48,7 +48,7 @@ class Player:
         if keys[pygame.K_w] or keys[pygame.K_UP]:
             self.target_velocity = 1.0
         elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
-            self.target_velocity = -0.27
+            self.target_velocity = -3
         else:
             self.target_velocity = 0.0
 
