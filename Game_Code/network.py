@@ -12,14 +12,18 @@ class NetworkManager:
         self.PLAYER_NAME = f"Player_{self.PLAYER_ID[:8]}"
         self.other_players = {}
         self.running = True
+        # True when network operations are succeeding; False when disconnected
+        self.connected = False
 
         self.supabase = None
         try:
             self.supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+            self.connected = True
             print("✓ Connected to Supabase")
             Thread(target=self._network_loop, daemon=True).start()
             print("Network thread started")
         except Exception as e:
+            # leave connected as False
             print("✗ Supabase disabled:", e)
 
     def _network_loop(self):
@@ -27,6 +31,8 @@ class NetworkManager:
             return
         last_send = 0.0
         last_fetch = 0.0
+        # track consecutive errors to mark disconnected state
+        consecutive_errors = 0
 
         while self.running:
             try:
@@ -83,10 +89,18 @@ class NetworkManager:
                             continue
                     last_fetch = now
 
+                # if we reached here without exception, mark connection healthy
+                consecutive_errors = 0
+                self.connected = True
+
                 time.sleep(0.01)
             except Exception as e:
+                # mark as disconnected and back off
                 print("Network error:", e)
-                time.sleep(0.5)
+                consecutive_errors += 1
+                self.connected = False
+                # exponential-ish backoff up to a limit
+                time.sleep(min(0.5 * consecutive_errors, 5.0))
 
     def stop(self):
         self.running = False

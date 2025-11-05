@@ -1,6 +1,7 @@
 import pygame
 import moderngl
 import asyncio
+import math
 from config import *
 from renderer import Renderer
 from player import Player
@@ -17,6 +18,9 @@ pygame.display.gl_set_attribute(pygame.GL_CONTEXT_FORWARD_COMPATIBLE_FLAG, True)
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.OPENGL | pygame.DOUBLEBUF)
 pygame.display.set_caption("Boat Man Shooters")
 clock = pygame.time.Clock()
+
+# large font for overlay messages
+font = pygame.font.SysFont(None, 84)
 
 ctx = moderngl.create_context()
 print("OpenGL context created")
@@ -53,6 +57,27 @@ async def main():
         current_time = (pygame.time.get_ticks() - start_ticks) / 1000.0
         renderer.render(current_time, player, prediction.other_players_display)
 
+        # Draw disconnect overlay if network reports disconnected
+        disconnected = not getattr(network, 'connected', True)
+        if disconnected:
+            tsec = pygame.time.get_ticks() / 1000.0
+            # flash ~3 times per second
+            visible = (math.sin(tsec * 6.0) > 0)
+            if visible:
+                text = "DISCONNECTED FROM SERVER"
+                subtext = "Attempting to reconnect..."
+                # render main text and a blackout outline by drawing offsets
+                txt_surf = font.render(text, True, (255, 50, 50))
+                outline_surf = font.render(text, True, (0, 0, 0))
+                rect = txt_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+                # draw outline offsets for a simple border
+                for ox, oy in [(-3, -3), (-3, 3), (3, -3), (3, 3)]:
+                    screen.blit(outline_surf, outline_surf.get_rect(center=(WIDTH // 2 + ox, HEIGHT // 2 + oy)))
+                screen.blit(txt_surf, rect)
+
+                subfont = pygame.font.SysFont(None, 36)
+                sub_surf = subfont.render(subtext, True, (230, 230, 230))
+                screen.blit(sub_surf, sub_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 70)))
 
         pygame.display.flip()
         clock.tick(TARGET_FPS)
