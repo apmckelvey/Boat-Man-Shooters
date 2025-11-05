@@ -111,7 +111,8 @@ class PredictionManager:
                 "rot": state["rot"],
                 "speed": speed,
                 "sway_phase": phase,
-                "sway_amp": amp
+                "sway_amp": amp,
+                "name": data.get("name", "Unknown")
             }
 
         stale_cutoff = now - 12.0

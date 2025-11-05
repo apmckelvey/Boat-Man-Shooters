@@ -22,11 +22,40 @@ ctx = moderngl.create_context()
 print("OpenGL context created")
 
 renderer = Renderer(ctx)
-player = Player(15, 15) #spawn (7.5, 7.5) is the middle
+player = Player(0, 0) #spawn (7.5, 7.5) is the middle
 network = NetworkManager(player)
 prediction = PredictionManager()
 
+def draw_name_tags(screen, player, other_players_display, renderer):
+    from config import WIDTH, HEIGHT
+    font = pygame.font.SysFont(None, 24)
+    screen_x, screen_y = renderer.world_to_screen(player.x, player.y, player.camera_x, player.camera_y, WIDTH, HEIGHT)
 
+    #draw name above your boat
+    name_surface = font.render(network.PLAYER_NAME, True, (255, 255, 255))
+    name_rect = name_surface.get_rect(center=(screen_x, screen_y - 40))
+
+    #draw outline
+    outline_surface = font.render(network.PLAYER_NAME, True, (0, 0, 0))
+    for dx, dy in [(-1, -1), (-1, 1), (1, -1), (1, 1)]:
+        screen.blit(outline_surface, (name_rect.x + dx, name_rect.y + dy))
+
+    screen.blit(name_surface, name_rect)
+
+    #draw other ppls name tags
+    for pid, data in other_players_display.items():
+        screen_x, screen_y = renderer.world_to_screen(data['x'], data['y'], player.camera_x, player.camera_y, WIDTH, HEIGHT)
+
+        player_name = data.get('name', 'Unknown')
+        name_surface = font.render(player_name, True, (255, 255, 255))
+        name_rect = name_surface.get_rect(center=(screen_x, screen_y - 40))
+
+        #draw outline
+        outline_surface = font.render(player_name, True, (0, 0, 0))
+        for dx, dy in [(-1, -1), (-1, 1), (1, -1), (1, 1)]:
+            screen.blit(outline_surface, (name_rect.x + dx, name_rect.y + dy))
+
+        screen.blit(name_surface, name_rect)
 async def main():
     running = True
     start_ticks = pygame.time.get_ticks()
@@ -52,6 +81,8 @@ async def main():
 
         current_time = (pygame.time.get_ticks() - start_ticks) / 1000.0
         renderer.render(current_time, player, prediction.other_players_display)
+
+        draw_name_tags(screen, player, prediction.other_players_display, renderer)
 
         pygame.display.flip()
         clock.tick(TARGET_FPS)

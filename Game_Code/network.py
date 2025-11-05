@@ -59,6 +59,7 @@ class NetworkManager:
                             py = float(player_data.get("y", 0.0))
                             prot = float(player_data.get("rotation", 0.0))
                             ts = float(player_data.get("updated_at", time.time()))
+                            pname = player_data.get("player_name", "Unknown")
 
                             dx = px - self.player.x
                             dy = py - self.player.y
@@ -67,10 +68,13 @@ class NetworkManager:
                             if dist <= VISIBLE_RADIUS:
                                 if pid not in self.other_players:
                                     self.other_players[pid] = {
+                                        "name": pname,
                                         "state": {"x": px, "y": py, "rot": prot, "vx": 0.0, "vy": 0.0, "vrot": 0.0},
                                         "target": {"x": px, "y": py, "rot": prot, "vx": 0.0, "vy": 0.0, "vrot": 0.0},
                                         "history": []
                                     }
+                                else:
+                                    self.other_players[pid]["name"] = pname
 
                                 hist = self.other_players[pid]["history"]
                                 hist.append({"x": px, "y": py, "rot": prot, "ts": ts})

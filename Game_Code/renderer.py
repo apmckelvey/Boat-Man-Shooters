@@ -288,7 +288,14 @@ class Renderer:
         self._load_boat_texture()
         self._compile_shaders()
         self._create_geometry()
+    def world_to_screen(self, world_x, world_y, camera_x, camera_y, screen_width, screen_height):
+        rel_x = world_x - camera_x
+        rel_y = world_y - camera_y
+        #conver to screen space
+        screen_x = (rel_x / self.viewport_width) * screen_width + screen_width / 2.0
+        screen_y = screen_height / 2 - (rel_y / self.viewport_height) * screen_height
 
+        return screen_x, screen_y
     def _load_boat_texture(self):
         try:
             boat_image = pygame.image.load("../Graphics/Sprites/Boats/Player/player.png").convert_alpha()
@@ -334,6 +341,7 @@ class Renderer:
         self.program['cameraPos'].value = (float(player.camera_x), float(player.camera_y))
         self.program['viewportSize'].value = (float(self.viewport_width), float(self.viewport_height))
         self.program['worldSize'].value = (float(WORLD_WIDTH), float(WORLD_HEIGHT))
+
 
         display_list = list(other_players_display.values())[:10]
         num_other = len(display_list)
