@@ -298,7 +298,7 @@ class Renderer:
         return screen_x, screen_y
     def _load_boat_texture(self):
         try:
-            boat_image = pygame.image.load("../Graphics/Sprites/Boats/Player/player.png").convert_alpha()
+            boat_image = pygame.image.load("../Graphics/Sprites/Boats/player.png").convert_alpha()
             self.boat_width, self.boat_height = boat_image.get_size()
             self.boat_aspect = float(self.boat_width) / float(self.boat_height) if self.boat_height else 1.0
             boat_data = pygame.image.tobytes(boat_image, "RGBA", True)
