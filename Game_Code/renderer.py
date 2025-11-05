@@ -402,9 +402,8 @@ void main() {
         # initialize pygame freetype for rendering text to surface
         try:
             pygame.freetype.init()
-            # use smaller fonts so overlay is less obtrusive
-            self.overlay_font_large = pygame.freetype.SysFont(None, 56)
-            self.overlay_font_small = pygame.freetype.SysFont(None, 24)
+            self.overlay_font_large = pygame.freetype.SysFont(None, 84)
+            self.overlay_font_small = pygame.freetype.SysFont(None, 36)
         except Exception:
             self.overlay_font_large = None
             self.overlay_font_small = None
@@ -473,23 +472,23 @@ void main() {
         except Exception:
             WIDTH, HEIGHT = 1280, 720
 
-            # create an RGBA surface
-            surf = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA, 32)
-            surf = surf.convert_alpha()
+        # create an RGBA surface
+        surf = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA, 32)
+        surf = surf.convert_alpha()
 
-            # draw semi-transparent dark background (reduced by default so it's less flashy)
-            bg = (0, 0, 0, int(140 * alpha))
-            surf.fill(bg)
+        # draw semi-transparent dark background
+        bg = (0, 0, 0, int(180 * alpha))
+        surf.fill(bg)
 
         # render text
         if self.overlay_font_large:
-            # center main text (muted red to be less flashy)
-            text_surf, _ = self.overlay_font_large.render(main_text, (220, 80, 80))
+            # center main text
+            text_surf, _ = self.overlay_font_large.render(main_text, (255, 50, 50))
             tw, th = text_surf.get_size()
             surf.blit(text_surf, text_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
 
         if sub_text and self.overlay_font_small:
-            sub_surf, _ = self.overlay_font_small.render(sub_text, (210, 210, 210))
+            sub_surf, _ = self.overlay_font_small.render(sub_text, (230, 230, 230))
             surf.blit(sub_surf, sub_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 70)))
 
         # upload to GPU as texture
