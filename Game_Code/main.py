@@ -60,8 +60,8 @@ async def main():
         disconnected = not getattr(network, 'connected', True)
         if disconnected:
             tsec = pygame.time.get_ticks() / 1000.0
-            # flash ~3 times per second
-            visible = (math.sin(tsec * 6.0) > 0)
+            # flash once per second
+            visible = (math.sin(tsec * 1.0) > 0)
             if visible:
                 text = "DISCONNECTED FROM SERVER"
                 subtext = "Attempting to reconnect..."
