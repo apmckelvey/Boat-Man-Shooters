@@ -60,17 +60,24 @@ async def main():
         disconnected = not getattr(network, 'connected', True)
         if disconnected:
             tsec = pygame.time.get_ticks() / 1000.0
-            # flash once per second
-            visible = (math.sin(tsec * 1.0) > 0)
-            if visible:
-                text = "DISCONNECTED FROM SERVER"
-                subtext = "Attempting to reconnect..."
-                # draw overlay using the moderngl-backed renderer so it appears on OpenGL surface
-                try:
-                    renderer.draw_overlay(text, subtext)
-                except Exception:
-                    # fallback: nothing
-                    pass
+            # Smooth easing function for opacity using sine wave
+            # Base opacity of 0.6 with a gentle oscillation of ±0.25
+            # Slower animation for a more subtle effect (1.5 seconds per cycle)
+            base_opacity = 0.6
+            oscillation = 0.25
+            frequency = 1.3  # cycles per second
+            alpha = base_opacity + math.sin(tsec * frequency * math.pi) * oscillation
+            # Ensure alpha stays within reasonable bounds
+            alpha = max(0.35, min(0.85, alpha))
+            
+            text = "DISCONNECTED FROM SERVER"
+            subtext = "Attempting to reconnect..."
+            # draw overlay using the moderngl-backed renderer so it appears on OpenGL surface
+            try:
+                renderer.draw_overlay(text, subtext, alpha)
+            except Exception:
+                # fallback: nothing
+                pass
 
         pygame.display.flip()
         clock.tick(TARGET_FPS)

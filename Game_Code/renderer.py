@@ -402,8 +402,8 @@ void main() {
         # initialize pygame freetype for rendering text to surface
         try:
             pygame.freetype.init()
-            self.overlay_font_large = pygame.freetype.SysFont(None, 84)
-            self.overlay_font_small = pygame.freetype.SysFont(None, 36)
+            self.overlay_font_large = pygame.freetype.SysFont(None, 63)  # smaller size
+            self.overlay_font_small = pygame.freetype.SysFont(None, 27)  # smaller size
         except Exception:
             self.overlay_font_large = None
             self.overlay_font_small = None
