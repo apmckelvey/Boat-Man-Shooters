@@ -12,32 +12,65 @@ class NetworkManager:
         self.PLAYER_NAME = f"Player_{self.PLAYER_ID[:8]}"
         self.other_players = {}
         self.running = True
-        # True when network operations are succeeding; False when disconnected
+        # Connection state tracking
         self.connected = False
+        self.last_connection_attempt = 0
+        self.connection_retry_interval = 2.0  # Start with 2 second retry interval
+        self.max_retry_interval = 30.0  # Maximum retry interval of 30 seconds
+        self.consecutive_failures = 0
 
         self.supabase = None
+        self._attempt_connection()
+        Thread(target=self._network_loop, daemon=True).start()
+        print("Network thread started")
+
+    def _attempt_connection(self):
+        """Attempt to establish connection to Supabase"""
         try:
-            self.supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-            self.connected = True
-            print("✓ Connected to Supabase")
-            Thread(target=self._network_loop, daemon=True).start()
-            print("Network thread started")
+            current_time = time.time()
+            # Only attempt reconnection if enough time has passed since last attempt
+            if current_time - self.last_connection_attempt >= self.connection_retry_interval:
+                self.last_connection_attempt = current_time
+                
+                if not self.supabase:
+                    self.supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+                
+                # Test connection with a simple query
+                self.supabase.table("players").select("count", count="exact").execute()
+                
+                self.connected = True
+                self.consecutive_failures = 0
+                self.connection_retry_interval = 2.0  # Reset retry interval on success
+                print("✓ Connected to Supabase")
+                return True
+                
         except Exception as e:
-            # leave connected as False
-            print("✗ Supabase disabled:", e)
+            self.connected = False
+            self.consecutive_failures += 1
+            # Exponential backoff for retry interval
+            self.connection_retry_interval = min(
+                self.max_retry_interval,
+                2.0 * (1.5 ** min(self.consecutive_failures, 8))
+            )
+            print(f"✗ Connection attempt failed: {e}")
+            print(f"Will retry in {self.connection_retry_interval:.1f} seconds")
+            
+        return False
 
     def _network_loop(self):
-        if not self.supabase:
-            return
         last_send = 0.0
         last_fetch = 0.0
-        # track consecutive errors to mark disconnected state
-        consecutive_errors = 0
 
         while self.running:
-            try:
-                now = time.time()
+            now = time.time()
+            
+            # If not connected, attempt reconnection
+            if not self.connected:
+                self._attempt_connection()
+                time.sleep(0.1)  # Short sleep to prevent busy-waiting
+                continue
 
+            try:
                 if now - last_send >= SEND_INTERVAL:
                     data = {
                         "player_id": self.PLAYER_ID,
@@ -47,8 +80,9 @@ class NetworkManager:
                         "rotation": float(self.player.rotation),
                         "updated_at": float(now)
                     }
-                    self.supabase.table("players").upsert(data, on_conflict="player_id").execute()
-                    last_send = now
+                    if self.supabase:
+                        self.supabase.table("players").upsert(data, on_conflict="player_id").execute()
+                        last_send = now
 
                 if now - last_fetch >= FETCH_INTERVAL:
                     cutoff = now - 10.0
