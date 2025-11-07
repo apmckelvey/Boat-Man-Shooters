@@ -59,7 +59,8 @@ print("Code block!")
 This project uses the dependencies `pygame`, `moderngl`, `numpy`, and `supabase`, which are not built in to the Python system. To install these dependencies, you will have to use pip in your terminal if you are in a local environment.
 
 1. ### Install `pip` if Needed
-   1. First, get the `get-pip.py` file from the following link: <ul> `https://bootstrap.pypa.io/get-pip.py` </ul>
+   1. First, get the `get-pip.py` file from the following link:  
+   [https://bootstrap.pypa.io/get-pip.py](https://bootstrap.pypa.io/get-pip.py)
    2. Run it in your local Python environment or alternatively use `cd` in your terminal to get into the file and run it with `python3`:
       
 ```Bash
