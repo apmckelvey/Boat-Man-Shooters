@@ -73,19 +73,13 @@ python3 get-pip.py
 Run the following commands in your terminal to install the dependencies using `pip`.
 
 ```Bash
-pip install pygame
-pip install moderngl
-pip install numpy
-pip install supabase
+pip install pygame supabase moderngl numpy
 ```
 
 If that did not work, you can alternatively try these following commands:
 
 ```Bash
-pip3 install pygame
-pip3 install moderngl
-pip3 install numpy
-pip3 install supabase
+pip3 install pygame supabase moderngl numpy
 ```
 
 > ***NOTE:*** These directions are assuming you are running Python verison 3 or higher.
