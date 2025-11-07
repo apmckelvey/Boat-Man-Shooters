@@ -14,7 +14,8 @@
 3. [Usage](#usage)  
    3.1. [Installation of Dependencies](#installation_of_dependencies)  
    3.2. [How to Run](#how_to_run)  
-   3.3. [How to Play](#how_to_play)  
+   3.3. [How to Play](#how_to_play)
+4. [Credits](#credits)
    
 # Overview <a name="overview"></a>
 
@@ -91,3 +92,8 @@ pip3 install pygame supabase moderngl numpy
 ## How to Play <a name="how_to_play"></a>
 
 
+
+# Credits <a name="credits"></a>
+
+*Background Music:* **Ocean wave loops** by DesiFreeMusic found on Pixabay:  
+[https://pixabay.com/music/upbeat-ocean-wave-loops-377890/](https://pixabay.com/music/upbeat-ocean-wave-loops-377890/)
