@@ -71,7 +71,7 @@ async def main():
             except Exception:
                 pass
 
-            renderer.draw_player_nametags(player, prediction.other_players_display, names=names)
+            renderer.draw_player_nametags(player, prediction.other_players_display, names=names, y_offset=90)
         except Exception:
             pass
 
