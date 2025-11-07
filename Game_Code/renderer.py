@@ -406,9 +406,9 @@ void main() {
             # Try a bundled TTF first (so DynaPuff looks identical across platforms if provided)
             font_paths = [
                 # project-specific path you mentioned
-                os.path.join(os.path.dirname(__file__), "..", "Assets", "DynaPuffFont.ttf"),
+                os.path.join(os.path.dirname(__file__), "..", "Assets", "DynaPuff Font", "DynaPuffFont.ttf"),
                 os.path.join(os.path.dirname(__file__), "..", "DynaPuffFont.ttf"),
-                os.path.join(os.getcwd(), "Assets", "DynaPuffFont.ttf"),
+                os.path.join(os.getcwd(), "Assets", "DynaPuff Font", "DynaPuffFont.ttf"),
                 os.path.join(os.getcwd(), "DynaPuffFont.ttf"),
             ]
 
