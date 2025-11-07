@@ -101,6 +101,6 @@ Under the following license:
 [https://pixabay.com/service/license-summary/](https://pixabay.com/service/license-summary/)
 
 *Cannonball:* found on [pngimg.com](pngimg.com):  
-[https://pngimg.com/image/108033](https://pngimg.com/image/108033)
-Under the following license:
+[https://pngimg.com/image/108033](https://pngimg.com/image/108033)  
+Under the following license:  
 [Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)](https://pngimg.com/license)
