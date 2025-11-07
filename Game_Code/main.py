@@ -12,6 +12,17 @@ pygame.init()
 #controller initialization
 pygame.joystick.init()
 
+#getting the joysticks
+joystick_count = pygame.joystick.get_count()
+if joystick_count == 0:
+    print("No joysticks found.")
+    controller_joystick = None # Set to None if no controller is found
+else:
+    # Get the first joystick (index 0 is usually the first connected controller)
+    controller_joystick = pygame.joystick.Joystick(0)
+    controller_joystick.init()
+    print(f"Detected joystick: {controller_joystick.get_name()}")
+
 #music
 pygame.mixer.music.load('../Assets/music.mp3')
 pygame.mixer.music.play(-1)
@@ -41,6 +52,12 @@ async def main():
     start_ticks = pygame.time.get_ticks()
     print("Demo running — Player:", network.PLAYER_NAME)
 
+    #joystick and dpad directions
+    joystick_x = 0.0
+    joystick_y = 0.0
+    dpad_x = 0
+    dpad_y = 0
+
     while running:
         dt = clock.get_time() / 1000.0
         if dt <= 0:
@@ -55,7 +72,24 @@ async def main():
                 running = False
 
         keys = pygame.key.get_pressed()
-        player.update(dt, keys)
+        
+        # Handle controller input
+        if controller_joystick:
+            # Right stick for rotation
+            rotation_value = -controller_joystick.get_axis(2)  # Right stick X-axis
+            # Left stick for movement
+            movement_value = -controller_joystick.get_axis(1)  # Left stick Y-axis
+            
+            # D-pad
+            dpad_x = controller_joystick.get_hat(0)[0]  # -1 for left, 1 for right
+            dpad_y = controller_joystick.get_hat(0)[1]  # -1 for down, 1 for up
+        else:
+            rotation_value = 0
+            movement_value = 0
+            dpad_x = 0
+            dpad_y = 0
+            
+        player.update(dt, keys, rotation_value, movement_value, dpad_x, dpad_y)
 
         prediction.update_predictions(dt, network.other_players)
 
