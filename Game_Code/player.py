@@ -34,13 +34,17 @@ class Player:
         self.sprinting = False
         # Option to invert right-stick rotation direction if a controller's axis is reversed
         self.invert_right_stick = False
+        # Left trigger rest value (detected on first controller sample) for robust LT detection
+        self._lt_rest = None
 
     def update(self, dt, keys, controller=None):
         import pygame
         from config import WORLD_WIDTH, WORLD_HEIGHT
 
-        if self.sprint < 100 and self.sprinting == False:
-            self.sprint += 0.25
+        # Regenerate sprint when not currently sprinting (time-based)
+        if self.sprint < 100 and not self.sprinting:
+            # regen rate: 10 units per second
+            self.sprint = min(100, self.sprint + dt * 10.0)
             print(self.sprint)
 
         # Keyboard input for rotation
@@ -107,10 +111,49 @@ class Player:
                 raw_stick = 0.0
             stick_value = -raw_stick if raw_stick is not None else 0.0
 
+            # Read left trigger (LT) defensively — common axes are 4 or 5 depending on driver
+            lt_pressed = False
+            try:
+                lt_val = None
+                for ax_idx in (4, 5):
+                    try:
+                        v = controller.get_axis(ax_idx)
+                    except Exception:
+                        v = None
+                    if v is not None:
+                        lt_val = v
+                        break
+
+                if lt_val is not None:
+                    # Initialize resting value on first sample
+                    if self._lt_rest is None:
+                        self._lt_rest = lt_val
+
+                    # Determine pressed relative to resting value to handle different driver mappings
+                    # If rest is high (>0.5), pressing typically moves value lower -> detect drop
+                    if self._lt_rest > 0.5:
+                        lt_pressed = lt_val < (self._lt_rest - 0.4)
+                    # If rest is low (<-0.5), pressing typically moves value higher -> detect increase
+                    elif self._lt_rest < -0.5:
+                        lt_pressed = lt_val > (self._lt_rest + 0.4)
+                    else:
+                        # Fallback: treat as pressed when lt_val is clearly positive
+                        lt_pressed = lt_val > 0.5
+            except Exception:
+                lt_pressed = False
+
             # Stick: map to same keyboard rates with dead zone
             if abs(stick_value) > 0.1:
                 if stick_value > 0:
                     movement_input = stick_value * 1.0
+                    # Sprint when LT pressed: use time-based drain
+                    if lt_pressed and self.sprint > 0:
+                        # drain rate: 20 units per second
+                        self.sprint = max(0.0, self.sprint - dt * 20.0)
+                        self.sprinting = True
+                        movement_input = 2.0
+                    else:
+                        self.sprinting = False
                 else:
                     movement_input = stick_value * 3.0
 
@@ -122,6 +165,12 @@ class Player:
                     dpad_y = 0
                 if dpad_y > 0:
                     movement_input = 1.0
+                    if lt_pressed and self.sprint > 0:
+                        self.sprint = max(0.0, self.sprint - dt * 20.0)
+                        self.sprinting = True
+                        movement_input = 2.0
+                    else:
+                        self.sprinting = False
                 elif dpad_y < 0:
                     movement_input = -3.0
 

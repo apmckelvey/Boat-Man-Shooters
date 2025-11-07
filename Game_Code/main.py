@@ -22,6 +22,20 @@ else:
     controller_joystick = pygame.joystick.Joystick(0)
     controller_joystick.init()
     print(f"Detected joystick: {controller_joystick.get_name()}")
+    # Diagnostic: print axes/buttons/hats mapping to help map triggers
+    try:
+        naxes = controller_joystick.get_numaxes()
+        nbuttons = controller_joystick.get_numbuttons()
+        nhats = controller_joystick.get_numhats()
+        print(f"Controller axes: {naxes}, buttons: {nbuttons}, hats: {nhats}")
+        axes_vals = [controller_joystick.get_axis(i) for i in range(naxes)]
+        print("Axis values:", axes_vals)
+        btn_vals = [controller_joystick.get_button(i) for i in range(nbuttons)]
+        print("Button values:", btn_vals)
+        hat_vals = [controller_joystick.get_hat(i) for i in range(nhats)]
+        print("Hat values:", hat_vals)
+    except Exception:
+        pass
 
 #music
 pygame.mixer.music.load('../Assets/Sounds/music.mp3')
