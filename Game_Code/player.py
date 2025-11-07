@@ -30,9 +30,16 @@ class Player:
         self.previous_x = x
         self.previous_y = y
 
+        self.sprint = 100
+        self.sprinting = False
+
     def update(self, dt, keys, controller=None):
         import pygame
         from config import WORLD_WIDTH, WORLD_HEIGHT
+
+        if self.sprint < 100 and self.sprinting == False:
+            self.sprint += 0.25
+            print(self.sprint)
 
         # Keyboard input for rotation
         if keys[pygame.K_a] or keys[pygame.K_LEFT]:
@@ -72,6 +79,14 @@ class Player:
         # Keyboard controls
         if keys[pygame.K_w] or keys[pygame.K_UP]:
             movement_input = 1.0
+            if keys[pygame.K_LSHIFT] and self.sprint > 0:
+                self.sprint -= 1
+                self.sprinting = True
+                movement_input = 2
+            if not keys[pygame.K_LSHIFT]:
+                self.sprinting = False
+
+
         elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
             movement_input = -3.0
 
