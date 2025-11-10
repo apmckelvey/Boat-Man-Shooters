@@ -561,6 +561,70 @@ void main() {
         except Exception:
             return
 
+    def draw_sprint_bar(self, player):
+        """Draw a sprint energy bar in the corner of the screen"""
+        try:
+            from config import WIDTH, HEIGHT
+        except Exception:
+            WIDTH, HEIGHT = 1280, 720
+
+        # create transparent surface
+        surf = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA, 32)
+        surf = surf.convert_alpha()
+
+        # sprint bar dimensions and position
+        bar_width = 200
+        bar_height = 20
+        x = WIDTH - bar_width - 20  # 20px from right edge
+        y = HEIGHT - bar_height - 20  # 20px from bottom
+
+        # Draw background (empty bar)
+        pygame.draw.rect(surf, (255, 0, 0, 180), (x, y, bar_width, bar_height))
+        
+        # Draw foreground (sprint energy)
+        current_width = (player.sprint / 100.0) * bar_width
+        if current_width > 0:
+            pygame.draw.rect(surf, (0, 255, 0, 180), (x, y, current_width, bar_height))
+
+        # Add border for better visibility
+        pygame.draw.rect(surf, (255, 255, 255, 100), (x, y, bar_width, bar_height), 2)
+
+        # Optional: Add "SPRINT" label
+        if self.nametag_font:
+            try:
+                label_surf, _ = self.nametag_font.render("SPRINT", (255, 255, 255))
+                label_rect = label_surf.get_rect(bottomright=(x - 10, y + bar_height))
+                surf.blit(label_surf, label_rect)
+            except Exception:
+                pass
+
+        # Upload to GPU and render
+        data = pygame.image.tostring(surf, 'RGBA', True)
+        w, h = surf.get_size()
+
+        try:
+            if self.overlay_texture is None:
+                self.overlay_texture = self.ctx.texture((w, h), 4, data)
+                self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
+            else:
+                try:
+                    self.overlay_texture.write(data)
+                except Exception:
+                    self.overlay_texture.release()
+                    self.overlay_texture = self.ctx.texture((w, h), 4, data)
+                    self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
+
+            self.overlay_texture.use(location=2)
+            try:
+                self.overlay_program['overlayTexture'].value = 2
+            except Exception:
+                pass
+
+            self.ctx.enable(moderngl.BLEND)
+            self.overlay_vao.render(mode=moderngl.TRIANGLE_STRIP)
+        except Exception:
+            return
+
     def draw_player_nametags(self, player, other_players_display, names=None, y_offset=75):
         try:
             from config import WIDTH, HEIGHT

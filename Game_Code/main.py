@@ -106,6 +106,12 @@ async def main():
         except Exception:
             pass
 
+        # Draw sprint bar
+        try:
+            renderer.draw_sprint_bar(player)
+        except Exception:
+            pass
+
         # Draw disconnect overlay if network reports disconnected
         disconnected = not getattr(network, 'connected', True)
         if disconnected:

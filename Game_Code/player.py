@@ -93,7 +93,7 @@ class Player:
         if keys[pygame.K_w] or keys[pygame.K_UP]:
             movement_input = 1.0
             if (keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]) and self.sprint > 0:
-                self.sprint -= 1
+                self.sprint -= 0.5
                 self.sprinting = True
                 movement_input = 2
             if not keys[pygame.K_LSHIFT] or not keys[pygame.K_RSHIFT]:
@@ -148,8 +148,9 @@ class Player:
                     movement_input = stick_value * 1.0
                     # Sprint when LT pressed: use time-based drain
                     if lt_pressed and self.sprint > 0:
-                        # drain rate: 20 units per second
-                        self.sprint = max(0.0, self.sprint - dt * 20.0)
+                        # time-based drain so controller is frame-rate independent
+                        # 0.5 per update @60 FPS -> 30 units/sec
+                        self.sprint = max(0.0, self.sprint - dt * 30.0)
                         self.sprinting = True
                         movement_input = 2.0
                     else:
@@ -166,7 +167,9 @@ class Player:
                 if dpad_y > 0:
                     movement_input = 1.0
                     if lt_pressed and self.sprint > 0:
-                        self.sprint = max(0.0, self.sprint - dt * 20.0)
+                        # time-based drain so controller is frame-rate independent
+                        # 0.5 per update @60 FPS -> 30 units/sec
+                        self.sprint = max(0.0, self.sprint - dt * 30.0)
                         self.sprinting = True
                         movement_input = 2.0
                     else:
