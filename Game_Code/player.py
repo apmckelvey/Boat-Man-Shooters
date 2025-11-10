@@ -45,7 +45,6 @@ class Player:
         if self.sprint < 100 and not self.sprinting:
             # regen rate: 10 units per second
             self.sprint = min(100, self.sprint + dt * 10.0)
-            print(self.sprint)
 
         # Keyboard input for rotation
         if keys[pygame.K_a] or keys[pygame.K_LEFT]:
