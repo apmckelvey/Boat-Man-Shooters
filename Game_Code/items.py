@@ -11,8 +11,8 @@ class Item:
         self.y = y
         self.item_type = item_type  # 1-5
         self.image = image
-        self.width = 0.3  # collision size in world units
-        self.height = 0.3
+        self.width = 0.1  # collision size in world units
+        self.height = 0.1
 
     def check_collision(self, player_x, player_y, player_radius=0.2):
         # Simple circle-rectangle collision
@@ -36,6 +36,8 @@ class ItemManager:
         self.textures = {}  # Will store ModernGL textures
         self._load_item_images()
         self._spawn_items()
+
+        xvalues = []
 
     def create_gl_textures(self, ctx):
         for item_type, image in self.images.items():
@@ -71,8 +73,8 @@ class ItemManager:
 
         for _ in range(self.num_items):
             # Random position within world bounds
-            x = random.uniform(margin, WORLD_WIDTH - margin)
-            y = random.uniform(margin, WORLD_HEIGHT - margin)
+            x = 0
+            y = 0
 
             # Random item type (1-5)
             item_type = random.randint(1, 5)
