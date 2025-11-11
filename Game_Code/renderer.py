@@ -6,6 +6,7 @@ import numpy as np
 import pygame
 import pygame.freetype
 import os
+from config import WIDTH, HEIGHT
 
 vertex_shader = '''
 #version 330 core
@@ -44,11 +45,22 @@ uniform float otherBoatSwayAmps[10];
 uniform vec2 worldSize;
 uniform float boatAspect;
 
+// NEW: Item uniforms
+uniform int numItems;
+uniform float itemPositions[30];
+uniform int itemTypes[15];
+uniform sampler2D itemTexture1;
+uniform sampler2D itemTexture2;
+uniform sampler2D itemTexture3;
+uniform sampler2D itemTexture4;
+uniform sampler2D itemTexture5;
+
 in vec2 v_uv;
 in vec2 v_world_pos;
 out vec4 fragColor;
 
 const float BOAT_SIZE = 0.15;
+const float ITEM_SIZE = 0.3;
 const float BORDER_WIDTH = 0.3;
 const float BORDER_FADE = 0.5;
 
@@ -82,7 +94,6 @@ vec2 rotate2D(vec2 p, float angle) {
     return vec2(p.x * c - p.y * s, p.x * s + p.y * c);
 }
 
-// Calculate distance from world boundaries
 float getDistanceFromBoundary(vec2 pos, vec2 worldSize) {
     float distLeft = pos.x;
     float distRight = worldSize.x - pos.x;
@@ -91,7 +102,6 @@ float getDistanceFromBoundary(vec2 pos, vec2 worldSize) {
     return min(min(distLeft, distRight), min(distBottom, distTop));
 }
 
-// Enhanced ripple system with more frequency variation
 float unifiedRipples(vec2 p, vec2 boatPos, float t, float speed) {
     float dist = length(p - boatPos);
     float ripple1 = sin(dist * 38.0 - t * 2.8) * 0.5 + 0.5;
@@ -105,7 +115,6 @@ float unifiedRipples(vec2 p, vec2 boatPos, float t, float speed) {
     return base * fade * mix(0.5, 0.35, smoothstep(0.0, 0.5, speed));
 }
 
-// Improved wake with better foam generation
 float wakePattern(vec2 p, vec2 boatPos, float boatRot, float speed, float t) {
     vec2 localP = p - boatPos;
     localP = rotate2D(localP, boatRot);
@@ -128,7 +137,6 @@ float wakePattern(vec2 p, vec2 boatPos, float boatRot, float speed, float t) {
     return (wakeShape * 0.35 + (ripples * 0.3 + foam * 0.4)) * distanceFade * frontFade * speed * 0.5;
 }
 
-// Enhanced bow wave with more detail
 float bowWave(vec2 p, vec2 boatPos, float boatRot, float speed, float t) {
     vec2 localP = p - boatPos;
     localP = rotate2D(localP, boatRot);
@@ -158,7 +166,6 @@ void main() {
     vec2 boatPos = boatPosition + vec2(swayX, swayY);
     float boatSpeed = length(boatVelocity);
 
-    // Enhanced multi-layer wave system with more detail
     float wave1 = fbm(pos + vec2(time * 0.2, time * 0.15));
     float wave2 = fbm(pos * 1.3 - vec2(time * 0.15, time * 0.25));
     float wave3 = fbm(pos * 1.8 + vec2(time * 0.08, -time * 0.2));
@@ -167,7 +174,6 @@ void main() {
 
     float waves = (wave1 + wave2 * 0.6 + wave3 * 0.4 + wave4 * 0.3 + wave5 * 0.2) / 2.5;
 
-    // Add subtle caustics effect
     float caustics = sin(pos.x * 10.0 + time * 1.5) * sin(pos.y * 10.0 + time * 1.8);
     caustics += sin(pos.x * 15.0 - time * 2.0) * sin(pos.y * 15.0 + time * 2.2);
     waves += caustics * 0.03;
@@ -190,10 +196,8 @@ void main() {
         waves += wakePattern(v_world_pos, othPosSway, -othRot, othSpeed * 2.5, time) * 0.75;
     }
 
-    // Apply subtle posterization to define wave edges better
     waves = floor(waves * 16.0) / 16.0;
 
-    // Realistic water colors with better definition
     vec3 deepWater = vec3(0.02, 0.18, 0.35);
     vec3 darkWater = vec3(0.06, 0.32, 0.52);
     vec3 midWater = vec3(0.14, 0.50, 0.68);
@@ -201,7 +205,6 @@ void main() {
     vec3 brightWater = vec3(0.48, 0.82, 0.92);
     vec3 foamColor = vec3(0.92, 0.96, 0.98);
 
-    // Smooth blending between water colors
     vec3 waterColor;
     if (waves < 0.15) {
         waterColor = mix(deepWater, darkWater, waves / 0.15);
@@ -215,20 +218,16 @@ void main() {
         waterColor = mix(brightWater, foamColor, (waves - 0.75) / 0.25);
     }
 
-    // Subtle color posterization for definition without harshness
     waterColor = posterizeColor(waterColor, 32.0);
 
-    // Add depth variation based on wave height
     float depthModulation = fbm(v_world_pos * 5.0 + time * 0.05) * 0.12;
     waterColor = mix(waterColor, deepWater, depthModulation * 0.25);
 
-    // Add specular highlights for realism
     float specular = pow(max(0.0, waves - 0.65), 4.0) * 0.35;
     waterColor += vec3(specular);
 
-    // Add boundary visualization
     float distFromBoundary = getDistanceFromBoundary(v_world_pos, worldSize);
-    
+
     if (distFromBoundary < BORDER_WIDTH) {
         float borderIntensity = smoothstep(BORDER_WIDTH, 0.0, distFromBoundary);
         float pulse = sin(time * 3.0) * 0.3 + 0.7;
@@ -236,16 +235,40 @@ void main() {
         vec3 warningColor = vec3(0.9, 0.4, 0.2);
         vec3 edgeColor = mix(warningColor, boundaryColor, borderIntensity);
         waterColor = mix(waterColor, edgeColor, borderIntensity * 0.6 * pulse);
-        
+
         if (distFromBoundary < BORDER_WIDTH * 0.5) {
             float stripePattern = step(0.5, fract(distFromBoundary * 15.0 + time * 2.0));
             waterColor = mix(waterColor, vec3(1.0, 0.2, 0.1), stripePattern * borderIntensity * 0.4);
         }
     }
-    
+
     if (distFromBoundary < BORDER_WIDTH + BORDER_FADE) {
         float fadeIntensity = smoothstep(BORDER_WIDTH + BORDER_FADE, BORDER_WIDTH, distFromBoundary);
         waterColor = mix(waterColor, vec3(0.9, 0.4, 0.2) * 0.6, fadeIntensity * 0.2);
+    }
+
+    // Draw items BEFORE boats so boats appear on top
+    for (int i = 0; i < numItems && i < 15; i++) {
+        int idx = i * 2;
+        vec2 itemPos = vec2(itemPositions[idx], itemPositions[idx+1]);
+
+        vec2 itemUV = v_world_pos - itemPos;
+        vec2 itemTex = (itemUV / ITEM_SIZE) + 0.5;
+
+        if (itemTex.x >= 0.0 && itemTex.x <= 1.0 && itemTex.y >= 0.0 && itemTex.y <= 1.0) {
+            vec4 itemColor = vec4(0.0);
+            int itemType = itemTypes[i];
+
+            if (itemType == 1) itemColor = texture(itemTexture1, itemTex);
+            else if (itemType == 2) itemColor = texture(itemTexture2, itemTex);
+            else if (itemType == 3) itemColor = texture(itemTexture3, itemTex);
+            else if (itemType == 4) itemColor = texture(itemTexture4, itemTex);
+            else if (itemType == 5) itemColor = texture(itemTexture5, itemTex);
+
+            if (itemColor.a > 0.05) {
+                waterColor = mix(waterColor, itemColor.rgb, itemColor.a);
+            }
+        }
     }
 
     vec2 boatUV = v_world_pos - boatPos;
@@ -268,12 +291,9 @@ void main() {
         othUV = rotate2D(othUV, -othRot);
         vec2 othTex = vec2(othUV.x / (BOAT_SIZE * boatAspect), othUV.y / BOAT_SIZE) + 0.5;
         if (othTex.x >= 0.0 && othTex.x <= 1.0 && othTex.y >= 0.0 && othTex.y <= 1.0) {
-            // sample enemy texture for other boats and composite fully opaque (no transparency)
             vec4 oc = texture(enemyTexture, othTex);
-            // only apply if there's visible texel (alpha > small threshold)
             if (oc.a > 0.05) {
                 vec3 tint = vec3(1.0, 1.0, 1.0);
-                // replace water color with boat color where boat is present
                 waterColor = mix(waterColor, oc.rgb * tint, 1.0);
             }
         }
@@ -296,6 +316,33 @@ class Renderer:
         self._create_geometry()
         # overlay resources (for UI text rendered via pygame -> GL texture)
         self._create_overlay_resources()
+
+        self.item_textures = {}
+        self.item_textures_loaded = False
+
+    def setup_item_textures(self, item_manager):
+        if self.item_textures_loaded:
+            return
+
+        # Create GL textures from pygame surfaces
+        item_manager.create_gl_textures(self.ctx)
+
+        # Bind each item texture to a texture unit
+        for item_type in range(1, 6):
+            if item_type in item_manager.textures:
+                texture = item_manager.textures[item_type]
+                texture.use(location=2 + item_type)  # Units 3-7
+                self.item_textures[item_type] = texture
+
+                try:
+                    self.program[f'itemTexture{item_type}'].value = 2 + item_type
+                    print(f"Bound itemTexture{item_type} to unit {2 + item_type}")
+                except Exception as e:
+                    print(f"Warning: Could not bind itemTexture{item_type}: {e}")
+
+        self.item_textures_loaded = True
+        print(f"Loaded {len(self.item_textures)} item textures")
+
     def world_to_screen(self, world_x, world_y, camera_x, camera_y, screen_width, screen_height):
         rel_x = world_x - camera_x
         rel_y = world_y - camera_y
@@ -446,7 +493,7 @@ void main() {
             self.overlay_font_small = None
             self.nametag_font = None
 
-    def render(self, time, player, other_players_display):
+    def render(self, time, player, other_players_display, item_manager=None):
         from config import WORLD_WIDTH, WORLD_HEIGHT
         
         self.program['time'].value = float(time)
@@ -492,9 +539,72 @@ void main() {
                 self.program['otherBoatSwayAmps'].value = tuple(sway_amp_array.tolist())
             except Exception:
                 pass
+        if item_manager and not self.item_textures_loaded:
+            self.setup_item_textures(item_manager)
+
+            # Set item uniforms
+        if item_manager:
+            # Get items visible from camera
+            visible_items = item_manager.get_visible_items(
+                player.camera_x,
+                player.camera_y,
+                visible_radius=5.0
+            )
+
+            num_items = min(len(visible_items), 15)
+            self.program['numItems'].value = num_items
+
+            # Prepare arrays
+            pos_array = np.zeros(30, dtype='f4')
+            type_array = np.zeros(15, dtype='i4')
+
+            for idx, item in enumerate(visible_items[:15]):
+                pos_array[idx * 2] = float(item.x)
+                pos_array[idx * 2 + 1] = float(item.y)
+                type_array[idx] = int(item.item_type)
+
+            # Send to shader
+            try:
+                self.program['itemPositions'].write(pos_array.tobytes())
+                self.program['itemTypes'].write(type_array.tobytes())
+            except Exception as e:
+                try:
+                    self.program['itemPositions'].value = tuple(pos_array.tolist())
+                    self.program['itemTypes'].value = tuple(type_array.tolist())
+                except Exception:
+                    print(f"Could not set item uniforms: {e}")
+        else:
+            try:
+                self.program['numItems'].value = 0
+            except Exception:
+                pass
 
         self.ctx.clear(0.0, 0.35, 0.75)
         self.vao.render(mode=moderngl.TRIANGLE_STRIP)
+
+        if item_manager:
+            visible_items = item_manager.get_visible_items(
+                player.camera_x,
+                player.camera_y,
+                visible_radius=5.0
+            )
+
+            for item in visible_items:
+                screen_x, screen_y = self.world_to_screen(
+                    item.x, item.y,
+                    player.camera_x, player.camera_y,
+                    WIDTH, HEIGHT
+                )
+
+                if item.image:
+                    # Get image size
+                    img_width, img_height = item.image.get_size()
+
+                    # Calculate screen size (scale based on viewport)
+                    scale_factor = 80  # Adjust this to make items bigger/smaller
+                    draw_x = int(screen_x - img_width * scale_factor / (2 * img_width))
+                    draw_y = int(screen_y - img_height * scale_factor / (2 * img_height))
+
 
     def draw_overlay(self, main_text: str, sub_text: str = "", alpha: float = 1.0):
         """Render a fullscreen overlay by drawing text into a pygame surface,

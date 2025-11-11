@@ -7,6 +7,7 @@ from renderer import Renderer
 from player import Player
 from network import NetworkManager
 from prediction import PredictionManager
+from items import ItemManager
 
 pygame.init()
 #controller initialization
@@ -59,6 +60,7 @@ renderer = Renderer(ctx)
 player = Player(0, 0) #spawn (7.5, 7.5) is the middle
 network = NetworkManager(player)
 prediction = PredictionManager()
+item_manager = ItemManager(num_items=15) #number of items
 
 
 async def main():
@@ -88,10 +90,14 @@ async def main():
         keys = pygame.key.get_pressed()
         player.update(dt, keys, controller_joystick)
 
+        collision = item_manager.check_collision(player.x, player.y, player_radius=0.15)
+        if collision:
+            item_manager.resolve_collision(player, collision)
+
         prediction.update_predictions(dt, network.other_players)
 
         current_time = (pygame.time.get_ticks() - start_ticks) / 1000.0
-        renderer.render(current_time, player, prediction.other_players_display)
+        renderer.render(current_time, player, prediction.other_players_display, item_manager)
         # draw small rectangles above players (local + others) with names
         try:
             # build names mapping: 'local' -> local player name, other pid -> stored name if available

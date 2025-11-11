@@ -1,5 +1,6 @@
 import math
 from utils import lerp_angle, smoothstep
+from config import SPRINT
 
 
 class Player:
@@ -30,7 +31,7 @@ class Player:
         self.previous_x = x
         self.previous_y = y
 
-        self.sprint = 100
+        self.sprint = SPRINT
         self.sprinting = False
         # Option to invert right-stick rotation direction if a controller's axis is reversed
         self.invert_right_stick = False
