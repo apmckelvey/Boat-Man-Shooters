@@ -35,9 +35,10 @@ class ItemManager:
         self.num_items = num_items
         self.textures = {}  # Will store ModernGL textures
         self._load_item_images()
-        self._spawn_items()
+        xvalues = [5, 6, 7, 8, 9, 4, 4, 3, 2, 1, 5, 6, 7, 8, 9, 5, 4, 2, 6, 523, 132, 221]
+        yvalues = [0, 2, 4, 3, 2, 3, 2, 12, 3, 5, 67, 8, 5, 3, 5, 1, 2, 6, 78, 6, 412, 2]
+        self._spawn_items(xvalues,yvalues)
 
-        xvalues = []
 
     def create_gl_textures(self, ctx):
         for item_type, image in self.images.items():
@@ -67,14 +68,16 @@ class ItemManager:
                 pygame.draw.rect(placeholder, (0, 0, 0), (0, 0, 64, 64), 3)
                 self.images[i] = placeholder
 
-    def _spawn_items(self):
+
+    def _spawn_items(self, xvalues, yvalues):
         # Create a margin from the edges
         margin = 1.0
 
         for _ in range(self.num_items):
+
             # Random position within world bounds
-            x = 0
-            y = 0
+            x = xvalues.pop(0)
+            y = yvalues.pop(0)
 
             # Random item type (1-5)
             item_type = random.randint(1, 5)
