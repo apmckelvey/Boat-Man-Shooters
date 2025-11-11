@@ -2,6 +2,7 @@ import pygame
 import moderngl
 import asyncio
 import math
+from pygame import RESIZABLE
 from config import *
 from renderer import Renderer
 from player import Player
@@ -47,7 +48,8 @@ pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
 pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 3)
 pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_CORE)
 pygame.display.gl_set_attribute(pygame.GL_CONTEXT_FORWARD_COMPATIBLE_FLAG, True)
-screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.OPENGL | pygame.DOUBLEBUF)
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.OPENGL | pygame.DOUBLEBUF | RESIZABLE)
+
 pygame.display.set_caption("Boat Man Shooters")
 clock = pygame.time.Clock()
 
