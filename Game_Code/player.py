@@ -10,9 +10,9 @@ class Player:
         self.rotation = 0.0
         self.target_rotation = 0.0
 
-        self.speed = 10
+        self.speed = 5
         self.backward_speed = 0.08
-        self.rotation_speed = 2.5
+        self.rotation_speed = 5
         self.rotation_smoothing = 0.15
 
         self.current_velocity = 0.0
@@ -38,9 +38,16 @@ class Player:
         # Left trigger rest value (detected on first controller sample) for robust LT detection
         self._lt_rest = None
 
+        self.L_Can_fire = True
+        self.R_Can_fire = True
+        self.L_fire_time = 0
+        self.R_fire_time = 0
+        self.cooldown = 3000
+
     def update(self, dt, keys, controller=None):
         import pygame
         from config import WORLD_WIDTH, WORLD_HEIGHT
+        current_time = pygame.time.get_ticks()
 
         # Regenerate sprint when not currently sprinting (time-based)
         if self.sprint < 100 and not self.sprinting:
@@ -52,6 +59,23 @@ class Player:
             self.target_rotation += self.rotation_speed * dt
         if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             self.target_rotation -= self.rotation_speed * dt
+
+        # Cannon fire with Q and E
+        if keys[pygame.K_q] and self.L_Can_fire:
+            print("Left cannon fired")
+            self.L_Can_fire = False
+            self.L_fire_time = current_time
+        if keys[pygame.K_e] and self.R_Can_fire:
+            print("Right cannon fired")
+            self.R_Can_fire = False
+            self.R_fire_time = current_time
+
+        # Cooldown thing, waits 3 seconds to reset
+        if not self.L_Can_fire and current_time - self.L_fire_time >= self.cooldown:
+            self.L_Can_fire = True
+        if not self.R_Can_fire and current_time - self.R_fire_time >= self.cooldown:
+            self.R_Can_fire = True
+
 
         # Controller input for rotation (right stick or d-pad)
         # Read controller axes/hats defensively since some controllers may not have the same layout
