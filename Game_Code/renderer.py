@@ -320,6 +320,100 @@ class Renderer:
         self.item_textures = {}
         self.item_textures_loaded = False
 
+    def render_menu(self, time):
+        from config import WIDTH, HEIGHT, WORLD_WIDTH, WORLD_HEIGHT
+
+
+        camera_x = WORLD_WIDTH / 2.0
+        camera_y = WORLD_HEIGHT / 2.0
+
+
+        self.program['time'].value = float(time)
+        self.program['boatPosition'].value = (float(camera_x), float(camera_y))
+        self.program['boatRotation'].value = 0.0
+        self.program['boatVelocity'].value = (0.0, 0.0)
+        self.program['wakeFade'].value = 0.0
+        self.program['cameraPos'].value = (float(camera_x), float(camera_y))
+        self.program['viewportSize'].value = (float(self.viewport_width), float(self.viewport_height))
+        self.program['worldSize'].value = (float(WORLD_WIDTH), float(WORLD_HEIGHT))
+        self.program['numOtherPlayers'].value = 0
+
+        try:
+            self.program['numItems'].value = 0
+        except Exception:
+            pass
+
+
+        self.ctx.clear(0.0, 0.35, 0.75)
+        self.vao.render(mode=moderngl.TRIANGLE_STRIP)
+
+
+        surf = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA, 32)
+        surf = surf.convert_alpha()
+
+
+        if self.overlay_font_large:
+            try:
+                title_text = "BOAT MAN SHOOTERS"
+                title_surf, _ = self.overlay_font_large.render(title_text, (255, 255, 255))
+                title_rect = title_surf.get_rect(center=(WIDTH // 2, HEIGHT // 3))
+
+                shadow_surf, _ = self.overlay_font_large.render(title_text, (0, 0, 0))
+                shadow_rect = shadow_surf.get_rect(center=(WIDTH // 2 + 3, HEIGHT // 3 + 3))
+                surf.blit(shadow_surf, shadow_rect)
+                surf.blit(title_surf, title_rect)
+            except Exception:
+                pass
+
+        button_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 - 30, 200, 60)
+        mouse_pos = pygame.mouse.get_pos()
+        is_hovering = button_rect.collidepoint(mouse_pos)
+
+        if is_hovering:
+            button_color = (100, 200, 100, 220)
+            text_color = (255, 255, 255)
+        else:
+            button_color = (50, 150, 50, 200)
+            text_color = (230, 230, 230)
+
+        pygame.draw.rect(surf, button_color, button_rect, border_radius=10)
+        pygame.draw.rect(surf, (255, 255, 255, 180), button_rect, 3, border_radius=10)
+
+        if self.overlay_font_small:
+            try:
+                button_text = "START GAME"
+                text_surf, _ = self.overlay_font_small.render(button_text, text_color)
+                text_rect = text_surf.get_rect(center=button_rect.center)
+                surf.blit(text_surf, text_rect)
+            except Exception:
+                pass
+
+        data = pygame.image.tostring(surf, 'RGBA', True)
+        w, h = surf.get_size()
+
+        try:
+            if self.overlay_texture is None:
+                self.overlay_texture = self.ctx.texture((w, h), 4, data)
+                self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
+            else:
+                try:
+                    self.overlay_texture.write(data)
+                except Exception:
+                    self.overlay_texture.release()
+                    self.overlay_texture = self.ctx.texture((w, h), 4, data)
+                    self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
+
+            self.overlay_texture.use(location=2)
+            try:
+                self.overlay_program['overlayTexture'].value = 2
+            except Exception:
+                pass
+
+            self.ctx.enable(moderngl.BLEND)
+            self.overlay_vao.render(mode=moderngl.TRIANGLE_STRIP)
+        except Exception:
+            return
+
     def setup_item_textures(self, item_manager):
         if self.item_textures_loaded:
             return
@@ -412,7 +506,7 @@ class Renderer:
         self.vao = self.ctx.simple_vertex_array(self.program, vbo, 'in_vert')
 
     def _create_overlay_resources(self):
-        # simple textured quad program for overlays
+
         overlay_vertex = '''
 #version 330 core
 in vec2 in_vert;

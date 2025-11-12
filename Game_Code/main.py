@@ -2,6 +2,8 @@ import pygame
 import moderngl
 import asyncio
 import math
+import sys
+from pygame import RESIZABLE
 from config import *
 from renderer import Renderer
 from player import Player
@@ -10,69 +12,57 @@ from prediction import PredictionManager
 from items import ItemManager
 
 pygame.init()
-#controller initialization
+# controller initialization
 pygame.joystick.init()
 
-#getting the joysticks
+# getting the joysticks
 joystick_count = pygame.joystick.get_count()
 if joystick_count == 0:
     print("No joysticks found.")
-    controller_joystick = None # Set to None if no controller is found
+    controller_joystick = None
 else:
-    # Get the first joystick (index 0 is usually the first connected controller)
     controller_joystick = pygame.joystick.Joystick(0)
     controller_joystick.init()
     print(f"Detected joystick: {controller_joystick.get_name()}")
-    # Diagnostic: print axes/buttons/hats mapping to help map triggers
-    try:
-        naxes = controller_joystick.get_numaxes()
-        nbuttons = controller_joystick.get_numbuttons()
-        nhats = controller_joystick.get_numhats()
-        print(f"Controller axes: {naxes}, buttons: {nbuttons}, hats: {nhats}")
-        axes_vals = [controller_joystick.get_axis(i) for i in range(naxes)]
-        print("Axis values:", axes_vals)
-        btn_vals = [controller_joystick.get_button(i) for i in range(nbuttons)]
-        print("Button values:", btn_vals)
-        hat_vals = [controller_joystick.get_hat(i) for i in range(nhats)]
-        print("Hat values:", hat_vals)
-    except Exception:
-        pass
 
-#music
+# music
 pygame.mixer.music.load('../Assets/Sounds/music.mp3')
 pygame.mixer.music.play(-1)
+
+icon = pygame.image.load('../Logos/logo.png')
+
+pygame.display.set_icon(icon)
+pygame.display.set_caption("Boat Man Shooters")
 
 # Set OpenGL attributes before creating the display
 pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
 pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 3)
 pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_CORE)
 pygame.display.gl_set_attribute(pygame.GL_CONTEXT_FORWARD_COMPATIBLE_FLAG, True)
-screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.OPENGL | pygame.DOUBLEBUF)
-pygame.display.set_caption("Boat Man Shooters")
-clock = pygame.time.Clock()
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.OPENGL | pygame.DOUBLEBUF | RESIZABLE)
 
-# large font for overlay messages
+clock = pygame.time.Clock()
 
 ctx = moderngl.create_context()
 print("OpenGL context created")
 
 renderer = Renderer(ctx)
-player = Player(0, 0) #spawn (7.5, 7.5) is the middle
-network = NetworkManager(player)
-prediction = PredictionManager()
-item_manager = ItemManager(num_items=15) #number of items
+
+
+game_state = "MENU" #game state
+
+player = None
+network = None
+prediction = None
+item_manager = None
 
 
 async def main():
+    global game_state, player, network, prediction, item_manager
+
+    fullscreen = False
     running = True
     start_ticks = pygame.time.get_ticks()
-    print("Demo running — Player:", network.PLAYER_NAME)
-
-    #joystick and dpad directions
-    joystick_x = 0.0
-    joystick_y = 0.0
-    dpad_x = 0
-    dpad_y = 0
 
     while running:
         dt = clock.get_time() / 1000.0
@@ -85,67 +75,94 @@ async def main():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                running = False
+                if game_state == "GAME":
+                    game_state = "MENU"
+                    if network:
+                        network.stop()
+                    player = None
+                    network = None
+                    prediction = None
+                    item_manager = None
+                    print("Returned to main menu")
+                else:
+                    running = False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_f:
+                fullscreen = not fullscreen
+                if fullscreen:
+                    screen = pygame.display.set_mode((WIDTH, HEIGHT),
+                                                     pygame.OPENGL | pygame.DOUBLEBUF | pygame.FULLSCREEN)
+                else:
+                    screen = pygame.display.set_mode((WIDTH, HEIGHT),
+                                                     pygame.OPENGL | pygame.DOUBLEBUF | pygame.RESIZABLE)
 
-        keys = pygame.key.get_pressed()
-        player.update(dt, keys, controller_joystick)
-
-        collision = item_manager.check_collision(player.x, player.y, player_radius=0.15)
-        if collision:
-            item_manager.resolve_collision(player, collision)
-
-        prediction.update_predictions(dt, network.other_players)
+            if game_state == "MENU" and event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+                button_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 - 30, 200, 60)
+                if button_rect.collidepoint(mouse_pos):
+                    game_state = "GAME"
+                    player = Player(0, 0)
+                    network = NetworkManager(player)
+                    prediction = PredictionManager()
+                    item_manager = ItemManager(num_items=15)
+                    print(f"{network.PLAYER_NAME} joined game")
 
         current_time = (pygame.time.get_ticks() - start_ticks) / 1000.0
-        renderer.render(current_time, player, prediction.other_players_display, item_manager)
-        # draw small rectangles above players (local + others) with names
-        try:
-            # build names mapping: 'local' -> local player name, other pid -> stored name if available
-            names = {'local': getattr(network, 'PLAYER_NAME', 'You')}
+
+        if game_state == "MENU":
+            renderer.render_menu(current_time)
+            pygame.display.flip()
+
+        elif game_state == "GAME":
+            keys = pygame.key.get_pressed()
+            player.update(dt, keys, controller_joystick)
+
+            collision = item_manager.check_collision(player.x, player.y, player_radius=0.15)
+            if collision:
+                item_manager.resolve_collision(player, collision)
+
+            prediction.update_predictions(dt, network.other_players)
+
+            renderer.render(current_time, player, prediction.other_players_display, item_manager)
+
             try:
-                for pid, pdata in network.other_players.items():
-                    names[pid] = pdata.get('name')
+                names = {'local': getattr(network, 'PLAYER_NAME', 'You')}
+                try:
+                    for pid, pdata in network.other_players.items():
+                        names[pid] = pdata.get('name')
+                except Exception:
+                    pass
+                renderer.draw_player_nametags(player, prediction.other_players_display, names=names, y_offset=90)
             except Exception:
                 pass
 
-            renderer.draw_player_nametags(player, prediction.other_players_display, names=names, y_offset=90)
-        except Exception:
-            pass
-
-        # Draw sprint bar
-        try:
-            renderer.draw_sprint_bar(player)
-        except Exception:
-            pass
-
-        # Draw disconnect overlay if network reports disconnected
-        disconnected = not getattr(network, 'connected', True)
-        if disconnected:
-            tsec = pygame.time.get_ticks() / 1000.0
-            # Smooth easing function for opacity using sine wave
-            # Base opacity of 0.6 with a gentle oscillation of ±0.25
-            # Slower animation for a more subtle effect (1.5 seconds per cycle)
-            base_opacity = 0.6
-            oscillation = 0.25
-            frequency = 1.3  # cycles per second
-            alpha = base_opacity + math.sin(tsec * frequency * math.pi) * oscillation
-            # Ensure alpha stays within reasonable bounds
-            alpha = max(0.35, min(0.85, alpha))
-            
-            text = "DISCONNECTED FROM SERVER"
-            subtext = "Attempting to reconnect..."
-            # draw overlay using the moderngl-backed renderer so it appears on OpenGL surface
             try:
-                renderer.draw_overlay(text, subtext, alpha)
+                renderer.draw_sprint_bar(player)
             except Exception:
-                # fallback: nothing
                 pass
 
-        pygame.display.flip()
+            disconnected = not getattr(network, 'connected', True)
+            if disconnected:
+                tsec = pygame.time.get_ticks() / 1000.0
+                base_opacity = 0.6
+                oscillation = 0.25
+                frequency = 1.3
+                alpha = base_opacity + math.sin(tsec * frequency * math.pi) * oscillation
+                alpha = max(0.35, min(0.85, alpha))
+
+                text = "DISCONNECTED FROM SERVER"
+                subtext = "Attempting to reconnect..."
+                try:
+                    renderer.draw_overlay(text, subtext, alpha)
+                except Exception:
+                    pass
+
+            pygame.display.flip()
+
         clock.tick(TARGET_FPS)
         await asyncio.sleep(0)
 
-    network.stop()
+    if network:
+        network.stop()
     pygame.quit()
 
 
