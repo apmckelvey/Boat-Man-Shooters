@@ -88,7 +88,10 @@ class Player:
 
         # Initialize movement input
         movement_input = 0.0
-
+        if not (keys[pygame.K_w] or keys[pygame.K_UP]):
+            self.sprinting = False
+        if not keys[pygame.K_LSHIFT]:
+            self.sprinting = False
         # Keyboard controls
         if keys[pygame.K_w] or keys[pygame.K_UP]:
             movement_input = 1.0
@@ -96,11 +99,6 @@ class Player:
                 self.sprint -= 0.5
                 self.sprinting = True
                 movement_input = 2
-
-        if not (keys[pygame.K_w] or keys[pygame.K_UP]):
-            self.sprinting = False
-        if not keys[pygame.K_LSHIFT]:
-            self.sprinting = False
 
 
         elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
