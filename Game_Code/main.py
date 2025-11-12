@@ -1,3 +1,15 @@
+"""
+MAIN MENU:
+
+1. Have main-menu.png loaded in the middle of the screen
+2. Have the Join Game and Settings buttons loaded on the menu in their respective order
+3. BUTTON BEHAVIORS:
+    a. When the cursor is hovered over the button, enlarge button by 10%
+    b. When the button is pressed, play press sound (../Assets/Sounds/Button\ Sounds/button-submit/button-submit-press.mp3) for normal button and change to pressed state graphic
+        i. Keep the button in pressed graphic while being clicked
+    c. When the button is unpressed, revert to the unpressed state, and play unpress sound (../Assets/Sounds/Button\ Sounds/button-submit/button-submit-unpress.mp3)
+"""
+
 import pygame
 import moderngl
 import asyncio
