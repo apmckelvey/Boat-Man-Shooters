@@ -329,9 +329,6 @@ class Renderer:
 
 
         self.program['time'].value = float(time)
-        self.program['boatPosition'].value = (float(camera_x), float(camera_y))
-        self.program['boatRotation'].value = 0.0
-        self.program['boatVelocity'].value = (0.0, 0.0)
         self.program['wakeFade'].value = 0.0
         self.program['cameraPos'].value = (float(camera_x), float(camera_y))
         self.program['viewportSize'].value = (float(self.viewport_width), float(self.viewport_height))
