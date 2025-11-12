@@ -1,7 +1,6 @@
 pygame
 moderngl
 asyncio
-time
 uuid
 threading
 supabase
