@@ -1,7 +1,6 @@
 pygame
 moderngl
 asyncio
-sys
 os
 time
 uuid
