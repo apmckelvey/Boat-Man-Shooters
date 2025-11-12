@@ -8,4 +8,4 @@
           - dependency-name: "pygame"
           - dependency-name: "moderngl"
           - dependency-name: "asyncio"
- 
+          - dependency-name: "supabase"
