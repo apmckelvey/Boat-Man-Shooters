@@ -35,7 +35,7 @@ class ItemManager:
         self.num_items = num_items
         self.textures = {}  # Will store ModernGL textures
         self._load_item_images()
-        xvalues = [5, 6, 7, 8, 9, 4, 4, 3, 2, 1, 5, 6, 7, 8, 9, 5, 4, 2, 6, 523, 132, 221]
+        xvalues = [0, 6, 7, 8, 9, 4, 4, 3, 2, 1, 5, 6, 7, 8, 9, 5, 4, 2, 6, 523, 132, 1280]
         yvalues = [0, 2, 4, 3, 2, 3, 2, 12, 3, 5, 67, 8, 5, 3, 5, 1, 2, 6, 78, 6, 412, 2]
         self._spawn_items(xvalues,yvalues)
 
@@ -115,7 +115,7 @@ class ItemManager:
         normal_x, normal_y, item = collision_info
 
         # Push player away from the item
-        push_distance = 0.05  # How much to push the player
+        push_distance = 0.009 # How much to push the player
         player.x += normal_x * push_distance
         player.y += normal_y * push_distance
 
