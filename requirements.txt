@@ -1,7 +1,6 @@
 pygame
 moderngl
 asyncio
-os
 time
 uuid
 threading
