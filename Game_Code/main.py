@@ -33,9 +33,14 @@ if joystick_count == 0:
     print("No joysticks found.")
     controller_joystick = None
 else:
-    controller_joystick = pygame.joystick.Joystick(0)
-    controller_joystick.init()
-    print(f"Detected joystick: {controller_joystick.get_name()}")
+    try:
+        controller_joystick = pygame.joystick.Joystick(0)
+        controller_joystick.init()
+        print(f"Detected joystick: {controller_joystick.get_name()}")
+    except pygame.error as e:
+        print(f"Warning: Controller detected but couldn't enable all features: {e}")
+        print("Continuing without controller support...")
+        controller_joystick = None
 
 # music
 pygame.mixer.music.load('../Assets/Sounds/music.mp3')
