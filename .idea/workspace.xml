@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="099ae51e-1b55-42b6-87de-3b172905fdc3" name="Changes" comment="added supabase to depandabot" />
+    <list default="true" id="099ae51e-1b55-42b6-87de-3b172905fdc3" name="Changes" comment="added more menus and buttons">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -125,7 +127,7 @@
       <workItem from="1762971850255" duration="2870000" />
       <workItem from="1762987348600" duration="58000" />
       <workItem from="1762987408739" duration="796000" />
-      <workItem from="1762988737503" duration="703000" />
+      <workItem from="1762988737503" duration="2075000" />
     </task>
     <task id="LOCAL-00001">
       <option name="closed" value="true" />
@@ -303,7 +305,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762988068736</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="added more menus and buttons">
+      <option name="closed" value="true" />
+      <created>1762992082071</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1762992082071</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -355,7 +365,8 @@
     <MESSAGE value="changed sprint bar colors to logo colors" />
     <MESSAGE value="Added sign up and login menus" />
     <MESSAGE value="added supabase to depandabot" />
-    <option name="LAST_COMMIT_MESSAGE" value="added supabase to depandabot" />
+    <MESSAGE value="added more menus and buttons" />
+    <option name="LAST_COMMIT_MESSAGE" value="added more menus and buttons" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -369,7 +380,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/boat_man_shooters$player.coverage" NAME="player Coverage Results" MODIFIED="1762965457413" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Game_Code" />
-    <SUITE FILE_PATH="coverage/boat_man_shooters$main.coverage" NAME="main Coverage Results" MODIFIED="1762988829073" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Game_Code" />
+    <SUITE FILE_PATH="coverage/boat_man_shooters$main.coverage" NAME="main Coverage Results" MODIFIED="1762993540992" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Game_Code" />
     <SUITE FILE_PATH="coverage/boat_man_shooters$renderer.coverage" NAME="renderer Coverage Results" MODIFIED="1762966092028" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Game_Code" />
     <SUITE FILE_PATH="coverage/boat_man_shooters$network.coverage" NAME="network Coverage Results" MODIFIED="1762427916701" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Game_Code" />
   </component>

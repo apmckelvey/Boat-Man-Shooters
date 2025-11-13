@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Menu Example</title>
+    <style>
+        /* --- Page Styles --- */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #ffffff; /* Background set to white */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #000000; /* Default text color set to black */
+            overflow: hidden; /* Hide scrollbars */
+        }
+
+        .menu-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px; /* Space between buttons */
+        }
+
+        /* --- Shared Button Styles --- */
+        .menu-button {
+            cursor: pointer;
+            /* Criteria 3a: Enlarge on hover */
+            transition: transform 0.1s ease-in-out;
+            /* Remove default styles for consistent behavior */
+            border: none;
+            background: none;
+            padding: 0;
+            user-select: none; /* Prevents text/image selection on click */
+            -webkit-user-drag: none; /* Prevents dragging on Safari */
+        }
+
+        .menu-button:hover {
+            transform: scale(1.1);
+        }
+
+        /* --- "Settings" Button (Image <img>) --- */
+        #settings-button {
+            /* Set a width for the image button */
+            width: 250px; 
+            height: auto;
+            border-radius: 8px; /* Optional: adds slightly rounded corners */
+        }
+
+        /* --- "Back" Button (Image <img>) --- */
+        #back-button {
+            /* Set a width for the image button */
+            width: 250px; 
+            height: auto;
+            border-radius: 8px; /* Optional: adds slightly rounded corners */
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- "Main Menu" title removed -->
+
+    <div class="menu-container">
+        <!-- "Join Game" button removed -->
+        
+        <!-- "Back" button -->
+        <img src="button-back-unpressed.png" 
+             alt="Back Button" 
+             class="menu-button" 
+             id="back-button"
+             draggable="false"> <!-- Prevents image ghosting on drag -->
+
+        <!-- "Settings" button -->
+        <img src="settings-button-unpressed.png" 
+             alt="Settings Button" 
+             class="menu-button" 
+             id="settings-button"
+             draggable="false"> <!-- Prevents image ghosting on drag -->
+    </div>
+
+    <!-- 
+      Pre-load audio elements.
+      The 'src' paths now point to the files in the same directory.
+    -->
+    <!-- 3b: Press sound -->
+    <audio id="audio-press" src="button-submit-press.mp3" preload="auto"></audio>
+    <!-- 3c: Unpress sound -->
+    <audio id="audio-unpress" src="button-submit-unpress.mp3" preload="auto"></audio>
+
+    <!-- New audio elements for the back button -->
+    <audio id="audio-back-press" src="button-back-press.mp3" preload="auto"></audio>
+    <audio id="audio-back-unpress" src="button-back-unpress.mp3" preload="auto"></audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get all interactive elements
+            // const joinButton = document.getElementById('join-game-button'); // Removed
+            const settingsButton = document.getElementById('settings-button');
+            const audioPress = document.getElementById('audio-press');
+            const audioUnpress = document.getElementById('audio-unpress');
+
+            // Get new back button elements
+            const backButton = document.getElementById('back-button');
+            const audioBackPress = document.getElementById('audio-back-press');
+            const audioBackUnpress = document.getElementById('audio-back-unpress');
+
+
+            // --- Define the image paths ---
+            // These filenames must match your attached files exactly.
+            const settingsUnpressedSrc = 'settings-button-unpressed.png';
+            const settingsPressedSrc = 'settings-button-pressed.png';
+
+            // Define new back button image paths
+            const backUnpressedSrc = 'button-back-unpressed.png';
+            const backPressedSrc = 'button-back-pressed.png';
+
+            // Keep track of the settings button's state
+            let isSettingsPressed = false;
+            // Keep track of the back button's state
+            let isBackButtonPressed = false;
+
+            // --- Helper function to play sounds ---
+            function playSound(audioElement) {
+                if (audioElement) {
+                    audioElement.currentTime = 0; // Rewind to start
+                    audioElement.play().catch(e => {
+                        // Log errors, e.g., if user hasn't interacted with the page yet
+                        console.error("Audio playback error:", e);
+                    });
+                }
+            }
+
+            // --- "Join Game" Button Listeners --- (Removed)
+            
+            // --- "Back" Button Listeners (Image Swap) ---
+            backButton.addEventListener('mousedown', (e) => {
+                // Only trigger for left-click
+                if (e.button !== 0) return;
+                isBackButtonPressed = true;
+                // Play back press sound and change graphic
+                playSound(audioBackPress);
+                backButton.src = backPressedSrc;
+            });
+
+            backButton.addEventListener('mouseup', (e) => {
+                // Only trigger for left-click
+                if (e.button !== 0) return;
+                
+                // Play back unpress sound and revert graphic
+                if (isBackButtonPressed) {
+                    playSound(audioBackUnpress);
+                    backButton.src = backUnpressedSrc;
+                }
+                isBackButtonPressed = false;
+            });
+
+            // Edge Case: Handle mouse leaving button while pressed
+            backButton.addEventListener('mouseleave', () => {
+                // If the mouse leaves while pressed, reset the button graphic
+                if (isBackButtonPressed) {
+                    backButton.src = backUnpressedSrc;
+                    isBackButtonPressed = false;
+                }
+            });
+
+
+            // --- "Settings" Button Listeners (Image Swap) ---
+            settingsButton.addEventListener('mousedown', (e) => {
+                // Only trigger for left-click
+                if (e.button !== 0) return;
+                isSettingsPressed = true;
+                // 3b: Play press sound and change graphic
+                playSound(audioPress);
+                settingsButton.src = settingsPressedSrc;
+            });
+
+            settingsButton.addEventListener('mouseup', (e) => {
+                // Only trigger for left-click
+                if (e.button !== 0) return;
+                
+                // 3c: Play unpress sound and revert graphic
+                // Only fire if the button was actually pressed down first
+                if (isSettingsPressed) {
+                    playSound(audioUnpress);
+                    settingsButton.src = settingsUnpressedSrc;
+                }
+                isSettingsPressed = false;
+            });
+
+            // Edge Case: Handle mouse leaving button while pressed
+            settingsButton.addEventListener('mouseleave', () => {
+                // If the mouse leaves while pressed, reset the button graphic
+                if (isSettingsPressed) {
+                    settingsButton.src = settingsUnpressedSrc;
+                    isSettingsPressed = false;
+                }
+            });
+
+        });
+    </script>
+
+</body>
+</html>
