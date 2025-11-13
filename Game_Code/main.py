@@ -7,6 +7,7 @@ MAIN MENU:
     a. When the cursor is hovered over the button, enlarge button by 10%
     b. When the button is pressed, play press sound (../Assets/Sounds/Button\ Sounds/button-submit/button-submit-press.mp3) for normal button and change to pressed state graphic
         i. Keep the button in pressed graphic while being clicked
+        ii. As button is being pressed, decrease the size by 5%
     c. When the button is unpressed, revert to the unpressed state, and play unpress sound (../Assets/Sounds/Button\ Sounds/button-submit/button-submit-unpress.mp3)
 """
 

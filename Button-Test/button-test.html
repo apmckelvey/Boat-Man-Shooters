@@ -42,6 +42,16 @@
             transform: scale(1.1);
         }
 
+        .menu-button:active {
+            /* On press, set scale to 105% (1.05)
+               This is still larger than the default (1.0)
+               and slightly smaller than the hover (1.1)
+            */
+            transform: scale(1.05);
+            /* Make the press animation very quick */
+            transition: transform 0.05s ease-out;
+        }
+
         /* --- "Settings" Button (Image <img>) --- */
         #settings-button {
             /* Set a width for the image button */

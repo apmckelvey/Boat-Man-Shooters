@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="099ae51e-1b55-42b6-87de-3b172905fdc3" name="Changes" comment="added more menus and buttons">
+    <list default="true" id="099ae51e-1b55-42b6-87de-3b172905fdc3" name="Changes" comment="Added button press test with the criteria comment in main.py">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Game_Code/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Game_Code/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -127,7 +128,7 @@
       <workItem from="1762971850255" duration="2870000" />
       <workItem from="1762987348600" duration="58000" />
       <workItem from="1762987408739" duration="796000" />
-      <workItem from="1762988737503" duration="2075000" />
+      <workItem from="1762988737503" duration="3346000" />
     </task>
     <task id="LOCAL-00001">
       <option name="closed" value="true" />
@@ -313,7 +314,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762992082071</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Added button press test with the criteria comment in main.py">
+      <option name="closed" value="true" />
+      <created>1762993877103</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1762993877103</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -366,7 +375,8 @@
     <MESSAGE value="Added sign up and login menus" />
     <MESSAGE value="added supabase to depandabot" />
     <MESSAGE value="added more menus and buttons" />
-    <option name="LAST_COMMIT_MESSAGE" value="added more menus and buttons" />
+    <MESSAGE value="Added button press test with the criteria comment in main.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added button press test with the criteria comment in main.py" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
