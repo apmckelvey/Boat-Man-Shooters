@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="099ae51e-1b55-42b6-87de-3b172905fdc3" name="Changes" comment="Added button press test with the criteria comment in main.py">
+    <list default="true" id="099ae51e-1b55-42b6-87de-3b172905fdc3" name="Changes" comment="added another button animation - size decrease while pressed">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Button-Test/button-test.html" beforeDir="false" afterPath="$PROJECT_DIR$/Button-Test/button-test.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Game_Code/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Game_Code/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -128,7 +129,7 @@
       <workItem from="1762971850255" duration="2870000" />
       <workItem from="1762987348600" duration="58000" />
       <workItem from="1762987408739" duration="796000" />
-      <workItem from="1762988737503" duration="3346000" />
+      <workItem from="1762988737503" duration="4088000" />
     </task>
     <task id="LOCAL-00001">
       <option name="closed" value="true" />
@@ -322,7 +323,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762993877103</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="added another button animation - size decrease while pressed">
+      <option name="closed" value="true" />
+      <created>1763036384850</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1763036384850</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -376,7 +385,8 @@
     <MESSAGE value="added supabase to depandabot" />
     <MESSAGE value="added more menus and buttons" />
     <MESSAGE value="Added button press test with the criteria comment in main.py" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added button press test with the criteria comment in main.py" />
+    <MESSAGE value="added another button animation - size decrease while pressed" />
+    <option name="LAST_COMMIT_MESSAGE" value="added another button animation - size decrease while pressed" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

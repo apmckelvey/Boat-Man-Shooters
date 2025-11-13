@@ -23,13 +23,25 @@
             flex-direction: column;
             align-items: center;
             gap: 25px; /* Space between buttons */
+            /* Move the container up by 50px */
+            transform: translateY(-50px);
+        }
+
+        /* --- Wiggle Animation Keyframes --- */
+        @keyframes button-wiggle {
+            0% { transform: rotate(0deg) scale(1.1); }
+            25% { transform: rotate(-2deg) scale(1.1); }
+            50% { transform: rotate(2deg) scale(1.1); }
+            75% { transform: rotate(-2deg) scale(1.1); }
+            100% { transform: rotate(0deg) scale(1.1); }
         }
 
         /* --- Shared Button Styles --- */
         .menu-button {
             cursor: pointer;
             /* Criteria 3a: Enlarge on hover */
-            transition: transform 0.1s ease-in-out;
+            /* Added filter to the transition */
+            transition: transform 0.1s ease-in-out, filter 0.1s ease-in-out;
             /* Remove default styles for consistent behavior */
             border: none;
             background: none;
@@ -40,15 +52,20 @@
 
         .menu-button:hover {
             transform: scale(1.1);
+            /* Add the wiggle animation on hover */
+            animation: button-wiggle 0.3s ease-in-out;
+            /* Add the glow effect on hover */
+            /* Increased spread (15px) and opacity (0.8) for more visibility */
+            filter: drop-shadow(0 0 15px rgba(0, 123, 255, 0.8));
         }
 
         .menu-button:active {
-            /* On press, set scale to 105% (1.05)
-               This is still larger than the default (1.0)
-               and slightly smaller than the hover (1.1)
-            */
+            /* On press, set scale to 105% (1.05) */
             transform: scale(1.05);
+            /* Brightness effect removed */
+            /* filter: brightness(0.95); */
             /* Make the press animation very quick */
+            /* Removed filter from the press transition */
             transition: transform 0.05s ease-out;
         }
 
@@ -62,8 +79,8 @@
 
         /* --- "Back" Button (Image <img>) --- */
         #back-button {
-            /* Set a width for the image button */
-            width: 250px; 
+            /* Set a width for the image button - 0.3 * 250px = 75px */
+            width: 75px; 
             height: auto;
             border-radius: 8px; /* Optional: adds slightly rounded corners */
         }
