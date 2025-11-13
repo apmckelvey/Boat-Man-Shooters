@@ -10,7 +10,7 @@ class Player:
         self.rotation = 0.0
         self.target_rotation = 0.0
 
-        self.speed = 5
+        self.speed = 1
         self.backward_speed = 0.08
         self.rotation_speed = 5
         self.rotation_smoothing = 0.15
