@@ -1,4 +1,4 @@
-pygame
+pygame-ce
 moderngl
 asyncio
 uuid
