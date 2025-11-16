@@ -90,13 +90,13 @@ pip3 uninstall pygame
 You may now install `pygame-ce`:
 
 ```Bash
-pip install pygame
+pip install pygame-ce
 ```
 
 If that did not work, you can alternatively try the following command:
 
 ```Bash
-pip3 install pygame
+pip3 install pygame-ce
 ```
 
 > ***NOTE:*** These directions are assuming you are running Python verison 3 or higher.
