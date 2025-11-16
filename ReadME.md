@@ -15,7 +15,7 @@
    3.1. [Installation of Dependencies](#installation_of_dependencies)  
    3.2. [How to Run](#how_to_run)  
    3.3. [How to Play](#how_to_play)
-4. [Credits](#credits)
+4. [Legal Stuff](#legal_stuff)
    
 # Overview <a name="overview"></a>
 
@@ -28,7 +28,6 @@ This is a online multiple player game where the intention is to shoot other boat
 - Fluid UI interface/animations
 - Sounds and background music
 - Both keyboard and controller input
-- 
 
 # Mechanics <a name="mechanics"></a>
 
@@ -42,6 +41,7 @@ The game has the following structure:
 ├── Logos *All the logos and icons for our project*  
 ├── .gitignore *Tells GitHub to ignore specific files when commiting*  
 ├── requirements.txt *Tells GitHub Dependabot what dependencies are needed to update*  
+├── license.md *The license for this project.*
 └── ReadME.md *This documentation file you are reading right now.*   
 
 ## Logic <a name="logic"></a>
@@ -49,16 +49,7 @@ The game has the following structure:
 
 ## Code <a name="code"></a>
 
-# Why pygame-ce?
-
-We then explain why we did what we did...
-
-You can describe stuff, like how `print()` prints stuff.
-``` Python
-# And add code blocks!
-print("Code block!")
-```
-
+Explain flow between files - tell reader that explainations of code can be found in deep dive.
 
 # Usage <a name="usage"></a>
 
@@ -77,7 +68,7 @@ python3 get-pip.py
 ```
 > *NOTE:* Replace *"/Directory/to/get-pip.py"* with the actual directory to `get-pip.py`
 
-2. ### Get `pygame-ce`
+2. ### Remove Basic `pygame` (if installed)
 If you don't have pygame installed, you may skip the following step to delete the basic pygame. If you do have this command, run the following in your terminal to delete pygame so that you may replace it with `pygame-ce`.
 
 ```Bash
@@ -89,7 +80,14 @@ If that did not work, you can alternatively try the following command:
 ```Bash
 pip3 uninstall pygame
 ```
-Now you may install `pygame-ce`:
+
+3. ### Install `pygame-ce`
+
+> ##### Why `pygame-ce`?
+>
+> We decided to use `pygame-ce`, the community fork of pygame, because of its continuous updates and security fixes. It also helps our game work faster than the original. Codewise, it's very similar; you can just call `import pygame` just like the original!
+
+You may now install `pygame-ce`:
 
 ```Bash
 pip install pygame
@@ -103,7 +101,7 @@ pip3 install pygame
 
 > ***NOTE:*** These directions are assuming you are running Python verison 3 or higher.
 
-3. ### Get Other Dependencies
+4. ### Get Other Dependencies
 Run the following commands in your terminal to install the rest of the dependencies using `pip`.
 
 ```Bash
@@ -125,8 +123,10 @@ pip3 install supabase moderngl numpy
 ## How to Play <a name="how_to_play"></a>
 
 
+# Legal Stuff <a name="legal_stuff"></a>
 
-# Credits <a name="credits"></a>
+
+## Credits <a name="credits"></a>
 
 *Background Music:* **Ocean wave loops** by DesiFreeMusic found on [Pixabay](https://pixabay.com/):  
 [https://pixabay.com/music/upbeat-ocean-wave-loops-377890/](https://pixabay.com/music/upbeat-ocean-wave-loops-377890/)  
@@ -145,3 +145,7 @@ Under the following license:
 [https://pixabay.com/service/license-summary/](https://pixabay.com/service/license-summary/)
 
 *Sprites (Including Player and Enemy)* Made by **Liam Blackmon**
+
+## License
+
+This project is made open-source by the MIT license, which can be found in `licence.md`
