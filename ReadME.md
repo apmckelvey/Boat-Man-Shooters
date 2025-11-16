@@ -45,7 +45,7 @@ The game has the following structure:
 └── ReadME.md *This documentation file you are reading right now.*   
 
 ## Logic <a name="logic"></a>
-<img src="Documentation/ Game\ Logic\ Flowchart.png" alt="Game Logic Flowchart">
+<img src="Documentation/Game Logic Flowchart.png" alt="Game Logic Flowchart">
 
 ## Code <a name="code"></a>
 
