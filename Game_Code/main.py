@@ -12,12 +12,10 @@ MAIN MENU:
 
 REFER TO THE BUTTON-TEST.HTML FOR THE PREFERRED BUTTON ANIMATIONS
 """
-
 import pygame
 import moderngl
 import asyncio
 import math
-import sys
 from pygame import RESIZABLE
 from config import *
 from renderer import Renderer
@@ -25,6 +23,9 @@ from player import Player
 from network import NetworkManager
 from prediction import PredictionManager
 from items import ItemManager
+import math
+from utils import lerp_angle, smoothstep
+from config import SPRINT
 
 pygame.init()
 # controller initialization
@@ -50,7 +51,6 @@ pygame.mixer.music.load('../Assets/Sounds/music.mp3')
 pygame.mixer.music.play(-1)
 
 icon = pygame.image.load('../Logos/icon.png')
-
 pygame.display.set_icon(icon)
 pygame.display.set_caption("Boat Man Shooters")
 
