@@ -911,5 +911,10 @@ void main() {
         selfx = self.__getattribute__('x')
         selfy = self.__getattribute__('y')
         side = side
+        cannon_ball = pygame.image.load("../Graphics/Sprites/cannonball.png").convert_alpha()
+        cannon_rect = cannon_ball.get_rect()
+        cannon_rect.center = (selfx, selfy)
         print(side)
+        print(cannon_rect.center)
+        print(selfx,selfy)
 
