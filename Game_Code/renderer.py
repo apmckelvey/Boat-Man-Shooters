@@ -906,3 +906,10 @@ void main() {
             self.overlay_vao.render(mode=moderngl.TRIANGLE_STRIP)
         except Exception:
             return
+
+    def cannon_shoot(self,side):
+        selfx = self.__getattribute__('x')
+        selfy = self.__getattribute__('y')
+        side = side
+        print(side)
+

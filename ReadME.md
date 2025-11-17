@@ -144,6 +144,11 @@ Under the following license:
 Under the following license:  
 [https://pixabay.com/service/license-summary/](https://pixabay.com/service/license-summary/)
 
+*Boat Moving Sounds:* **Boat on River** by paulprit (Freesound) found on [Pixabay](https://pixabay.com/):  
+[https://pixabay.com/sound-effects/boat-on-river-26388/](https://pixabay.com/sound-effects/boat-on-river-26388/)  
+Under the following license:  
+[https://pixabay.com/service/license-summary/](https://pixabay.com/service/license-summary/)  
+
 *Sprites (Including Player and Enemy)* Made by **Liam Blackmon**
 
 ## License
