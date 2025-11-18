@@ -17,3 +17,9 @@ WORLD_HEIGHT = 15
 
 SUPABASE_URL = "https://ciuqcdaowlwztlzkanpq.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpdXFjZGFvd2x3enRsemthbnBxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5MTYxMjUsImV4cCI6MjA3NzQ5MjEyNX0.WdoFmiZTRZbkTlnNISPTbkcDTFWDv75QEFsKNs7zkeY"
+
+if not SUPABASE_URL or not SUPABASE_KEY:
+    raise RuntimeError(
+        "Supabase configuration missing. "
+        "Please set SUPABASE_URL and SUPABASE_KEY environment variables."
+    )
