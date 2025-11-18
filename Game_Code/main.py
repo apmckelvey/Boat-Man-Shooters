@@ -8,14 +8,13 @@ MAIN MENU:
     b. When the button is pressed, play press sound (../Assets/Sounds/Button Sounds/button-submit/button-submit-press.mp3) for normal button and change to pressed state graphic
         i. Keep the button in pressed graphic while being clicked
         ii. As button is being pressed, decrease the size by 5%
-    c. When the button is unpressed, revert to the unpressed state, and play unpress sound (../Assets/Sounds/Button\ Sounds/button-submit/button-submit-unpress.mp3)
+    c. When the button is unpressed, revert to the unpressed state, and play unpress sound (../Assets/Sounds/Button Sounds/button-submit/button-submit-unpress.mp3)
 
 REFER TO THE BUTTON-TEST.HTML FOR THE PREFERRED BUTTON ANIMATIONS
 """
 import pygame
 import moderngl
-import asyncio
-import math
+import asynciod
 from pygame import RESIZABLE
 from config import *
 from renderer import Renderer
@@ -24,8 +23,7 @@ from network import NetworkManager
 from prediction import PredictionManager
 from items import ItemManager
 import math
-from utils import lerp_angle, smoothstep
-from config import SPRINT
+
 
 pygame.init()
 # controller initialization
