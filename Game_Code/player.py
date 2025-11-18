@@ -2,6 +2,7 @@ import math
 from utils import lerp_angle, smoothstep
 from config import SPRINT
 from renderer import Renderer
+import pygame
 
 class Player:
     def __init__(self, x, y):
@@ -37,6 +38,12 @@ class Player:
         self.invert_right_stick = False
         # Left trigger rest value (detected on first controller sample) for robust LT detection
         self._lt_rest = None
+
+        # --- Boat movement sound (louder) ---
+        self.engine_sound = pygame.mixer.Sound('../Assets/Sounds/Game Sounds/boat.mp3')
+        self.engine_sound.set_volume(1.0)  # make it louder (1.0 is max)
+        self.engine_channel = None
+        self.engine_fade_ms = 150  # quick fade in/out in milliseconds
 
         self.L_Can_fire = True
         self.R_Can_fire = True
@@ -205,12 +212,29 @@ class Player:
                     movement_input = -3.0
 
         # Apply the movement input
+        prev_velocity = self.current_velocity
         self.target_velocity = movement_input
 
         if self.target_velocity > self.current_velocity:
             self.current_velocity = min(self.current_velocity + self.acceleration * dt, self.target_velocity)
         else:
             self.current_velocity = max(self.current_velocity - self.deceleration * dt, self.target_velocity)
+
+        # --- Start/stop sound based on actual movement, with quick fade ---
+        moving_now = abs(self.current_velocity) > 1e-3
+        moving_before = abs(prev_velocity) > 1e-3
+
+        # Started moving this frame: fade in
+        if moving_now and not moving_before:
+            if self.engine_channel is None or not self.engine_channel.get_busy():
+                # play looped with fade-in
+                self.engine_channel = self.engine_sound.play(loops=-1, fade_ms=self.engine_fade_ms)
+
+        # Stopped moving this frame: fade out
+        if not moving_now and moving_before:
+            if self.engine_channel is not None:
+                self.engine_channel.fadeout(self.engine_fade_ms)
+                self.engine_channel = None
 
         target_wake_fade = smoothstep(0.0, 0.2, abs(self.current_velocity))
         if target_wake_fade > self.wake_fade:
