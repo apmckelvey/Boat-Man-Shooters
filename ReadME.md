@@ -37,7 +37,7 @@ The game has the following structure:
 ├── .github &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;***Configuration files for GitHub***  
 ├── Assets &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;***Contains the font, music, and button sounds***  
 ├── Game_Code &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;***Contains all the game code***  
-├── Graphics &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;*C**ontains Map Items, Sprites, Butons, and Menus***  
+├── Graphics &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;***Contains Map Items, Sprites, Butons, and Menus***  
 ├── Logos &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ***All the logos and icons for our project***  
 ├── .gitignore &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ***Tells GitHub to ignore specific files when commiting***  
 ├── requirements.txt &nbsp; &nbsp; &nbsp; ***Tells GitHub Dependabot what dependencies are needed to update***  
