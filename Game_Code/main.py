@@ -190,10 +190,21 @@ async def main():
                 button_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 - 30, 200, 60)
                 if button_rect.collidepoint(mouse_pos):
                     game_state = "GAME"
-                    player = Player(random.randint(0, WORLD_WIDTH), random.randint(0, WORLD_HEIGHT))
+                    item_manager = ItemManager(num_items=15)
+                    fallback_x, fallback_y = 2.0, 2.0  #fallback default coordinates if error
+                    for _ in range(50):
+                        #random coorfinates
+                        random_x = random.randint(1, WORLD_WIDTH - 1)
+                        random_y = random.randint(1, WORLD_HEIGHT - 1)
+                    #check if spot is clear
+                    if not item_manager.check_collision(random_x, random_y, player_radius=0.5):
+                        player = Player(random_x, random_y)
+                    else:
+                        #use fallback
+                        player = Player(fallback_x, fallback_y)
+
                     network = NetworkManager(player)
                     prediction = PredictionManager()
-                    item_manager = ItemManager(num_items=15)
                     cannon_balls = []
                     print(f"{network.PLAYER_NAME} joined game")
 
