@@ -1,5 +1,7 @@
 import time
 import uuid
+from datetime import datetime
+import pygame
 from threading import Thread
 from supabase import create_client, Client
 from config import *
@@ -23,7 +25,41 @@ class NetworkManager:
         self._attempt_connection()
         Thread(target=self._network_loop, daemon=True).start()
         print("Network thread started")
+        self.seen_uuids = [] #this counts what chats have already been loaded
+    def new_chat(self, table_name: str, item_data: dict):
+        try:
+            new_uuid = str(uuid.uuid4())
+            item_data["id"] = new_uuid
+            response = self.supabase.from_(table_name).insert(item_data).execute()
+            if response.data:
+                print(f"Successfully added item with ID: {new_uuid}")
+                return response.data
+            else:
+                print(f"Error adding item: {response.error}")
+                return None
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
 
+    def get_chats(self):
+        response = self.supabase.table("chat").select("*").execute()
+        for row in response.data:
+            uuid = row["id"]
+            msg = row["msg"]
+            if uuid not in self.seen_uuids: #if it hasn't been loaded yet than
+                self.seen_uuids.append(uuid)
+                print(f"{msg}")
+
+    def delete_chat_history(self):
+        try:
+            response = self.supabase.table("chat").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()#delete rows where id is not equal to empty uuid format
+            if response.data:
+                print(f"Successfully deleted all rows from table '{'chat'}'.")
+                print(f"Deleted data: {response.data}")
+            elif response.error:
+                print(f"Error deleting rows: {response.error}")
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
     def _attempt_connection(self):
         """Attempt to establish connection to Supabase"""
         try:
@@ -56,11 +92,9 @@ class NetworkManager:
             print(f"Will retry in {self.connection_retry_interval:.1f} seconds")
             
         return False
-
     def _network_loop(self):
         last_send = 0.0
         last_fetch = 0.0
-
         while self.running:
             now = time.time()
             

@@ -23,6 +23,7 @@ from network import NetworkManager
 from prediction import PredictionManager
 from items import ItemManager
 import math
+import datetime
 import time
 
 pygame.init()
@@ -142,6 +143,14 @@ async def main():
 
             if event.type == pygame.KEYDOWN and game_state == "GAME":
                 global L_Can_fire, R_Can_fire, current_time, L_fire_time, R_fire_time
+                if pygame.key.get_pressed()[pygame.K_z]:
+                    current_time = datetime.datetime.now()
+                    NetworkManager.new_chat(network,"chat", {
+                        "msg": f"{input('Name: ')}- \"{input('Message: ')}\" @{current_time.strftime('%c')}\""})
+                if pygame.key.get_pressed()[pygame.K_x]:
+                    NetworkManager.get_chats(network)
+                if pygame.key.get_pressed()[pygame.K_c]:
+                    NetworkManager.delete_chat_history(network)
                 if event.key == pygame.K_q and L_Can_fire is True:  # Left cannon
                     L_Can_fire = False
                     L_fire_time = current_time
@@ -149,7 +158,6 @@ async def main():
                     cannon_sound.play()
                     cannon_balls.append(new_ball)
                     print(f"Left cannon fired! Total balls: {len(cannon_balls)}")
-
                 if event.key == pygame.K_e and R_Can_fire is True:  # Right cannon
                     R_Can_fire = False
                     R_fire_time = current_time
