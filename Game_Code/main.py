@@ -24,7 +24,6 @@ from prediction import PredictionManager
 from items import ItemManager
 import math
 import datetime
-import time
 
 pygame.init()
 # controller initialization

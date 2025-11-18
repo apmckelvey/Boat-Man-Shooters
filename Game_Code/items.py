@@ -1,7 +1,5 @@
 import pygame
-import random
 import math
-from config import WORLD_WIDTH, WORLD_HEIGHT
 
 
 class Item:

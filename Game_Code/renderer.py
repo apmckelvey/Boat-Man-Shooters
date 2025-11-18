@@ -1,9 +1,6 @@
 import moderngl
 import numpy as np
 import pygame
-import moderngl
-import numpy as np
-import pygame
 import pygame.freetype
 import os
 from config import WIDTH, HEIGHT

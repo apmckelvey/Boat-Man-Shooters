@@ -1,7 +1,5 @@
 import time
 import uuid
-from datetime import datetime
-import pygame
 from threading import Thread
 from supabase import create_client, Client
 from config import *

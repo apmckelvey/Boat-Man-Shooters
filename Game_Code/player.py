@@ -1,7 +1,6 @@
 import math
 from utils import lerp_angle, smoothstep
 from config import SPRINT
-from renderer import Renderer
 import pygame
 
 class Player:
