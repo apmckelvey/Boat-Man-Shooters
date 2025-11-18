@@ -14,7 +14,7 @@ REFER TO THE BUTTON-TEST.HTML FOR THE PREFERRED BUTTON ANIMATIONS
 """
 import pygame
 import moderngl
-import asynciod
+import asyncio
 from pygame import RESIZABLE
 from config import *
 from renderer import Renderer
