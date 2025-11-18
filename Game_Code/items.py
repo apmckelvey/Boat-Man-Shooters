@@ -37,7 +37,7 @@ class ItemManager:
         self._load_item_images()
         xvalues = [3, 14, 7, 11, 2, 9, 13, 5, 12, 6, 8, 1, 13, 4, 10, 7, 3, 15, 9, 12, 5, 11]
         yvalues = [8, 2, 14, 6, 11, 3, 10, 7, 10, 4, 13, 5, 9, 1, 12, 8, 14, 6, 11, 3, 14.2]
-        item_types =   [1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2]
+        item_types =   [1, 6, 3, 4, 7, 1, 2, 3, 4, 5, 7, 2, 3, 4, 5, 1, 2, 3, 6, 5, 7, 6]
         self._spawn_items(xvalues,yvalues, item_types)
 
 
@@ -116,7 +116,7 @@ class ItemManager:
         normal_x, normal_y, item = collision_info
 
         # Push player away from the item
-        push_distance = 0.009 # How much to push the player
+        push_distance = 0.02 # How much to push the player
         player.x += normal_x * push_distance
         player.y += normal_y * push_distance
 
