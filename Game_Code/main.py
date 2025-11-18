@@ -23,7 +23,7 @@ from network import NetworkManager
 from prediction import PredictionManager
 from items import ItemManager
 import math
-import time
+import random
 
 pygame.init()
 # controller initialization
@@ -190,7 +190,7 @@ async def main():
                 button_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 - 30, 200, 60)
                 if button_rect.collidepoint(mouse_pos):
                     game_state = "GAME"
-                    player = Player(0, 0)
+                    player = Player(random.randint(0, WORLD_WIDTH), random.randint(0, WORLD_HEIGHT))
                     network = NetworkManager(player)
                     prediction = PredictionManager()
                     item_manager = ItemManager(num_items=15)
