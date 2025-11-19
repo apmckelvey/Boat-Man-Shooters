@@ -40,13 +40,22 @@ class NetworkManager:
             return None
 
     def get_chats(self):
-        response = self.supabase.table("chat").select("*").execute()
-        for row in response.data:
-            uuid = row["id"]
-            msg = row["msg"]
-            if uuid not in self.seen_uuids: #if it hasn't been loaded yet than
-                self.seen_uuids.append(uuid)
-                print(f"{msg}")
+       try:
+            response = self.supabase.table("chat").select("*").execute()
+            indx = 0
+            if response.data:
+                for row in response.data:
+                    uuid = row["id"]
+                    msg = row["msg"]
+                    if uuid not in self.seen_uuids: #if it hasn't been loaded yet than
+                        self.seen_uuids.append(uuid)
+                        indx += 1
+                        print(f"{msg}")
+                print(f"Successfully retrieved chats: {indx}")
+            elif response.error:
+                print(f"Error deleting rows: {response.error}")
+       except Exception as e:
+            print(f"An unexpected error occurred: {e}")
 
     def delete_chat_history(self):
         try:
