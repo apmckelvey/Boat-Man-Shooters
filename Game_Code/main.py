@@ -145,7 +145,7 @@ async def main():
                 global L_Can_fire, R_Can_fire, current_time, L_fire_time, R_fire_time
                 if pygame.key.get_pressed()[pygame.K_z]:
                     current_time = datetime.datetime.now()
-                    NetworkManager.new_chat(network, "chat", {
+                    NetworkManager.new_chat(network,  {
                         "msg": f"{input('Name: ')} - \"{input('Message: ')}\" @ {current_time.strftime('%c')}\""}) #FUTURE USE THREADING TO STOP PROJECT FROM STOPPING FOR INPUTS
                 if pygame.key.get_pressed()[pygame.K_x]:
                     NetworkManager.get_chats(network)

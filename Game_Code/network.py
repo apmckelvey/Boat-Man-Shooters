@@ -24,11 +24,11 @@ class NetworkManager:
         Thread(target=self._network_loop, daemon=True).start()
         print("Network thread started")
         self.seen_uuids = [] #this counts what chats have already been loaded
-    def new_chat(self, table_name: str, item_data: dict):
+    def new_chat(self, item_data: dict):
         try:
             new_uuid = str(uuid.uuid4())
             item_data["id"] = new_uuid
-            response = self.supabase.from_(table_name).insert(item_data).execute()
+            response = self.supabase.from_("chat").insert(item_data).execute()
             if response.data:
                 print(f"Successfully added item with ID: {new_uuid}")
                 return response.data
