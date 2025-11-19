@@ -24,6 +24,7 @@ from prediction import PredictionManager
 from items import ItemManager
 import math
 import datetime
+from prediction import *
 
 pygame.init()
 # controller initialization
@@ -240,6 +241,7 @@ async def main():
                 pass
 
             try:
+                renderer.draw_minimap(player, prediction.other_players_display)
                 renderer.draw_sprint_bar(player)
             except Exception:
                 pass
