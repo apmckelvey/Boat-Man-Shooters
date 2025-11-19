@@ -22,7 +22,7 @@ class CannonBall:
             pygame.draw.circle(self.image, (150, 150, 150), (16, 16), 10)
 
         offset_distance = 0.15
-        angle_offset = 1.5 if side == "left" else -1.5
+        angle_offset = 1 if side == "left" else -1
 
         spawn_angle = rotation + angle_offset
         self.x += math.cos(spawn_angle) * offset_distance

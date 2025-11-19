@@ -83,7 +83,7 @@ L_Can_fire = True
 R_Can_fire = True
 L_fire_time = 0
 R_fire_time = 0
-cooldown = 1
+cooldown = 0.5
 current_time = pygame.time.get_ticks()
 
 async def main():
