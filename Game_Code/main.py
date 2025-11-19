@@ -145,7 +145,7 @@ async def main():
                 if pygame.key.get_pressed()[pygame.K_z]:
                     current_time = datetime.datetime.now()
                     NetworkManager.new_chat(network, "chat", {
-                        "msg": f"{input('Name: ')}- \"{input('Message: ')}\" @{current_time.strftime('%c')}\""})
+                        "msg": f"{input('Name: ')} - \"{input('Message: ')}\" @ {current_time.strftime('%c')}\""}) #FUTURE USE THREADING TO STOP PROJECT FROM STOPPING FOR INPUTS
                 if pygame.key.get_pressed()[pygame.K_x]:
                     NetworkManager.get_chats(network)
                 if pygame.key.get_pressed()[pygame.K_c]:
