@@ -24,6 +24,7 @@ from network import NetworkManager
 from prediction import PredictionManager
 from items import ItemManager
 import math
+from cannonball import CannonBall
 
 pygame.init()
 
