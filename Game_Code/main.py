@@ -211,6 +211,7 @@ async def main():
                 renderer.draw_player_nametags(player, prediction.other_players_display, names=names, y_offset=90)
                 renderer.draw_minimap(player, prediction.other_players_display)
                 renderer.draw_sprint_bar(player)
+                renderer.draw_health_and_cannon_cd(player)
             except: pass
 
             #disconnected alert

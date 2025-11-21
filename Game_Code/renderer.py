@@ -1011,3 +1011,46 @@ void main() {
         except Exception as e:
             print(f"Error drawing cannon balls: {e}")
 
+    def draw_health_and_cannon_cd(self,player):
+        try:
+            from config import WIDTH, HEIGHT
+        except Exception:
+            WIDTH, HEIGHT = 1280, 720
+
+        surf = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA, 32)
+        surf = surf.convert_alpha()
+
+        box_height = 200
+        box_width = 200
+
+        x = WIDTH - box_width - 20
+        y = HEIGHT - box_height - 50
+
+        pygame.draw.rect(surf, (50,50,50,160), (x, y, box_width, box_height))
+        pygame.draw.rect(surf, (255, 255, 255, 100), (x, y, box_width, box_height), 2)
+
+        data = pygame.image.tostring(surf, 'RGBA', True)
+        w, h = surf.get_size()
+
+        try:
+            if self.overlay_texture is None:
+                self.overlay_texture = self.ctx.texture((w, h), 4, data)
+                self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
+            else:
+                try:
+                    self.overlay_texture.write(data)
+                except Exception:
+                    self.overlay_texture.release()
+                    self.overlay_texture = self.ctx.texture((w, h), 4, data)
+                    self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
+
+            self.overlay_texture.use(location=2)
+            try:
+                self.overlay_program['overlayTexture'].value = 2
+            except Exception:
+                pass
+
+            self.ctx.enable(moderngl.BLEND)
+            self.overlay_vao.render(mode=moderngl.TRIANGLE_STRIP)
+        except Exception:
+            return
