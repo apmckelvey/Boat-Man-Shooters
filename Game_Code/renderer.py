@@ -1032,6 +1032,15 @@ void main() {
         data = pygame.image.tostring(surf, 'RGBA', True)
         w, h = surf.get_size()
 
+        #boat health textures
+        green_health = pygame.image.load("../Graphics/Overlay/boat-health-green.png").convert_alpha()
+        yellow_health = pygame.image.load("../Graphics/Overlay/boat-health-yellow.png").convert_alpha()
+        orange_health = pygame.image.load("../Graphics/Overlay/boat-health-orange.png").convert_alpha()
+        red_health = pygame.image.load("../Graphics/Overlay/boat-health-red.png").convert_alpha()
+
+        #Change this later cuz we dont have health yet
+        chosen_picture = green_health
+
         try:
             if self.overlay_texture is None:
                 self.overlay_texture = self.ctx.texture((w, h), 4, data)
