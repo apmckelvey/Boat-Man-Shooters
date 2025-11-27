@@ -1,30 +1,19 @@
-"""
-MAIN MENU:
-
-1. Have main-menu.png loaded in the middle of the screen
-2. Have the Join Game and Settings buttons loaded on the menu in their respective order
-3. BUTTON BEHAVIORS:
-    a. When the cursor is hovered over the button, enlarge button by 10%, wiggle it for a sec, and add "aura" effect
-    b. When the button is pressed, play press sound (../Assets/Sounds/Button Sounds/button-submit/button-submit-press.mp3) for normal button and change to pressed state graphic
-        i. Keep the button in pressed graphic while being clicked
-        ii. As button is being pressed, decrease the size by 5%
-    c. When the button is unpressed, revert to the unpressed state, and play unpress sound (../Assets/Sounds/Button Sounds/button-submit/button-submit-unpress.mp3)
-
-REFER TO THE BUTTON-TEST.HTML FOR THE PREFERRED BUTTON ANIMATIONS
-"""
-
+#module imports
 import pygame
 import moderngl
 import asyncio
 from pygame import RESIZABLE
+import math
+
+#fimports from other files
 from config import *
 from renderer import Renderer
 from player import Player
 from network import NetworkManager
 from prediction import PredictionManager
 from items import ItemManager
-import math
 from cannonball import CannonBall
+from button import Button
 
 pygame.init()
 
