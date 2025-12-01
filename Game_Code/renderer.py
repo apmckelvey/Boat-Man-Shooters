@@ -786,13 +786,11 @@ void main() {
 
             #color: green when ready, otherwise orange->red based on remaining fraction
             if frac <= 0.001:
-                color = (60, 220, 80, 220)
+                color = (0, 255, 0, 220)
             else:
-                #orange -> red
-                r = int(226 * (1.0 - frac) + 240 * frac)
-                g = int(140 * (1.0 - frac) + 80 * frac)
-                b = int(96 * (1.0 - frac) + 80 * frac)
-                color = (r, g, b, 220)
+                r = int(255 * frac)
+                g = int(255 * (1.0 - frac))
+                color = (r, g, 0, 220)
 
             if fill_h > 0:
                 pygame.draw.rect(surf, color, (base_x, fill_y, cd_bar_w, fill_h))

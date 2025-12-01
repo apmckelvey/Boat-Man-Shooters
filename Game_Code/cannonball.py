@@ -12,7 +12,7 @@ class CannonBall:
         self.age = 0.0
 
         try:
-            img = pygame.image.load("../Graphics/Sprites/cannonball.png").convert_alpha()
+            img = pygame.image.load("../Graphics/Sprites/Cannonballs/cannonball.png").convert_alpha()
             self.image = pygame.transform.scale(img, (32, 32))
         except:
             self.image = pygame.Surface((32, 32), pygame.SRCALPHA)
