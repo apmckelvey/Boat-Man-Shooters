@@ -13,7 +13,6 @@ from network import NetworkManager
 from prediction import PredictionManager
 from items import ItemManager
 from cannonball import CannonBall
-from button import Button
 
 pygame.init()
 
