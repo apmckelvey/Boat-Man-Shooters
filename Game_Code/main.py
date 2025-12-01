@@ -61,7 +61,7 @@ item_manager = None
 cannon_balls = []
 L_Can_fire = True
 R_Can_fire = True
-cooldown = 1.0  # seconds
+cooldown = 1.0
 
 #trigger rest values (calibrated on first frame)
 lt_rest = None
@@ -86,7 +86,7 @@ async def main():
             if event.type == pygame.QUIT:
                 running = False
 
-            # triggers
+            #triggers
             if event.type == pygame.JOYAXISMOTION and controller_joystick:
                 global lt_rest, rt_rest
                 if lt_rest is None or rt_rest is None:
@@ -110,7 +110,7 @@ async def main():
                             L_Can_fire = False
                             pygame.time.set_timer(pygame.USEREVENT + 1, int(cooldown * 1000), loops=1)
 
-                # right canon (RT)
+                #right canon (RT)
                 if event.type == pygame.JOYAXISMOTION and event.axis in (4, 5) and R_Can_fire:
                     value = event.value
                     if axis == 5:
@@ -148,16 +148,16 @@ async def main():
                     game_state = "GAME"
                     item_manager = ItemManager(num_items=15)
                     player = Player(random.randint(0, WORLD_WIDTH), random.randint(0, WORLD_HEIGHT))
-                    fallback_x, fallback_y = 2.0, 2.0  # fallback default coordinates if error
+                    fallback_x, fallback_y = 2.0, 2.0  #fallback default coordinates if error
                     for _ in range(50):
-                        # random coord=inates
+                        #random coordinates
                         random_x = random.randint(1, WORLD_WIDTH - 1)
                         random_y = random.randint(1, WORLD_HEIGHT - 1)
-                    # check if spot is clear
+                    #check if spot is clear
                     if not item_manager.check_collision(random_x, random_y, player_radius=0.5):
                         player = Player(random_x, random_y)
                     else:
-                        # use fallback
+                        #use fallback
                         player = Player(fallback_x, fallback_y)
                     network = NetworkManager(player)
                     prediction = PredictionManager()
