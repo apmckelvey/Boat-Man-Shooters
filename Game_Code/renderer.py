@@ -108,7 +108,7 @@ class Renderer:
             except Exception:
                 pass
 
-        data = pygame.image.tostring(surf, 'RGBA', True)
+        data = pygame.image.tobytes(surf, 'RGBA', True)
         w, h = surf.get_size()
 
         try:
@@ -481,7 +481,7 @@ void main() {
         pygame.draw.circle(surf, (50, 255, 50), (int(px), int(py)), 5)
 
         #render the overlay
-        data = pygame.image.tostring(surf, 'RGBA', True)
+        data = pygame.image.tobytes(surf, 'RGBA', True)
         w, h = surf.get_size()
 
         try:
@@ -530,7 +530,7 @@ void main() {
             surf.blit(sub_surf, sub_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 70)))
 
         #upload to GPU as texture
-        data = pygame.image.tostring(surf, 'RGBA', True)
+        data = pygame.image.tobytes(surf, 'RGBA', True)
         w, h = surf.get_size()
 
         #create or write texture
@@ -597,7 +597,7 @@ void main() {
                 pass
 
         #upload to GPU and render
-        data = pygame.image.tostring(surf, 'RGBA', True)
+        data = pygame.image.tobytes(surf, 'RGBA', True)
         w, h = surf.get_size()
 
         try:
@@ -677,7 +677,7 @@ void main() {
                 continue
 
         #upload to GPU as texture and render on top (reuse overlay texture logic)
-        data = pygame.image.tostring(surf, 'RGBA', True)
+        data = pygame.image.tobytes(surf, 'RGBA', True)
         w, h = surf.get_size()
 
         try:
@@ -726,7 +726,7 @@ void main() {
             else:
                 pygame.draw.circle(surf, (255, 255, 255), (int(screen_x), int(screen_y)), 8)
 
-        data = pygame.image.tostring(surf, 'RGBA', True)
+        data = pygame.image.tobytes(surf, 'RGBA', True)
         w, h = surf.get_size()
 
         try:
@@ -809,7 +809,7 @@ void main() {
 
 
 
-        data = pygame.image.tostring(surf, 'RGBA', True)
+        data = pygame.image.tobytes(surf, 'RGBA', True)
         w, h = surf.get_size()
 
         #choose a preloaded health picture
