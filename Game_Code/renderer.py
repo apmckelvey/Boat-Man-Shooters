@@ -591,7 +591,7 @@ void main() {
         if self.nametag_font:
             try:
                 label_surf, _ = self.nametag_font.render("SPRINT", (255, 255, 255))
-                label_rect = label_surf.get_rect(bottomright=(x + (bar_width / 2) + 30, y + (bar_height / 2) + 8))
+                label_rect = label_surf.get_rect(bottomright=(x + (bar_width / 2) + 30, y + (bar_height / 2) + 8)) #idk why this is the middle jus messed with it till it looked right
                 surf.blit(label_surf, label_rect)
             except Exception:
                 pass
