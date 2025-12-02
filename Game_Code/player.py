@@ -38,7 +38,7 @@ class Player:
 
         #motor sound
         self.motor_sound = pygame.mixer.Sound('../Assets/Sounds/Game Sounds/motor.mp3')
-        self.motor_sound.set_volume(0.2)
+        self.motor_sound.set_volume(0.25)
         self.motor_sound.play(loops=-1)
 
         #engine sound
