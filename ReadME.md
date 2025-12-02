@@ -13,9 +13,12 @@
    2.3. [Code](#code)  
 3. [Usage](#usage)  
    3.1. [Installation of Dependencies](#installation_of_dependencies)  
-   3.2. [How to Run](#how_to_run)  
-   3.3. [How to Play](#how_to_play)
-4. [Legal Stuff](#legal_stuff)
+   3.2. [How to Run (Python Files)](#how_to_run)  
+   3.3. [How to Play (App)](#how_to_play)  
+4. [Legal Stuff](#legal_stuff)  
+    4.1. [Credits](#credits)  
+    4.2. [License](#license)  
+    4.3. [Contributing](#contributing)  
    
 # Overview <a name="overview"></a>
 
@@ -59,6 +62,8 @@ Explain flow between files - tell reader that explainations of code can be found
 ## Installation of Dependencies <a name="installation_of_dependencies">
 
 This project uses the dependencies `pygame-ce`, `moderngl`, `numpy`, and `supabase`, which are not built in to the Python system. To install these dependencies, you will have to use pip in your terminal if you are in a local environment.
+
+> ***NOTE: If you are running in an app, you will not need to install these dependencies. Please proceed to section 3.3***
 
 1. ### Install `pip` if Needed
    1. First, get the `get-pip.py` file from the following link:  
@@ -119,15 +124,97 @@ pip3 install supabase moderngl numpy
 
 > ***NOTE:*** These directions are assuming you are running Python verison 3 or higher.
 
-## How to Run <a name="how_to_run"></a>
+## How to Run (Python Files) <a name="how_to_run"></a>
+1. Clone the repository with the following command:
+```Bash
+git clone https://github.com/apmckelvey/boat-man-shooters.git
+```
 
+2. `cd` into the repository folder:
+```Bash
+cd /Directory/to/repository
+```
+> *NOTE:* Replace `"/Directory/to/repository"` with the actual directory to the repository
 
+3. Run `main.py` using `Python`:
+```Bash
+python /Game_Code/main.py
+```
 
-## How to Play <a name="how_to_play"></a>
+If that did not work, you can alternatively try the following command:
+```Bash
+python3 /Game_Code/main.py
+```
 
+## How to Play (App) <a name="how_to_play"></a>
+Download the app from the releases page: [https://github.com/apmckelvey/boat-man-shooters/releases](https://github.com/apmckelvey/boat-man-shooters/releases)
+
+### Build-it-Yoursef From the Code
+
+1. Install the dependencies as described in section 3.1 as well as the dependency `nuitka`:
+
+```Bash
+pip install nuitka
+```
+
+If that did not work, you can alternatively try the following command:
+
+```Bash
+pip3 install nuitka
+```
+
+> ***NOTE:*** These directions are assuming you are running Python verison 3 or higher.
+
+2. Clone the repository with the following command:
+```Bash
+git clone https://github.com/apmckelvey/boat-man-shooters.git
+```
+
+3. `cd` into the repository folder:
+```Bash
+cd /Directory/to/repository
+```
+> *NOTE:* Replace `"/Directory/to/repository"` with the actual directory to the repository.
+
+4. Run the following command:
+```Bash
+cd 'Directory/to/repository' && \
+python -m nuitka --standalone \
+  --macos-create-app-bundle \
+  --macos-app-icon=MyIcon.icns \
+  --product-name="Boat Man Shooters" \
+  --macos-signed-app-name=com.apmckelvey.BoatManShooters \
+  --include-data-dir=Assets=Assets \
+  --include-data-dir=Graphics=Graphics \
+  --include-data-dir=Logos=Logos \
+  --include-data-dir=Documentation=Documentation \
+  --include-data-file="./Assets/DynaPuff Font/DynaPuffFont.ttf"="Assets/DynaPuff Font/DynaPuffFont.ttf" \
+  --output-dir=dist \
+  Game_Code/main.py
+```
+
+If that did not work, you can alternatively try the following command:
+```Bash
+cd 'Directory/to/repository' && \
+python3 -m nuitka --standalone \
+  --macos-create-app-bundle \
+  --macos-app-icon=MyIcon.icns \
+  --product-name="Boat Man Shooters" \
+  --macos-signed-app-name=com.apmckelvey.BoatManShooters \
+  --include-data-dir=Assets=Assets \
+  --include-data-dir=Graphics=Graphics \
+  --include-data-dir=Logos=Logos \
+  --include-data-dir=Documentation=Documentation \
+  --include-data-file="./Assets/DynaPuff Font/DynaPuffFont.ttf"="Assets/DynaPuff Font/DynaPuffFont.ttf" \
+  --output-dir=dist \
+  Game_Code/main.py
+```
+
+This will create a folder called `dist` in the repository folder with the built app.
+
+> *NOTE:* Replace `"/Directory/to/repository"` with the actual directory to the repository. Also, these directions are assuming you are running Python verison 3 or higher.
 
 # Legal Stuff <a name="legal_stuff"></a>
-
 
 ## Credits <a name="credits"></a>
 
@@ -159,6 +246,10 @@ Under the following license:
 
 *Sprites (Including Player and Enemy)* Made by **Liam Blackmon**
 
-## License
+## License <a name="license"></a>
 
 This project is made open-source by the MIT license, which can be found in `LICENSE` on the main page of the repository.
+
+## Contributing <name="contributing"></a>
+
+Please read our Code of Conduct before contributing, which can be found in `CODE_OF_CONDUCT.md` on the main page of the repository.
