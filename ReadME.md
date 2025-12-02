@@ -39,9 +39,12 @@ The game has the following structure:
 ├── Game_Code &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;***Contains all the game code***  
 ├── Graphics &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;***Contains Map Items, Sprites, Butons, and Menus***  
 ├── Logos &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ***All the logos and icons for our project***  
+├── Documentation &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;***Contains all the documentation files***  
 ├── .gitignore &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ***Tells GitHub to ignore specific files when commiting***  
 ├── requirements.txt &nbsp; &nbsp; &nbsp; ***Tells GitHub Dependabot what dependencies are needed to update***  
+├── CODE_OF_CONDUCT.md &nbsp; &nbsp; &nbsp;***The code of conduct for this project.***  
 ├── LICENSE &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;***The license for this project.***  
+├── MyIcon.icns &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;***The icon for this project used when building an app.***  
 └── ReadME.md &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ***This documentation file you are reading right now.***  
 
 ## Logic <a name="logic"></a>
