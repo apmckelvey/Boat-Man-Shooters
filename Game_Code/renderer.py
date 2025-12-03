@@ -3,9 +3,6 @@ import numpy as np
 import pygame
 import pygame.freetype
 import os
-
-from pygame import Surface
-
 from config import WIDTH, HEIGHT
 from shaders import vertex_shader, fragment_shader
 
@@ -21,6 +18,7 @@ class Renderer:
         self._create_geometry()
         #overlay resources (for UI text rendered via pygame -> GL texture)
         self._create_overlay_resources()
+
         self.item_textures = {}
         self.item_textures_loaded = False
         #cached fullscreen surface used by overlay drawing functions
@@ -52,6 +50,7 @@ class Renderer:
 
         camera_x = WORLD_WIDTH / 2.0
         camera_y = WORLD_HEIGHT / 2.0
+
 
         self.program['time'].value = float(time)
         self.program['wakeFade'].value = 0.0
@@ -579,14 +578,14 @@ void main() {
         y = HEIGHT - bar_height - 20
 
         #draw background (empty bar)
-        pygame.draw.rect(surf, (226, 140, 96, 80), (x, y, bar_width, bar_height))
+        pygame.draw.rect(surf, (50, 50, 50, 80), (x, y, bar_width, bar_height))
         
         #draw foreground with color gradient based on sprint level
         sprint_frac = player.display_sprint / SPRINT  # 0.0 to 1.0
         current_width = sprint_frac * bar_width
         
         if current_width > 0:
-            #color transitions smoothly from green (full) to red (empty)
+            # Color transitions smoothly from green (full) to red (empty)
             r = int(225 * (1.0 - sprint_frac))
             g = int(255 * sprint_frac)
             color = (r, g, 0, 220)
@@ -846,24 +845,3 @@ void main() {
             self.overlay_vao.render(mode=moderngl.TRIANGLE_STRIP)
         except Exception:
             return
-
-
-    def escape_menu(self,player,boolean):
-        print("Escape Menu")
-
-        try:
-            surf = self._get_overlay_surface()
-        except Exception:
-            print("Dih dont work")
-            pass
-
-        text1 = "Settings"
-
-        try:
-            if self.nametag_font:
-                lbl_surf, _ = self.nametag_font.render(text1, (255, 255, 255))
-                surf.blit(lbl_surf, lbl_surf.get_rect(center=(0,0)))
-                print(lbl_surf.get_rect(center=(0,0)))
-        except Exception:
-            print("Dih dont work")
-            pass

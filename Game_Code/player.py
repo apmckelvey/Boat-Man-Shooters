@@ -101,7 +101,7 @@ class Player:
             if self.sprint < SPRINT:
                 self.sprint += dt * 12  # regen
         
-        #smoothly animate display_sprint towards actual sprint value
+        # Smoothly animate display_sprint towards actual sprint value
         sprint_smoothing = 0.15
         self.display_sprint += (self.sprint - self.display_sprint) * sprint_smoothing
 
