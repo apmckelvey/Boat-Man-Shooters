@@ -3,6 +3,9 @@ import numpy as np
 import pygame
 import pygame.freetype
 import os
+
+from pygame import Surface
+
 from config import WIDTH, HEIGHT
 from shaders import vertex_shader, fragment_shader
 
@@ -18,7 +21,6 @@ class Renderer:
         self._create_geometry()
         #overlay resources (for UI text rendered via pygame -> GL texture)
         self._create_overlay_resources()
-
         self.item_textures = {}
         self.item_textures_loaded = False
         #cached fullscreen surface used by overlay drawing functions
@@ -50,7 +52,6 @@ class Renderer:
 
         camera_x = WORLD_WIDTH / 2.0
         camera_y = WORLD_HEIGHT / 2.0
-
 
         self.program['time'].value = float(time)
         self.program['wakeFade'].value = 0.0
@@ -837,3 +838,24 @@ void main() {
             self.overlay_vao.render(mode=moderngl.TRIANGLE_STRIP)
         except Exception:
             return
+
+
+    def escape_menu(self,player,boolean):
+        print("Escape Menu")
+
+        try:
+            surf = self._get_overlay_surface()
+        except Exception:
+            print("Dih dont work")
+            pass
+
+        text1 = "Settings"
+
+        try:
+            if self.nametag_font:
+                lbl_surf, _ = self.nametag_font.render(text1, (255, 255, 255))
+                surf.blit(lbl_surf, lbl_surf.get_rect(center=(0,0)))
+                print(lbl_surf.get_rect(center=(0,0)))
+        except Exception:
+            print("Dih dont work")
+            pass

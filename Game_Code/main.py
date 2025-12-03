@@ -68,10 +68,11 @@ R_cooldown_end = 0.0
 #trigger rest values (calibrated on first frame)
 lt_rest = None
 rt_rest = None
+inescape_menu = False
 
 async def main():
     global game_state, player, network, prediction, item_manager
-    global L_Can_fire, R_Can_fire, lt_rest, rt_rest, cannon_balls, L_cooldown_end, R_cooldown_end
+    global L_Can_fire, R_Can_fire, lt_rest, rt_rest, cannon_balls, L_cooldown_end, R_cooldown_end, inescape_menu
 
     fullscreen = False
     running = True
@@ -149,6 +150,7 @@ async def main():
                     pygame.time.set_timer(pygame.USEREVENT + 2, int(cooldown * 1000), loops=1)
 
             #transition from menu to game
+
             if game_state == "MENU" and event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos
                 button_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 - 30, 200, 60)
@@ -173,13 +175,9 @@ async def main():
                     print(f"{network.PLAYER_NAME} joined game")
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    if game_state == "GAME":
-                        game_state = "MENU"
-                        if network: network.stop()
-                        player = network = prediction = item_manager = None
-                    else:
-                        running = False
+                if event.key == pygame.K_ESCAPE and inescape_menu is False:
+                    renderer.escape_menu(player,True)
+                    inescape_menu = True
                 if event.key == pygame.K_f:
                     fullscreen = not fullscreen
                     flags = pygame.OPENGL | pygame.DOUBLEBUF
