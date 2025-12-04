@@ -175,9 +175,6 @@ async def main():
                     print(f"{network.PLAYER_NAME} joined game")
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE and inescape_menu is False:
-                    renderer.escape_menu(player,True)
-                    inescape_menu = True
                 if event.key == pygame.K_f:
                     fullscreen = not fullscreen
                     flags = pygame.OPENGL | pygame.DOUBLEBUF
@@ -217,6 +214,10 @@ async def main():
                 renderer.draw_player_nametags(player, prediction.other_players_display, names=names, y_offset=90)
                 renderer.draw_minimap(player, prediction.other_players_display)
                 renderer.draw_sprint_bar(player)
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE and inescape_menu is False:
+                        renderer.escape_menu(player, True)
+                        inescape_menu = True
                 #remaining cooldown fraction; 1 = fully cooling, 0 = ready
                 left_frac = 0.0
                 right_frac = 0.0
