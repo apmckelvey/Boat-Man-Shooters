@@ -4,6 +4,11 @@
   <img height="50%" width="50%" src="/Logos/logo.png">
 </p>
 
+<p align="center">
+<a href="www.https://apmckelvey.github.io/boat-man-shooters/">Click to Download</a>
+</p>
+
+
 ## Table of Contents
 
 1. [Overview](#overview)  
