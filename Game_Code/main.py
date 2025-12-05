@@ -69,10 +69,10 @@ R_cooldown_end = 0.0
 lt_rest = None
 rt_rest = None
 inescape_menu = False
-
+escape_was_pressed = False
 async def main():
     global game_state, player, network, prediction, item_manager
-    global L_Can_fire, R_Can_fire, lt_rest, rt_rest, cannon_balls, L_cooldown_end, R_cooldown_end, inescape_menu
+    global L_Can_fire, R_Can_fire, lt_rest, rt_rest, cannon_balls, L_cooldown_end, R_cooldown_end, inescape_menu, escape_was_pressed
 
     fullscreen = False
     running = True
@@ -214,12 +214,15 @@ async def main():
                 renderer.draw_player_nametags(player, prediction.other_players_display, names=names, y_offset=90)
                 renderer.draw_minimap(player, prediction.other_players_display)
                 renderer.draw_sprint_bar(player)
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE and inescape_menu is False:
-                        inescape_menu = True
 
-                    elif event.key == pygame.K_ESCAPE and inescape_menu is True:
-                        inescape_menu = False
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE and not escape_was_pressed:
+                            inescape_menu = not inescape_menu
+                            escape_was_pressed = True
+                    if event.type == pygame.KEYUP:
+                        if event.key == pygame.K_ESCAPE:
+                            escape_was_pressed = False
                 if inescape_menu:
                     renderer.escape_menu(player)
                 #remaining cooldown fraction; 1 = fully cooling, 0 = ready

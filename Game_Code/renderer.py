@@ -49,7 +49,6 @@ class Renderer:
     def render_menu(self, time):
         from config import WIDTH, HEIGHT, WORLD_WIDTH, WORLD_HEIGHT
 
-
         camera_x = WORLD_WIDTH / 2.0
         camera_y = WORLD_HEIGHT / 2.0
 
@@ -65,24 +64,18 @@ class Renderer:
         except Exception:
             pass
 
-
         self.ctx.clear(0.0, 0.35, 0.75)
         self.vao.render(mode=moderngl.TRIANGLE_STRIP)
 
-
         surf = self._get_overlay_surface()
 
+        menu_image = pygame.image.load("../Graphics/UI Interface/Menus/main-menu.png").convert_alpha()
+        resized_image = pygame.transform.smoothscale(menu_image, (463, 650))
+        menu_rect = surf.get_rect(center=(WIDTH // 2, HEIGHT // 2))
 
         if self.overlay_font_large:
             try:
-                title_text = "BOAT MAN SHOOTERS"
-                title_surf, _ = self.overlay_font_large.render(title_text, (255, 255, 255))
-                title_rect = title_surf.get_rect(center=(WIDTH // 2, HEIGHT // 3))
-
-                shadow_surf, _ = self.overlay_font_large.render(title_text, (0, 0, 0))
-                shadow_rect = shadow_surf.get_rect(center=(WIDTH // 2 + 3, HEIGHT // 3 + 3))
-                surf.blit(shadow_surf, shadow_rect)
-                surf.blit(title_surf, title_rect)
+                surf.blit(resized_image, (WIDTH // 2 - 250, HEIGHT - HEIGHT))
             except Exception:
                 pass
 
@@ -286,26 +279,30 @@ void main() {
                     self.overlay_font_large = pygame.freetype.Font(found_ttf, 63)
                     self.overlay_font_small = pygame.freetype.Font(found_ttf, 27)
                     self.nametag_font = pygame.freetype.Font(found_ttf, 18)
+                    self.setting_font = pygame.freetype.Font(found_ttf, 25)
                 except Exception:
                     #fallback to SysFont lookup
                     self.overlay_font_large = pygame.freetype.SysFont("DynaPuff", 63)
                     self.overlay_font_small = pygame.freetype.SysFont("DynaPuff", 27)
                     self.nametag_font = pygame.freetype.SysFont("DynaPuff", 18)
+                    self.setting_font = pygame.freetype.SysFont("DynaPuff", 25)
             else:
                 #prefer DynaPuff via system font name, fallback to default
                 try:
                     self.overlay_font_large = pygame.freetype.SysFont("DynaPuff", 63)
                     self.overlay_font_small = pygame.freetype.SysFont("DynaPuff", 27)
                     self.nametag_font = pygame.freetype.SysFont("DynaPuff", 18)
+                    self.setting_font = pygame.freetype.SysFont("DynaPuff", 25)
                 except Exception:
                     self.overlay_font_large = pygame.freetype.SysFont(None, 63)
                     self.overlay_font_small = pygame.freetype.SysFont(None, 27)
                     self.nametag_font = pygame.freetype.SysFont(None, 18)
+                    self.setting_font = pygame.freetype.SysFont(None, 25)
         except Exception:
             self.overlay_font_large = None
             self.overlay_font_small = None
             self.nametag_font = None
-
+            self.setting_font = None
     def _get_overlay_surface(self):
         #return a cached fullscreen overlay surface, recreating only if size changed
         try:
@@ -859,19 +856,29 @@ void main() {
         xcor = WIDTH
         ycor = HEIGHT
 
-        text1 = "Settings"
-        print(text1)
+        list_of_buttons = ["Menu","Settings","Cancel"]
+        menu_image = pygame.image.load("../Graphics/UI Interface/Menus/main-menu.png").convert_alpha()
+        resized_image = pygame.transform.smoothscale(menu_image, (463, 650))
+        menu_rect = surf.get_rect(center=(WIDTH // 2, HEIGHT // 2))
 
-        if self.nametag_font:
+        if self.overlay_font_large:
             try:
-                label_surf, _ = self.nametag_font.render("Settings", (255, 255, 255))
-                label_rect = label_surf.get_rect(center=( xcor//2,ycor//2)) #idk why this is the middle jus messed with it till it looked right
-                surf.blit(label_surf, label_rect)
-                print("Worked")
+                surf.blit(resized_image, menu_rect)
             except Exception:
                 pass
 
-        #upload to GPU and render
+        for i in range(len(list_of_buttons)):
+            if self.setting_font:
+                try:
+                    shadow_surf, _ = self.setting_font.render(list_of_buttons[i], (0, 0, 0))
+                    shadow_rect = shadow_surf.get_rect(center=(xcor // 2 + 2, ycor // 2 - i * 40 + 2))
+                    surf.blit(shadow_surf, shadow_rect)
+                    label_surf, _ = self.setting_font.render(list_of_buttons[i], (255, 255, 255))
+                    label_rect = label_surf.get_rect(center=(xcor // 2, ycor // 2 - i * 40))
+                    surf.blit(label_surf, label_rect)
+                except Exception:
+                    pass
+
         data = pygame.image.tobytes(surf, 'RGBA', True)
         w, h = surf.get_size()
 
