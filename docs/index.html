@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Boat Man Shooters - Downloads</title>
+  <style>
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: linear-gradient(135deg, #0d1117, #161b22);
+      color: #c9d1d9;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    .logo {
+      width: 180px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: bold 3.5rem/1 "DynaPuff", system-ui, sans-serif;
+      margin: 0;
+      background: linear-gradient(90deg, #58a6ff, #1f6feb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .tagline {
+      font-size: 1.3rem;
+      color: #8b949e;
+      font-style: italic;
+      margin-top: 10px;
+    }
+    .downloads {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 16px;
+      padding: 28px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      border-color: #58a6ff;
+    }
+    .card h3 {
+      margin: 0 0 12px 0;
+      color: #58a6ff;
+      font-size: 1.5rem;
+    }
+    .size {
+      color: #8b949e;
+      margin: 8px 0 20px;
+      font-weight: bold;
+    }
+    .dl-btn {
+      display: inline-block;
+      background: #238636;
+      color: white;
+      padding: 14px 32px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1rem;
+      transition: background 0.2s;
+    }
+    .dl-btn:hover {
+      background: #2ea043;
+    }
+    .sarcasm {
+      margin-top: 16px;
+      font-size: 0.95rem;
+      color: #f85149;
+      font-style: italic;
+    }
+    footer {
+      text-align: center;
+      margin-top: 100px;
+      color: #8b949e;
+      font-size: 0.95rem;
+    }
+    .wave {
+      font-size: 2rem;
+      animation: wave 2s infinite;
+    }
+    @keyframes wave {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(20deg); }
+      75% { transform: rotate(-20deg); }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@400..700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="logo.png" alt="logo" class="logo">
+      <h1>Boat Man Shooters</h1>
+        <h1>(Work in Progress - No Downloads)</h1>
+      <p class="tagline">With 100% cannon-induced chaos</p>
+    </header>
+
+    <div class="downloads">
+      <!-- Replace the vX.X.X and file names with your actual latest release -->
+      <div class="card">
+        <h3>macOS (Universal)</h3>
+        <div class="size">~85 MB – Apple Silicon + Intel</div>
+        <a href="https://github.com/apmckelvey/boat-man-shooters/releases/latest/download/Boat_Man_Shooters-macOS.dmg" class="dl-btn">
+          Download .dmg
+        </a>
+        <div class="sarcasm">Finally, something that runs on your overpriced fruit computer.</div>
+      </div>
+
+      <div class="card">
+        <h3>Windows (64-bit)</h3>
+        <div class="size">~78 MB – Works on Windows 10/11</div>
+        <a href="https://github.com/apmckelvey/boat-man-shooters/releases/latest/download/Boat_Man_Shooters-Windows.exe" class="dl-btn">
+          Download .exe
+        </a>
+        <div class="sarcasm">Yes, it’s safe. No, your antivirus won’t like it anyway.</div>
+      </div>
+
+      <div class="card">
+        <h3>
+          <h3>Linux (AppImage)</h3>
+          <div class="size">~82 MB – Just chmod +x and sail</div>
+          <a href="https://github.com/apmckelvey/boat-man-shooters/releases/latest/download/Boat_Man_Shooters-x86_64.AppImage" class="dl-btn">
+            Download AppImage
+          </a>
+          <div class="sarcasm">For people who compile their own drama.</div>
+        </div>
+
+        <div class="card">
+          <h3>Source Code</h3>
+          <div class="size">For the truly brave (or bored)</div>
+          <a href="https://github.com/apmckelvey/boat-man-shooters/archive/refs/heads/main.zip" class="dl-btn">
+            source.zip
+          </a>
+          <br><br>
+          <a href="https://github.com/apmckelvey/boat-man-shooters/archive/refs/heads/main.tar.gz" class="dl-btn">
+            source.tar.gz
+          </a>
+          <div class="sarcasm">Good luck, captain.</div>
+        </div>
+      </div>
+
+    <footer>
+      <p>Made with excessive caffeine, questionable boat physics, and pure spite.<br>
+      <a href="https://github.com/apmckelvey/boat-man-shooters" style="color:#58a6ff;">GitHub Repo</a> •
+      <a href="https://github.com/apmckelvey/boat-man-shooters/releases" style="color:#58a6ff;">All Releases</a> •
+      <a href="https://github.com/apmckelvey/boat-man-shooters/blob/main/ReadME.md" style="color:#58a6ff;">Read the Docs (if you dare)</a>
+      </p>
+    </footer>
+  </div>
+</body>
+</html>
