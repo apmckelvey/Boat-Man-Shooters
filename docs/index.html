@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Boat Man Shooters - Downloads</title>
+
+  <!-- DynaPuff font from your game -->
+  <link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@400..700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-start: #0d1117;
+      --bg-end:   #161b22;
+      --card:     #161b22;
+      --text:     #c9d1d9;
+      --muted:    #8b949e;
+      --accent:   #58a6ff;
+      --green:    #238636;
+      --green-hov:#2ea043;
+      --red:      #f85149;
+      --border:   #30363d;
+      --shadow:   0 20px 40px rgba(0,0,0,0.5);
+    }
+
+    [data-theme="light"] {
+      --bg-start: #ffffff;
+      --bg-end:   #f6f8fa;
+      --card:     #ffffff;
+      --text:     #24292f;
+      --muted:    #57606a;
+      --accent:   #0969da;
+      --green:    #1a7f37;
+      --green-hov:#2b9a47;
+      --red:      #cf222e;
+      --border:   #d0d7de;
+      --shadow:   0 20px 40px rgba(0,0,0,0.12);
+    }
+
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      transition: background 0.5s ease, color 0.4s ease;
+    }
+
+    .container { max-width: 1000px; margin: 40px auto; padding: 20px; position: relative; }
+    header { text-align: center; margin-bottom: 60px; }
+
+    .logo {
+      width: 180px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-family: "DynaPuff", system-ui, sans-serif;
+      font-size: 3.8rem;
+      margin: 8px 0;
+      background: linear-gradient(90deg, var(--accent), #1f6feb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .tagline {
+      font-size: 1.3rem;
+      color: var(--muted);
+      font-style: italic;
+      margin-top: 10px;
+    }
+
+    .downloads {
+      display: grid;
+      gap: 28px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow);
+      border-color: var(--accent);
+    }
+
+    .card h3 { margin: 0 0 12px; color: var(--accent); font-size: 1.Card5rem; }
+    .size { color: var(--muted); margin: 8px 0 20px; font-weight: bold; }
+
+    .dl-btn {
+      display: inline-block;
+      background: var(--green);
+      color: white;
+      padding: 14px 32px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1rem;
+      transition: background 0.2s;
+    }
+
+    .dl-btn:hover { background: var(--green-hov); }
+
+    .sarcasm {
+      margin-top: 16px;
+      font-size: 0.95rem;
+      color: var(--red);
+      font-style: italic;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 100px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    /* Theme Toggle */
+    #theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 50px;
+      width: 56px;
+      height: 56px;
+      font-size: 1.6rem;
+      cursor: pointer;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    #theme-toggle:hover { transform: scale(1.1); }
+
+    .wave { font-size: 2rem; animation: wave 2s infinite; }
+    @keyframes wave {
+      0%,100% { transform: rotate(0deg); }
+      25% { transform: rotate(20deg); }
+      75% { transform: rotate(-20deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Theme Toggle Button -->
+  <button id="theme-toggle" aria-label="Toggle dark/light mode">Moon</button>
+
+  <div class="container">
+    <header>
+      <!-- Direct GitHub raw link – works perfectly on GitHub Pages -->
+      <img src="https://github.com/apmckelvey/boat-man-shooters/raw/main/Logos/logo.png" alt="Boat Man Shooters logo" class="logo">
+
+      <h1>Boat Man Shooters</h1>
+      <p class="tagline">Now with 100% more cannon-induced chaos <span class="wave">Wave</span></p>
+      <p style="color:var(--muted); margin-top:8px; font-size:1.1rem;">(Work in Progress – Downloads coming soon™)</p>
+    </header>
+
+    <div class="downloads">
+      <div class="card">
+        <h3>macOS (Universal)</h3>
+        <div class="size">~85 MB – Apple Silicon + Intel</div>
+        <a href="#" class="dl-btn" onclick="alert('Coming soon, captain!')">Download .dmg</a>
+        <div class="sarcasm">Finally, something that runs on your overpriced fruit computer.</div>
+      </div>
+
+      <div class="card">
+        <h3>Windows (64-bit)</h3>
+        <div class="size">~78 MB – Windows 10/11</div>
+        <a href="#" class="dl-btn" onclick="alert('Coming soon, captain!')">Download .exe</a>
+        <div class="sarcasm">Yes, it’s safe. No, your antivirus won’t believe you.</div>
+      </div>
+
+      <div class="card">
+        <h3>Linux (AppImage)</h3>
+        <div class="size">~82 MB – chmod +x and sail</div>
+        <a href="#" class="dl-btn" onclick="alert('Coming soon, captain!')">Download AppImage</a>
+        <div class="sarcasm">For the penguins who live on the edge.</div>
+      </div>
+
+      <div class="card">
+        <h3>Source Code</h3>
+        <div class="size">For the brave (or masochistic)</div>
+        <a href="https://github.com/apmckelvey/boat-man-shooters/archive/refs/heads/main.zip" class="dl-btn">source.zip</a>
+        <br><br>
+        <a href="https://github.com/apmckelvey/boat-man-shooters/archive/refs/heads/main.tar.gz" class="dl-btn">source.tar.gz</a>
+        <div class="sarcasm">You know you want to fix my bugs.</div>
+      </div>
+    </div>
+
+    <footer>
+      <p>Made with excessive caffeine, questionable boat physics, and a dream.<br>
+      <a href="https://github.com/apmckelvey/boat-man-shooters" style="color:var(--accent);">GitHub Repo</a> •
+      <a href="https://github.com/apmckelvey/boat-man-shooters/releases" style="color:var(--accent);">Releases</a> •
+      <a href="https://github.com/apmckelvey/boat-man-shooters/blob/main/ReadME.md" style="color:var(--accent);">Read the Docs</a>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    const toggle = document.getElementById('theme-toggle');
+    const body = document.documentElement;
+
+    // Load saved theme or respect system preference
+    if (localStorage.theme === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+      body.setAttribute('data-theme', 'light');
+      toggle.innerHTML = 'Sun';
+    } else {
+      body.setAttribute('data-theme', 'dark');
+      toggle.innerHTML = 'Moon';
+    }
+
+    // Toggle click
+    toggle.addEventListener('click', () => {
+      if (body.getAttribute('data-theme') === 'light') {
+        body.setAttribute('data-theme', 'dark');
+        localStorage.theme = 'dark';
+        toggle.innerHTML = 'Moon';
+      } else {
+        body.setAttribute('data-theme', 'light');
+        localStorage.theme = 'light';
+        toggle.innerHTML = 'Sun';
+      }
+    });
+  </script>
+</body>
+</html>

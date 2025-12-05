@@ -1,7 +1,13 @@
 <h1 align = center> Welcome to Boat Man Shooters 👋</h1>
+<h1 align = center> (Work in Progress)</h1>
 <p align="center">
   <img height="50%" width="50%" src="/Logos/logo.png">
 </p>
+
+<p align="center">
+<a href="www.https://apmckelvey.github.io/boat-man-shooters/">Click to Download</a>
+</p>
+
 
 ## Table of Contents
 
