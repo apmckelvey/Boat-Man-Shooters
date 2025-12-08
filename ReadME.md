@@ -31,29 +31,30 @@
    
 # Overview <a name="overview"></a>
 
-This is a online multiple player game where the intention is to shoot other boats and be the person with the most *(kills/time alive?)*. It is a constant lobby in which there can be a winner at any given time, given who has the most *(kills/time alive?)*. 
+This is a online multiple player game where the intention is to shoot other boats and to stay alive. It is a constant lobby in which there can be a winner at any given time, given who is surviving. 
 
 ## Features <a name="features"></a>
 
-- Online multiplayer game
-- Account system
-- Fluid UI interface/animations
-- Sounds and background music
-- Both keyboard and controller input
+- [X] Online multiplayer game
+- [ ] Account system
+- [ ] Fluid UI interface/animations
+- [X] Sounds and background music
+- [X] Both keyboard and controller input
 
 # Mechanics <a name="mechanics"></a>
 
 ## File Structure <a name="file_structure"></a>
 
 The game has the following structure:  
-├── .github &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;***Configuration files for GitHub***  
-├── Assets &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;***Contains the font, music, and button sounds***  
-├── Game_Code &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;***Contains all the game code***  
-├── Graphics &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;***Contains Map Items, Sprites, Butons, and Menus***  
-├── Logos &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ***All the logos and icons for our project***  
-├── Documentation &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;***Contains all the documentation files***  
-├── .gitignore &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ***Tells GitHub to ignore specific files when commiting***  
-├── requirements.txt &nbsp; &nbsp; &nbsp; ***Tells GitHub Dependabot what dependencies are needed to update***  
+├── .github &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;***Configuration files for GitHub.***  
+├── Assets &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;***Contains the font, music, and button sounds.***  
+├── Button-Test &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ***HTML test for button animations.***  
+├── Game_Code &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;***Contains all the game cod.e***  
+├── Graphics &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;***Contains Map Items, Sprites, Butons, and Menus.***  
+├── Logos &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ***All the logos and icons for our project.***  
+├── docs &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ***Website for GitHub Pages.***  
+├── .gitignore &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ***Tells GitHub to ignore specific files when commiting.***  
+├── requirements.txt &nbsp; &nbsp; &nbsp; ***Tells GitHub Dependabot what dependencies are needed to update.***  
 ├── CODE_OF_CONDUCT.md &nbsp; &nbsp; &nbsp;***The code of conduct for this project.***  
 ├── LICENSE &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;***The license for this project.***  
 ├── MyIcon.icns &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;***The icon for this project used when building an app.***  
@@ -259,6 +260,6 @@ Under the following license:
 
 This project is made open-source by the MIT license, which can be found in `LICENSE` on the main page of the repository.
 
-## Contributing <name="contributing"></a>
+## Contributing <a name="contributing"></a>
 
 Please read our Code of Conduct before contributing, which can be found in `CODE_OF_CONDUCT.md` on the main page of the repository.
