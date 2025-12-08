@@ -29,7 +29,7 @@ jobs:
           pip install -r requirements.txt
           pip install nuitka
 
-      # macOS build – your exact command, just without the local path
+      # macOS: EXACTLY your local command, just without the hard-coded path
       - name: Build macOS app bundle
         if: matrix.os == 'macos-latest'
         run: |
@@ -43,52 +43,4 @@ jobs:
             --include-data-dir=Graphics=Graphics \
             --include-data-dir=Logos=Logos \
             --include-data-dir=Documentation=Documentation \
-            --include-data-file="./Assets/DynaPuff Font/DynaPuffFont.ttf=Assets/DynaPuff Font/DynaPuffFont.ttf" \
-            --output-dir=dist \
-            Game_Code/main.py
-
-      # Linux build – standalone onefile binary
-      - name: Build Linux binary
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          cd "${{ github.workspace }}"
-          python3 -m nuitka --standalone \
-            --onefile \
-            --product-name="Boat Man Shooters" \
-            --include-data-dir=Assets=Assets \
-            --include-data-dir=Graphics=Graphics \
-            --include-data-dir=Logos=Logos \
-            --include-data-dir=Documentation=Documentation \
-            --include-data-file="./Assets/DynaPuff Font/DynaPuffFont.ttf=Assets/DynaPuff Font/DynaPuffFont.ttf" \
-            --output-dir=dist \
-            Game_Code/main.py
-
-      # Windows build – PowerShell syntax, no Bash if/[]
-      - name: Build Windows exe
-        if: matrix.os == 'windows-latest'
-        shell: pwsh
-        run: |
-          Set-Location "${{ github.workspace }}"
-          python -m nuitka --standalone `
-            --onefile `
-            --product-name="Boat Man Shooters" `
-            --include-data-dir=Assets=Assets `
-            --include-data-dir=Graphics=Graphics `
-            --include-data-dir=Logos=Logos `
-            --include-data-dir=Documentation=Documentation `
-            --include-data-file="Assets/DynaPuff Font/DynaPuffFont.ttf=Assets/DynaPuff Font/DynaPuffFont.ttf" `
-            --windows-console-mode=disable `
-            --output-dir=dist `
-            Game_Code/main.py
-
-      - name: Show dist contents
-        run: |
-          cd "${{ github.workspace }}"
-          ls -R dist || echo "dist not found"
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: boat-man-shooters-${{ matrix.os }}
-          path: dist/**
-          if-no-files-found: error
+            --include-data-file="./ the matrix OS
