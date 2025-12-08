@@ -23,13 +23,30 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install nuitka
 
-      # macOS: EXACTLY your local command, just without the hard-coded path
+      # ---------- ccache / clcache setup ----------
+
+      - name: Install and cache ccache (Ubuntu/macOS)
+        if: matrix.os != 'windows-latest'
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: ${{ runner.os }}-ccache-boat-man-shooters
+
+      - name: Install clcache (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          python -m pip install clcache
+          # Put clcache.exe on PATH
+          setx PATH "%USERPROFILE%\.local\bin;%PATH%"
+        shell: cmd
+
+      # ---------- macOS build ----------
+
       - name: Build macOS app bundle
         if: matrix.os == 'macos-latest'
         run: |
@@ -43,4 +60,57 @@ jobs:
             --include-data-dir=Graphics=Graphics \
             --include-data-dir=Logos=Logos \
             --include-data-dir=Documentation=Documentation \
-            --include-data-file="./ the matrix OS
+            --include-data-file="./Assets/DynaPuff Font/DynaPuffFont.ttf=Assets/DynaPuff Font/DynaPuffFont.ttf" \
+            --output-dir=dist \
+            Game_Code/main.py
+
+      # ---------- Linux build ----------
+
+      - name: Build Linux onefile binary
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          cd "${{ github.workspace }}"
+          python3 -m nuitka --standalone \
+            --onefile \
+            --product-name="Boat Man Shooters" \
+            --include-data-dir=Assets=Assets \
+            --include-data-dir=Graphics=Graphics \
+            --include-data-dir=Logos=Logos \
+            --include-data-dir=Documentation=Documentation \
+            --include-data-file="./Assets/DynaPuff Font/DynaPuffFont.ttf=Assets/DynaPuff Font/DynaPuffFont.ttf" \
+            --output-dir=dist \
+            Game_Code/main.py
+
+      # ---------- Windows build ----------
+
+      - name: Build Windows exe
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          Set-Location "${{ github.workspace }}"
+          python -m nuitka --standalone `
+            --onefile `
+            --product-name="Boat Man Shooters" `
+            --file-version=1.0.0 `
+            --include-data-dir=Assets=Assets `
+            --include-data-dir=Graphics=Graphics `
+            --include-data-dir=Logos=Logos `
+            --include-data-dir=Documentation=Documentation `
+            --include-data-file="Assets/DynaPuff Font/DynaPuffFont.ttf=Assets/DynaPuff Font/DynaPuffFont.ttf" `
+            --windows-console-mode=disable `
+            --output-dir=dist `
+            Game_Code/main.py
+
+      # ---------- Artifacts ----------
+
+      - name: List dist
+        run: |
+          cd "${{ github.workspace }}"
+          ls -R dist || echo "dist missing"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: boat-man-shooters-${{ matrix.os }}
+          path: dist/**
+          if-no-files-found: error
