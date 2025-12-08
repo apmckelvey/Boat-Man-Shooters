@@ -874,7 +874,6 @@ void main() {
         for i in range(len(list_of_buttons)):
             if self.setting_font:
                 try:
-
                     shadow_surf, _ = self.setting_font.render(list_of_buttons[i], (0, 0, 0))
                     shadow_rect = shadow_surf.get_rect(center=(xcor // 2 + 2, ycor // 2 - i * 40 + 2))
                     surf.blit(shadow_surf, shadow_rect)

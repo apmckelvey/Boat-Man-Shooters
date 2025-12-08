@@ -148,17 +148,13 @@ async def main():
                     R_Can_fire = False
                     R_cooldown_end = current_time + cooldown
                     pygame.time.set_timer(pygame.USEREVENT + 2, int(cooldown * 1000), loops=1)
-
-                if event.key == pygame.K_ESCAPE and not escape_was_pressed:
-                    print("Dih")
-                    inescape_menu = not inescape_menu
-                    escape_was_pressed = True
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE and not escape_was_pressed:
+                        inescape_menu = not inescape_menu
+                        escape_was_pressed = True
                 if event.type == pygame.KEYUP:
-                    print("dih")
                     if event.key == pygame.K_ESCAPE:
                         escape_was_pressed = False
-            if inescape_menu:
-                renderer.escape_menu(player)
             #transition from menu to game
 
             if game_state == "MENU" and event.type == pygame.MOUSEBUTTONDOWN:
@@ -225,6 +221,8 @@ async def main():
                 renderer.draw_minimap(player, prediction.other_players_display)
                 renderer.draw_sprint_bar(player)
 
+                if inescape_menu:
+                    renderer.escape_menu(player)
                 #remaining cooldown fraction; 1 = fully cooling, 0 = ready
                 left_frac = 0.0
                 right_frac = 0.0
