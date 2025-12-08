@@ -5,12 +5,9 @@ import numpy as np
 import pygame
 import pygame.freetype
 import os
-
 from pygame import Surface
-
 from config import WIDTH, HEIGHT
 from shaders import vertex_shader, fragment_shader
-
 
 class Renderer:
     def __init__(self, ctx):
@@ -874,7 +871,6 @@ void main() {
 
         list_of_buttons = ["Main Menu", "Settings", "Cancel", "Quit"]
         box_list = []
-
         mouse_pos = pygame.mouse.get_pos()
 
         for i in range(len(list_of_buttons)):
@@ -900,7 +896,9 @@ void main() {
                 color_surf, _ = self.setting_font.render(word, text_color)
                 color_rect = color_surf.get_rect(center=(xcor // 2, ycor // 2 + index * 60 - 60))
                 surf.blit(color_surf, color_rect)
-
+                if pygame.mouse.get_pressed()[0]:
+                    if word == "Main Menu":
+                        print("Menu")
 
 
         data = pygame.image.tobytes(surf, 'RGBA', True)
