@@ -4,8 +4,6 @@ on:
   workflow_dispatch:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
@@ -15,13 +13,10 @@ jobs:
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
-    name: Build on ${{ matrix.os }}
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -34,40 +29,57 @@ jobs:
           pip install -r requirements.txt
           pip install nuitka
 
-      - name: Build with Nuitka
+      # macOS build – your exact command, just without the local path
+      - name: Build macOS app bundle
+        if: matrix.os == 'macos-latest'
         run: |
           cd "${{ github.workspace }}"
-
-          # Base command (same entry point and data layout on all OSes)
-          BASE_CMD="python -m nuitka \
-            --standalone \
-            --product-name='Boat Man Shooters' \
+          python3 -m nuitka --standalone \
+            --macos-create-app-bundle \
+            --macos-app-icon=MyIcon.icns \
+            --product-name="Boat Man Shooters" \
+            --macos-signed-app-name=com.apmckelvey.BoatManShooters \
             --include-data-dir=Assets=Assets \
             --include-data-dir=Graphics=Graphics \
             --include-data-dir=Logos=Logos \
             --include-data-dir=Documentation=Documentation \
-            --include-data-file='./Assets/DynaPuff Font/DynaPuffFont.ttf=Assets/DynaPuff Font/DynaPuffFont.ttf' \
+            --include-data-file="./Assets/DynaPuff Font/DynaPuffFont.ttf=Assets/DynaPuff Font/DynaPuffFont.ttf" \
             --output-dir=dist \
-            Game_Code/main.py"
+            Game_Code/main.py
 
-          if [ "${{ matrix.os }}" = "macos-latest" ]; then
-            # Exact macOS flags from your local command
-            ${BASE_CMD} \
-              --macos-create-app-bundle \
-              --macos-app-icon=MyIcon.icns \
-              --macos-signed-app-name=com.apmckelvey.BoatManShooters
-          elif [ "${{ matrix.os }}" = "windows-latest" ]; then
-            # Windows single-file exe; icon optional if you add MyIcon.ico
-            ${BASE_CMD} \
-              --onefile \
-              --windows-console-mode=disable \
-              --windows-icon-from-ico=MyIcon.ico || ${BASE_CMD} --onefile --windows-console-mode=disable
-          else
-            # Linux standalone onefile binary; icon optional if you add MyIcon.png
-            ${BASE_CMD} \
-              --onefile \
-              --linux-onefile-icon=MyIcon.png || ${BASE_CMD} --onefile
-          fi
+      # Linux build – standalone onefile binary
+      - name: Build Linux binary
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          cd "${{ github.workspace }}"
+          python3 -m nuitka --standalone \
+            --onefile \
+            --product-name="Boat Man Shooters" \
+            --include-data-dir=Assets=Assets \
+            --include-data-dir=Graphics=Graphics \
+            --include-data-dir=Logos=Logos \
+            --include-data-dir=Documentation=Documentation \
+            --include-data-file="./Assets/DynaPuff Font/DynaPuffFont.ttf=Assets/DynaPuff Font/DynaPuffFont.ttf" \
+            --output-dir=dist \
+            Game_Code/main.py
+
+      # Windows build – PowerShell syntax, no Bash if/[]
+      - name: Build Windows exe
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          Set-Location "${{ github.workspace }}"
+          python -m nuitka --standalone `
+            --onefile `
+            --product-name="Boat Man Shooters" `
+            --include-data-dir=Assets=Assets `
+            --include-data-dir=Graphics=Graphics `
+            --include-data-dir=Logos=Logos `
+            --include-data-dir=Documentation=Documentation `
+            --include-data-file="Assets/DynaPuff Font/DynaPuffFont.ttf=Assets/DynaPuff Font/DynaPuffFont.ttf" `
+            --windows-console-mode=disable `
+            --output-dir=dist `
+            Game_Code/main.py
 
       - name: Show dist contents
         run: |
