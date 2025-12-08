@@ -1,3 +1,5 @@
+from operator import index
+
 import moderngl
 import numpy as np
 import pygame
@@ -876,10 +878,10 @@ void main() {
         for i in range(len(list_of_buttons)):
             if self.setting_font:
                 try:
+                    word = list_of_buttons[i]
                     shadow_surf, _ = self.setting_font.render(list_of_buttons[i], (0, 0, 0))
                     shadow_rect = shadow_surf.get_rect(center=(xcor // 2 + 2, ycor // 2 + i * 60 - 62))
                     box_rect = pygame.draw.rect(surf, (255, 255, 255,100), shadow_rect, 2)
-                    box_name = "list_of_buttons[i] Box"
                     surf.blit(shadow_surf, shadow_rect)
                     label_surf, _ = self.setting_font.render(list_of_buttons[i], (255, 255, 255))
                     label_rect = label_surf.get_rect(center=(xcor // 2, ycor // 2 + i * 60 - 60))
@@ -891,21 +893,16 @@ void main() {
         mouse_pos = pygame.mouse.get_pos()
 
         is_hovering = False
-        #is_hovering = button_rect.collidepoint(mouse_pos)
 
         for rects in box_list:
             if rects.collidepoint(mouse_pos):
-                print("arwisudho")
-                is_hovering = True
-            else:
-                is_hovering = False
+                text_color = (200, 200, 200)
+                word = "Main Menu"
+                index = box_list.index(rects)
+                color_surf, _ = self.setting_font.render(word, text_color)
+                color_rect = color_surf.get_rect(center=(xcor // 2, ycor // 2 + index * 60 - 60))
+                surf.blit(color_surf, color_rect)
 
-        if is_hovering:
-            text_color = (255, 255, 255)
-            color_surf, _ = self.setting_font.render("Dih", text_color)
-            surf.blit(color_surf, box_rect)
-        else:
-            text_color = (230, 230, 230)
 
 
         data = pygame.image.tobytes(surf, 'RGBA', True)
