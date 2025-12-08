@@ -897,8 +897,7 @@ void main() {
                 color_rect = color_surf.get_rect(center=(xcor // 2, ycor // 2 + index * 60 - 60))
                 surf.blit(color_surf, color_rect)
                 if pygame.mouse.get_pressed()[0]:
-                    if word == "Main Menu":
-                        print("Menu")
+                    print(word)
 
 
         data = pygame.image.tobytes(surf, 'RGBA', True)
