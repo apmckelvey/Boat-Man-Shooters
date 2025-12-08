@@ -5,7 +5,9 @@
         schedule:
           interval: "daily"
         allow:
-          - dependency-name: "pygame"
+          - dependency-name: "pygame-ce"
           - dependency-name: "moderngl"
           - dependency-name: "asyncio"
+          - dependency-name: "uuid"
+          - dependency-name: "numpy"
           - dependency-name: "supabase"
