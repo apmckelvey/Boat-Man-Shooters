@@ -29,24 +29,7 @@ jobs:
           pip install -r requirements.txt
           pip install nuitka
 
-      # ---------- ccache / clcache setup ----------
-
-      - name: Install and cache ccache (Ubuntu/macOS)
-        if: matrix.os != 'windows-latest'
-        uses: hendrikmuhs/ccache-action@v1
-        with:
-          key: ${{ runner.os }}-ccache-boat-man-shooters
-
-      - name: Install clcache (Windows)
-        if: matrix.os == 'windows-latest'
-        run: |
-          python -m pip install clcache
-          # Put clcache.exe on PATH
-          setx PATH "%USERPROFILE%\.local\bin;%PATH%"
-        shell: cmd
-
-      # ---------- macOS build ----------
-
+      # ---------- macOS build (your local command) ----------
       - name: Build macOS app bundle
         if: matrix.os == 'macos-latest'
         run: |
@@ -64,8 +47,7 @@ jobs:
             --output-dir=dist \
             Game_Code/main.py
 
-      # ---------- Linux build ----------
-
+      # ---------- Linux build (standalone + onefile) ----------
       - name: Build Linux onefile binary
         if: matrix.os == 'ubuntu-latest'
         run: |
@@ -81,13 +63,16 @@ jobs:
             --output-dir=dist \
             Game_Code/main.py
 
-      # ---------- Windows build ----------
-
+      # ---------- Windows build (standalone + onefile) ----------
       - name: Build Windows exe
         if: matrix.os == 'windows-latest'
         shell: pwsh
         run: |
           Set-Location "${{ github.workspace }}"
+
+          # Auto-accept required tool downloads (Dependency Walker, etc.)
+          $env:NUITKA_ASSUME_YES_FOR_DOWNLOADS = "1"
+
           python -m nuitka --standalone `
             --onefile `
             --product-name="Boat Man Shooters" `
@@ -102,7 +87,6 @@ jobs:
             Game_Code/main.py
 
       # ---------- Artifacts ----------
-
       - name: List dist
         run: |
           cd "${{ github.workspace }}"
