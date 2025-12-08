@@ -9,33 +9,36 @@ from pygame import Surface
 from config import WIDTH, HEIGHT
 from shaders import vertex_shader, fragment_shader
 
+
 class Renderer:
     def __init__(self, ctx):
         self.ctx = ctx
-        #changed aspect ratio to make map bigger - seems like a good size???
+        # changed aspect ratio to make map bigger - seems like a good size???
         self.viewport_width = 2.3
         self.viewport_height = 1.3
 
         self._load_boat_texture()
         self._compile_shaders()
         self._create_geometry()
-        #overlay resources (for UI text rendered via pygame -> GL texture)
+        # overlay resources (for UI text rendered via pygame -> GL texture)
         self._create_overlay_resources()
         self.item_textures = {}
         self.item_textures_loaded = False
-        #cached fullscreen surface used by overlay drawing functions
+        # cached fullscreen surface used by overlay drawing functions
         self._overlay_surf = None
         self._overlay_surf_size = (WIDTH, HEIGHT)
 
-        #preload health images so we don't hit disk each frame
+        # preload health images so we don't hit disk each frame
         self.health_images = {}
         try:
             self.health_images['green'] = pygame.image.load("../Graphics/Overlay/boat-health-green.png").convert_alpha()
-            self.health_images['yellow'] = pygame.image.load("../Graphics/Overlay/boat-health-yellow.png").convert_alpha()
-            self.health_images['orange'] = pygame.image.load("../Graphics/Overlay/boat-health-orange.png").convert_alpha()
+            self.health_images['yellow'] = pygame.image.load(
+                "../Graphics/Overlay/boat-health-yellow.png").convert_alpha()
+            self.health_images['orange'] = pygame.image.load(
+                "../Graphics/Overlay/boat-health-orange.png").convert_alpha()
             self.health_images['red'] = pygame.image.load("../Graphics/Overlay/boat-health-red.png").convert_alpha()
         except Exception:
-            #fallback if files missing — small tinted surfaces
+            # fallback if files missing — small tinted surfaces
             def _placeholder(c):
                 s = pygame.Surface((48, 12), pygame.SRCALPHA)
                 s.fill(c + (255,))
@@ -132,10 +135,10 @@ class Renderer:
         if self.item_textures_loaded:
             return
 
-        #create openGL textures from pygame surfaces
+        # create openGL textures from pygame surfaces
         item_manager.create_gl_textures(self.ctx)
 
-        #bind each item texture to a texture unit
+        # bind each item texture to a texture unit
         for item_type in range(1, 6):
             if item_type in item_manager.textures:
                 texture = item_manager.textures[item_type]
@@ -154,11 +157,12 @@ class Renderer:
     def world_to_screen(self, world_x, world_y, camera_x, camera_y, screen_width, screen_height):
         rel_x = world_x - camera_x
         rel_y = world_y - camera_y
-        #conver to screen space
+        # conver to screen space
         screen_x = (rel_x / self.viewport_width) * screen_width + screen_width / 2.0
         screen_y = screen_height / 2 - (rel_y / self.viewport_height) * screen_height
 
         return screen_x, screen_y
+
     def _load_boat_texture(self):
         try:
             boat_image = pygame.image.load("../Graphics/Sprites/Boats/player.png").convert_alpha()
@@ -178,7 +182,7 @@ class Renderer:
         self.boat_texture = self.ctx.texture((self.boat_width, self.boat_height), 4, boat_data)
         self.boat_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
 
-        #load enemy texture (used for other players)
+        # load enemy texture (used for other players)
         try:
             enemy_image = pygame.image.load("../Graphics/Sprites/Boats/enemy.png").convert_alpha()
             ew, eh = enemy_image.get_size()
@@ -186,7 +190,7 @@ class Renderer:
             self.enemy_width, self.enemy_height = ew, eh
             self.enemy_aspect = float(ew) / float(eh) if eh else 1.0
         except Exception:
-            #fallback to boat texture if enemy not found
+            # fallback to boat texture if enemy not found
             enemy_data = boat_data
             self.enemy_width, self.enemy_height = self.boat_width, self.boat_height
             self.enemy_aspect = getattr(self, 'boat_aspect', 1.0)
@@ -196,7 +200,7 @@ class Renderer:
 
     def _compile_shaders(self):
         self.program = self.ctx.program(vertex_shader=vertex_shader, fragment_shader=fragment_shader)
-        #bind textures: player boat -> unit 0, enemy boat -> unit 1
+        # bind textures: player boat -> unit 0, enemy boat -> unit 1
         self.boat_texture.use(location=0)
         self.enemy_texture.use(location=1)
         self.program['boatTexture'].value = 0
@@ -204,7 +208,7 @@ class Renderer:
             self.program['enemyTexture'].value = 1
         except Exception:
             pass
-        #pass boat aspect ratio to shader to avoid width distortion
+        # pass boat aspect ratio to shader to avoid width distortion
         try:
             self.program['boatAspect'].value = float(getattr(self, 'boat_aspect', 1.0))
         except Exception:
@@ -253,12 +257,12 @@ void main() {
             self.overlay_vao = None
 
         self.overlay_texture = None
-        #initialize pygame freetype for rendering text to surface
+        # initialize pygame freetype for rendering text to surface
         try:
             pygame.freetype.init()
-            #try a bundled TTF first (so DynaPuff looks identical across platforms if provided)
+            # try a bundled TTF first (so DynaPuff looks identical across platforms if provided)
             font_paths = [
-                #project-specific path
+                # project-specific path
                 os.path.join(os.path.dirname(__file__), "..", "Assets", "DynaPuff Font", "DynaPuffFont.ttf"),
                 os.path.join(os.path.dirname(__file__), "..", "DynaPuffFont.ttf"),
                 os.path.join(os.getcwd(), "Assets", "DynaPuff Font", "DynaPuffFont.ttf"),
@@ -281,13 +285,13 @@ void main() {
                     self.nametag_font = pygame.freetype.Font(found_ttf, 18)
                     self.setting_font = pygame.freetype.Font(found_ttf, 25)
                 except Exception:
-                    #fallback to SysFont lookup
+                    # fallback to SysFont lookup
                     self.overlay_font_large = pygame.freetype.SysFont("DynaPuff", 63)
                     self.overlay_font_small = pygame.freetype.SysFont("DynaPuff", 27)
                     self.nametag_font = pygame.freetype.SysFont("DynaPuff", 18)
                     self.setting_font = pygame.freetype.SysFont("DynaPuff", 25)
             else:
-                #prefer DynaPuff via system font name, fallback to default
+                # prefer DynaPuff via system font name, fallback to default
                 try:
                     self.overlay_font_large = pygame.freetype.SysFont("DynaPuff", 63)
                     self.overlay_font_small = pygame.freetype.SysFont("DynaPuff", 27)
@@ -303,8 +307,9 @@ void main() {
             self.overlay_font_small = None
             self.nametag_font = None
             self.setting_font = None
+
     def _get_overlay_surface(self):
-        #return a cached fullscreen overlay surface, recreating only if size changed
+        # return a cached fullscreen overlay surface, recreating only if size changed
         try:
             from config import WIDTH as W, HEIGHT as H
         except Exception:
@@ -313,19 +318,19 @@ void main() {
         if self._overlay_surf is None or self._overlay_surf_size != (W, H):
             self._overlay_surf_size = (W, H)
             self._overlay_surf = pygame.Surface((W, H), pygame.SRCALPHA, 32)
-            #convert surfaces once to match display format
+            # convert surfaces once to match display format
             try:
                 self._overlay_surf = self._overlay_surf.convert_alpha()
             except Exception:
                 pass
 
-        #clear surface for reuse
+        # clear surface for reuse
         self._overlay_surf.fill((0, 0, 0, 0))
         return self._overlay_surf
 
     def render(self, time, player, other_players_display, item_manager=None):
         from config import WORLD_WIDTH, WORLD_HEIGHT
-        
+
         self.program['time'].value = float(time)
         self.program['boatPosition'].value = (float(player.x), float(player.y))
         self.program['boatRotation'].value = float(player.rotation)
@@ -334,7 +339,6 @@ void main() {
         self.program['cameraPos'].value = (float(player.camera_x), float(player.camera_y))
         self.program['viewportSize'].value = (float(self.viewport_width), float(self.viewport_height))
         self.program['worldSize'].value = (float(WORLD_WIDTH), float(WORLD_HEIGHT))
-
 
         display_list = list(other_players_display.values())[:10]
         num_other = len(display_list)
@@ -372,9 +376,9 @@ void main() {
         if item_manager and not self.item_textures_loaded:
             self.setup_item_textures(item_manager)
 
-            #set item uniforms
+            # set item uniforms
         if item_manager:
-            #get items visible from camera
+            # get items visible from camera
             visible_items = item_manager.get_visible_items(
                 player.camera_x,
                 player.camera_y,
@@ -384,7 +388,7 @@ void main() {
             num_items = min(len(visible_items), 15)
             self.program['numItems'].value = num_items
 
-            #prepare arrays
+            # prepare arrays
             pos_array = np.zeros(30, dtype='f4')
             type_array = np.zeros(15, dtype='i4')
 
@@ -393,7 +397,7 @@ void main() {
                 pos_array[idx * 2 + 1] = float(item.y)
                 type_array[idx] = int(item.item_type)
 
-            #send to shader
+            # send to shader
             try:
                 self.program['itemPositions'].write(pos_array.tobytes())
                 self.program['itemTypes'].write(type_array.tobytes())
@@ -427,10 +431,10 @@ void main() {
                 )
 
                 if item.image:
-                    #get image size
+                    # get image size
                     img_width, img_height = item.image.get_size()
 
-                    #calculate screen size (scale based on viewport)
+                    # calculate screen size (scale based on viewport)
                     scale_factor = 80
                     draw_x = int(screen_x - img_width * scale_factor / (2 * img_width))
                     draw_y = int(screen_y - img_height * scale_factor / (2 * img_height))
@@ -442,43 +446,43 @@ void main() {
             WIDTH, HEIGHT = 1280, 720
             WORLD_WIDTH, WORLD_HEIGHT = 15, 15
 
-        #create a pygame surface - SURF IS SURFACE!
+        # create a pygame surface - SURF IS SURFACE!
         surf = self._get_overlay_surface()
 
-        #minimap configuration
+        # minimap configuration
         map_size = 200
         map_margin = 20
         map_rect = pygame.Rect(map_margin, map_margin, map_size, map_size)
 
-        #draw background
+        # draw background
         pygame.draw.rect(surf, (50, 50, 50, 160), map_rect)
         pygame.draw.rect(surf, (200, 200, 200, 255), map_rect, 2)
 
         def world_to_map(wx, wy):
-            #normalize coordinates 0..1, etc.
+            # normalize coordinates 0..1, etc.
             nx = wx / WORLD_WIDTH
             ny = wy / WORLD_HEIGHT
 
-            #map to rect
+            # map to rect
             mx = map_margin + nx * map_size
-            #flip Y cause world Y is up, screen Y is down
+            # flip Y cause world Y is up, screen Y is down
             my = map_margin + map_size - (ny * map_size)
             return mx, my
 
-        #draw other players (RED DOTS)
+        # draw other players (RED DOTS)
         for pid, p in other_players_display.items():
             mx, my = world_to_map(p['x'], p['y'])
             if map_rect.collidepoint(mx, my):
                 pygame.draw.circle(surf, (255, 50, 50), (int(mx), int(my)), 4)
 
-        #draw player that is playing the player-playable game (GREEN DOT)
+        # draw player that is playing the player-playable game (GREEN DOT)
         px, py = world_to_map(player.x, player.y)
-        #clamp local player drawing to map bounds just in case
+        # clamp local player drawing to map bounds just in case
         px = max(map_rect.left + 2, min(map_rect.right - 2, px))
         py = max(map_rect.top + 2, min(map_rect.bottom - 2, py))
         pygame.draw.circle(surf, (50, 255, 50), (int(px), int(py)), 5)
 
-        #render the overlay
+        # render the overlay
         data = pygame.image.tobytes(surf, 'RGBA', True)
         w, h = surf.get_size()
 
@@ -499,26 +503,26 @@ void main() {
             pass
 
     def draw_overlay(self, main_text: str, sub_text: str = "", alpha: float = 1.0):
-        #ensure overlay program exists
+        # ensure overlay program exists
         if not getattr(self, 'overlay_program', None) or not getattr(self, 'overlay_vao', None):
             return
 
-        #import sizes from config
+        # import sizes from config
         try:
             from config import WIDTH, HEIGHT
         except Exception:
             WIDTH, HEIGHT = 1280, 720
 
-        #create an RGBA surface
+        # create an RGBA surface
         surf = self._get_overlay_surface()
 
-        #draw semi-transparent dark background
+        # draw semi-transparent dark background
         bg = (0, 0, 0, int(180 * alpha))
         surf.fill(bg)
 
-        #render text
+        # render text
         if self.overlay_font_large:
-            #center main text
+            # center main text
             text_surf, _ = self.overlay_font_large.render(main_text, (255, 50, 50))
             tw, th = text_surf.get_size()
             surf.blit(text_surf, text_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
@@ -527,21 +531,21 @@ void main() {
             sub_surf, _ = self.overlay_font_small.render(sub_text, (230, 230, 230))
             surf.blit(sub_surf, sub_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 70)))
 
-        #upload to GPU as texture
+        # upload to GPU as texture
         data = pygame.image.tobytes(surf, 'RGBA', True)
         w, h = surf.get_size()
 
-        #create or write texture
+        # create or write texture
         try:
             if self.overlay_texture is None:
                 self.overlay_texture = self.ctx.texture((w, h), 4, data)
                 self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
             else:
-                #update existing texture
+                # update existing texture
                 try:
                     self.overlay_texture.write(data)
                 except Exception:
-                    #fallback to recreate
+                    # fallback to recreate
                     self.overlay_texture.release()
                     self.overlay_texture = self.ctx.texture((w, h), 4, data)
                     self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
@@ -552,10 +556,10 @@ void main() {
             except Exception:
                 pass
 
-            #enable blending and draw overlay quad
+            # enable blending and draw overlay quad
             self.ctx.enable(moderngl.BLEND)
             self.overlay_vao.render(mode=moderngl.TRIANGLE_STRIP)
-            #leaving blending state as-is
+            # leaving blending state as-is
         except Exception:
             return
 
@@ -566,43 +570,44 @@ void main() {
             WIDTH, HEIGHT = 1280, 720
             SPRINT = 100
 
-        #create transparent surface
+        # create transparent surface
         surf = self._get_overlay_surface()
 
-        #sprint bar dimensions and position
+        # sprint bar dimensions and position
         bar_width = 200
         bar_height = 20
         x = WIDTH - bar_width - 20
         y = HEIGHT - bar_height - 20
 
-        #draw background (empty bar)
+        # draw background (empty bar)
         pygame.draw.rect(surf, (226, 140, 96, 80), (x, y, bar_width, bar_height))
-        
-        #draw foreground with color gradient based on sprint level
+
+        # draw foreground with color gradient based on sprint level
         sprint_frac = player.display_sprint / SPRINT  # 0.0 to 1.0
         current_width = sprint_frac * bar_width
-        
+
         if current_width > 0:
-            #color transitions smoothly from green (full) to red (empty)
+            # color transitions smoothly from green (full) to red (empty)
             r = int(225 * (1.0 - sprint_frac))
             g = int(255 * sprint_frac)
             color = (r, g, 0, 220)
-            
+
             pygame.draw.rect(surf, color, (x, y, current_width, bar_height))
 
-        #add border for better visibility
+        # add border for better visibility
         pygame.draw.rect(surf, (255, 255, 255, 100), (x, y, bar_width, bar_height), 2)
 
-        #sprint label
+        # sprint label
         if self.nametag_font:
             try:
                 label_surf, _ = self.nametag_font.render("SPRINT", (255, 255, 255))
-                label_rect = label_surf.get_rect(bottomright=(x + (bar_width / 2) + 30, y + (bar_height / 2) + 8)) #idk why this is the middle jus messed with it till it looked right
+                label_rect = label_surf.get_rect(bottomright=(x + (bar_width / 2) + 30, y + (
+                            bar_height / 2) + 8))  # idk why this is the middle jus messed with it till it looked right
                 surf.blit(label_surf, label_rect)
             except Exception:
                 pass
 
-        #upload to GPU and render
+        # upload to GPU and render
         data = pygame.image.tobytes(surf, 'RGBA', True)
         w, h = surf.get_size()
 
@@ -635,35 +640,35 @@ void main() {
         except Exception:
             WIDTH, HEIGHT = 1280, 720
 
-        #create transparent surface
+        # create transparent surface
         surf = self._get_overlay_surface()
 
-        #helper to draw a nametag (text only) above screen position
+        # helper to draw a nametag (text only) above screen position
         def draw_nametag(screen_x, screen_y, text=None):
             if not text:
                 return
             font = getattr(self, 'nametag_font', None) or self.overlay_font_small
             if not font:
                 return
-            #position slightly higher
+            # position slightly higher
             pos = (int(screen_x), int(screen_y - y_offset))
-            #draw shadow for readability
+            # draw shadow for readability
             try:
                 shadow_surf, _ = font.render(text, (0, 0, 0))
                 surf.blit(shadow_surf, shadow_surf.get_rect(center=(pos[0] + 1, pos[1] + 1)))
             except Exception:
                 pass
-            #draw main text in white
+            # draw main text in white
             try:
                 txt_surf, _ = font.render(text, (255, 255, 255))
                 surf.blit(txt_surf, txt_surf.get_rect(center=pos))
             except Exception:
                 pass
 
-        #draw for local player
+        # draw for local player
         try:
             sx, sy = self.world_to_screen(player.x, player.y, player.camera_x, player.camera_y, WIDTH, HEIGHT)
-            #local player label: if names dict provided and contains a special key 'local', use it
+            # local player label: if names dict provided and contains a special key 'local', use it
             local_label = None
             if isinstance(names, dict):
                 local_label = names.get('local')
@@ -671,7 +676,7 @@ void main() {
         except Exception:
             pass
 
-        #draw for other players
+        # draw for other players
         for pid, p in other_players_display.items():
             try:
                 sx, sy = self.world_to_screen(p['x'], p['y'], player.camera_x, player.camera_y, WIDTH, HEIGHT)
@@ -682,7 +687,7 @@ void main() {
             except Exception:
                 continue
 
-        #upload to GPU as texture and render on top (reuse overlay texture logic)
+        # upload to GPU as texture and render on top (reuse overlay texture logic)
         data = pygame.image.tobytes(surf, 'RGBA', True)
         w, h = surf.get_size()
 
@@ -766,30 +771,30 @@ void main() {
         x = WIDTH - box_width - 20
         y = HEIGHT - box_height - 50
 
-        #Box
-        pygame.draw.rect(surf, (50,50,50,160), (x, y, box_width, box_height))
+        # Box
+        pygame.draw.rect(surf, (50, 50, 50, 160), (x, y, box_width, box_height))
         pygame.draw.rect(surf, (255, 255, 255, 100), (x, y, box_width, box_height), 2)
 
-        #CD Bars visualising cooldown remaining (left_cd_frac/right_cd_frac: 1.0 = full cooldown)
+        # CD Bars visualising cooldown remaining (left_cd_frac/right_cd_frac: 1.0 = full cooldown)
         cd_bar_height = 150
         cd_bar_w = 20
         left_x = x + 20
         right_x = x + 160
         top_y = y + 25
 
-        #draw background for both bars
+        # draw background for both bars
         pygame.draw.rect(surf, (226, 140, 96, 80), (left_x, top_y, cd_bar_w, cd_bar_height))
         pygame.draw.rect(surf, (226, 140, 96, 80), (right_x, top_y, cd_bar_w, cd_bar_height))
-        #borders
 
+        # borders
 
         def draw_cd_bar(base_x, frac):
-            #frac in 0...1 where 1.0 means still cooling and 0.0 ready
+            # frac in 0...1 where 1.0 means still cooling and 0.0 ready
             frac = max(0.0, min(1.0, float(frac)))
             fill_h = int((1.0 - frac) * cd_bar_height)
             fill_y = top_y + (cd_bar_height - fill_h)
 
-            #color: green when ready, otherwise orange->red based on remaining fraction
+            # color: green when ready, otherwise orange->red based on remaining fraction
             if frac <= 0.001:
                 color = (0, 255, 0, 220)
             else:
@@ -800,9 +805,9 @@ void main() {
             if fill_h > 0:
                 pygame.draw.rect(surf, color, (base_x, fill_y, cd_bar_w, fill_h))
 
-            #draw a small label below each bar - % or ready
+            # draw a small label below each bar - % or ready
             try:
-                label = 'READY' if frac <= 0.001 else f"{int(frac*100)}%"
+                label = 'READY' if frac <= 0.001 else f"{int(frac * 100)}%"
                 if self.nametag_font:
                     lbl_surf, _ = self.nametag_font.render(label, (255, 255, 255))
                     surf.blit(lbl_surf, lbl_surf.get_rect(center=(base_x + cd_bar_w // 2, top_y + cd_bar_height + 14)))
@@ -818,7 +823,7 @@ void main() {
         data = pygame.image.tobytes(surf, 'RGBA', True)
         w, h = surf.get_size()
 
-        #choose a preloaded health picture
+        # choose a preloaded health picture
         chosen_picture = self.health_images.get('green')
 
         try:
@@ -844,8 +849,7 @@ void main() {
         except Exception:
             return
 
-
-    def escape_menu(self,player):
+    def escape_menu(self, player):
         try:
             from config import WIDTH, HEIGHT
         except Exception:
@@ -856,10 +860,10 @@ void main() {
         xcor = WIDTH
         ycor = HEIGHT
 
-        list_of_buttons = ["Menu","Settings","Cancel"]
-        menu_image = pygame.image.load("../Graphics/UI Interface/Menus/main-menu.png").convert_alpha()
-        resized_image = pygame.transform.smoothscale(menu_image, (463, 650))
-        menu_rect = surf.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+        list_of_buttons = ["Menu", "Settings", "Cancel"]
+        settings_image = pygame.image.load("../Logos/logo-borderless.png").convert_alpha()
+        resized_image = pygame.transform.smoothscale(settings_image, (350, 350))
+        menu_rect = surf.get_rect(center=(WIDTH // 1.17, HEIGHT // 2.25))
 
         if self.overlay_font_large:
             try:
@@ -870,6 +874,7 @@ void main() {
         for i in range(len(list_of_buttons)):
             if self.setting_font:
                 try:
+
                     shadow_surf, _ = self.setting_font.render(list_of_buttons[i], (0, 0, 0))
                     shadow_rect = shadow_surf.get_rect(center=(xcor // 2 + 2, ycor // 2 - i * 40 + 2))
                     surf.blit(shadow_surf, shadow_rect)
