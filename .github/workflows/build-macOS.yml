@@ -1,4 +1,4 @@
-name: Build Boat Man Shooters (Nuitka)
+name: Build Boat Man Shooters (Nuitka) - macOS
 
 on:
   workflow_dispatch:
@@ -7,12 +7,7 @@ on:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-      fail-fast: false
-
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-latest
 
     steps:
       - name: Check out repository
@@ -29,9 +24,7 @@ jobs:
           pip install -r requirements.txt
           pip install nuitka
 
-      # macOS: .app bundle
       - name: Build macOS app bundle
-        if: matrix.os == 'macos-latest'
         run: |
           cd "${{ github.workspace }}"
           python3 -m nuitka --standalone \
@@ -56,6 +49,6 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: boat-man-shooters-${{ matrix.os }}
+          name: boat-man-shooters-macos
           path: dist/**
           if-no-files-found: error

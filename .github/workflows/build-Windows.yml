@@ -1,4 +1,4 @@
-name: Build Boat Man Shooters (Nuitka)
+name: Build Boat Man Shooters (Nuitka) - Windows
 
 on:
   workflow_dispatch:
@@ -7,12 +7,7 @@ on:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-      fail-fast: false
-
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-latest
 
     steps:
       - name: Check out repository
@@ -24,14 +19,13 @@ jobs:
           python-version: "3.11"
 
       - name: Install Python dependencies
+        shell: pwsh
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install nuitka
 
-      # Windows: standalone + onefile, using internal PE-based dependency scanner
       - name: Build Windows exe
-        if: matrix.os == 'windows-latest'
         shell: pwsh
         run: |
           Set-Location "${{ github.workspace }}"
@@ -58,6 +52,6 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: boat-man-shooters-${{ matrix.os }}
+          name: boat-man-shooters-windows
           path: dist/**
           if-no-files-found: error
