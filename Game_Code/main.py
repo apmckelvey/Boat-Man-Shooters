@@ -4,7 +4,7 @@ import moderngl
 import asyncio
 import math
 import random
-
+import renderer
 #imports from other files
 from config import *
 from renderer import Renderer
@@ -14,8 +14,8 @@ from prediction import PredictionManager
 from items import ItemManager
 from cannonball import CannonBall
 
-pygame.init()
 
+pygame.init()
 #controller initialization
 pygame.joystick.init()
 controller_joystick = None
@@ -50,7 +50,9 @@ ctx = moderngl.create_context()
 renderer = Renderer(ctx)
 
 #game state vars
-game_state = "MENU"
+game_state = renderer.game_state
+
+
 player = None
 network = None
 prediction = None
@@ -78,6 +80,11 @@ async def main():
     start_ticks = pygame.time.get_ticks()
 
     while running:
+        menu_boolean = renderer.menu_boolean
+        if menu_boolean is True:
+            menu_boolean = False
+            print(menu_boolean)
+            game_state = "MENU"
         dt = clock.get_time() / 1000.0
         if dt <= 0: dt = 1.0 / TARGET_FPS
         if dt > 0.25: dt = 0.25

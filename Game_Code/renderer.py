@@ -1,5 +1,4 @@
 from operator import index
-
 import moderngl
 import numpy as np
 import pygame
@@ -8,14 +7,16 @@ import os
 from pygame import Surface
 from config import WIDTH, HEIGHT
 from shaders import vertex_shader, fragment_shader
+from anyio import current_time
 
 class Renderer:
     def __init__(self, ctx):
+        self.menu_boolean = False
         self.ctx = ctx
         # changed aspect ratio to make map bigger - seems like a good size???
         self.viewport_width = 2.3
         self.viewport_height = 1.3
-
+        self.game_state = "MENU"
         self._load_boat_texture()
         self._compile_shaders()
         self._create_geometry()
@@ -897,8 +898,11 @@ void main() {
                 color_rect = color_surf.get_rect(center=(xcor // 2, ycor // 2 + index * 60 - 60))
                 surf.blit(color_surf, color_rect)
                 if pygame.mouse.get_pressed()[0]:
-                    print(word)
-
+                    if word == "Quit":
+                        pygame.quit()
+                    elif word == "Main Menu" and self.menu_boolean is False:
+                        self.game_state = "MENU"
+                        self.menu_boolean = True
 
         data = pygame.image.tobytes(surf, 'RGBA', True)
         w, h = surf.get_size()
