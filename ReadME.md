@@ -190,15 +190,15 @@ If that did not work, you can alternatively try the following command:
 python3 /Game_Code/main.py
 ```
 
-## How to Play (App) <a name="how_to_play"></a>
+## How to Play (App) <a name="how_to_play"></a>  
 
-### Option 1: Download Release
+### Option 1: Download Release  
 
-Download the app for your desired operating system: 
-**Website:** [https://apmckelvey.github.io/boat-man-shooters/](https://apmckelvey.github.io/boat-man-shooters/)
-**Releases Page:** [https://github.com/apmckelvey/boat-man-shooters/releases](https://github.com/apmckelvey/boat-man-shooters/releases)  
+Download the app for your desired operating system:   
+**Website:** [https://apmckelvey.github.io/boat-man-shooters/](https://apmckelvey.github.io/boat-man-shooters/)  
+**Releases Page:** [https://github.com/apmckelvey/boat-man-shooters/releases](https://github.com/apmckelvey/boat-man-shooters/releases)    
 
-### Option 2: Build-it-Yoursef (macOS) From the Code
+### Option 2: Build-it-Yoursef (macOS) From the Code  
 
 1. Install the dependencies as described in section 3.1 as well as the dependency `nuitka`:
 
