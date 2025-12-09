@@ -74,7 +74,7 @@ jobs:
             --onefile `
             --product-name="Boat Man Shooters" `
             --file-version=1.0.0 `
-            --windows-dependency-tool=pefile `
+            --assume-yes-for-downloads `
             --include-data-dir=Assets=Assets `
             --include-data-dir=Graphics=Graphics `
             --include-data-dir=Logos=Logos `
