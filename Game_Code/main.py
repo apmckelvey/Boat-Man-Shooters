@@ -5,17 +5,17 @@ import asyncio
 import math
 import random
 import renderer
-
 #imports from other files
 from config import *
+from renderer import Renderer
 from player import Player
 from network import NetworkManager
 from prediction import PredictionManager
 from items import ItemManager
 from cannonball import CannonBall
 
+
 pygame.init()
-game_state = renderer.game_state
 #controller initialization
 pygame.joystick.init()
 controller_joystick = None
@@ -47,9 +47,11 @@ pygame.display.gl_set_attribute(pygame.GL_CONTEXT_FORWARD_COMPATIBLE_FLAG, True)
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.OPENGL | pygame.DOUBLEBUF )
 clock = pygame.time.Clock()
 ctx = moderngl.create_context()
-renderer = renderer.Renderer(ctx)
+renderer = Renderer(ctx)
 
 #game state vars
+game_state = renderer.game_state
+
 
 player = None
 network = None
@@ -78,6 +80,11 @@ async def main():
     start_ticks = pygame.time.get_ticks()
 
     while running:
+        menu_boolean = renderer.menu_boolean
+        if menu_boolean is True:
+            menu_boolean = False
+            print(menu_boolean)
+            game_state = "MENU"
         dt = clock.get_time() / 1000.0
         if dt <= 0: dt = 1.0 / TARGET_FPS
         if dt > 0.25: dt = 0.25
