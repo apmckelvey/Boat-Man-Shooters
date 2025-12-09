@@ -29,42 +29,6 @@ jobs:
           pip install -r requirements.txt
           pip install nuitka
 
-      # macOS: .app bundle (matches your local command)
-      - name: Build macOS app bundle
-        if: matrix.os == 'macos-latest'
-        run: |
-          cd "${{ github.workspace }}"
-          python3 -m nuitka --standalone \
-            --macos-create-app-bundle \
-            --macos-app-icon=MyIcon.icns \
-            --assume-yes-for-downloads \
-            --product-name="Boat Man Shooters" \
-            --macos-signed-app-name=com.apmckelvey.BoatManShooters \
-            --include-data-dir=Assets=Assets \
-            --include-data-dir=Graphics=Graphics \
-            --include-data-dir=Logos=Logos \
-            --include-data-dir=Documentation=Documentation \
-            --include-data-file="./Assets/DynaPuff Font/DynaPuffFont.ttf=Assets/DynaPuff Font/DynaPuffFont.ttf" \
-            --output-dir=dist \
-            Game_Code/main.py
-
-      # Linux: standalone + onefile
-      - name: Build Linux onefile binary
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          cd "${{ github.workspace }}"
-          python3 -m nuitka --standalone \
-            --onefile \
-            --product-name="Boat Man Shooters" \
-            --assume-yes-for-downloads \
-            --include-data-dir=Assets=Assets \
-            --include-data-dir=Graphics=Graphics \
-            --include-data-dir=Logos=Logos \
-            --include-data-dir=Documentation=Documentation \
-            --include-data-file="./Assets/DynaPuff Font/DynaPuffFont.ttf=Assets/DynaPuff Font/DynaPuffFont.ttf" \
-            --output-dir=dist \
-            Game_Code/main.py
-
       # Windows: standalone + onefile, using internal PE-based dependency scanner
       - name: Build Windows exe
         if: matrix.os == 'windows-latest'
