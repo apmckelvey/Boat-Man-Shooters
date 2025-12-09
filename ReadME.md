@@ -93,7 +93,7 @@ The files interact through targeted imports, shared constants (`config.py`), and
 - **`items.py`**: Manages pickups/power-ups on the map (position, type, effects like health restore). Updated in the main loop; players collect them via collision checks (using `utils.py`). May be synced over the network for fairness.
 - **`prediction.py`**: Implements client-side prediction and reconciliation to reduce perceived lag in multiplayer. Simulates future player/cannonball positions locally using `utils.py` math, then corrects based on authoritative data from `network.py`.
 - **`network.py`**: Handles all multiplayer communication with Supabase (authentication, real-time database sync for player positions, shots, lobby state). Called frequently in the main loop; serializes/deserializes model data (`player.py`, `cannonball.py`) and works closely with `prediction.py` for smooth movement.
-- **`shaders.py`**: Contains GLSL shader programs for advanced visual effects (water distortion, lighting, particles). Loaded and used exclusively by `renderer.py`.
+- **`shaders.py`**: Contains GLSL (*OpenGL Shading Language*) shader programs for advanced visual effects (water distortion, lighting, particles). Loaded and used exclusively by `renderer.py`.
 - **`renderer.py`**: The core View—uses ModernGL to draw everything: players, cannonballs, items, UI, backgrounds, and effects. Loads textures from Graphics/ and Assets/, applies shaders from `shaders.py`, and is called every frame by `main.py`.
 - **`buttons.py`**: Defines interactive UI buttons for menus (login, play, etc.), handling hover/click states, animations, and sound feedback. Drawn via `renderer.py` and processed in `main.py`'s event loop.
 - **`main.py`**: The primary Controller and entry point. Initializes Pygame/ModernGL, loads assets, sets up the window, authenticates via `network.py`, and runs the infinite game loop: process input/events, update model (players, cannonballs, items), sync/predict network state, render via `renderer.py`, and cap FPS.
@@ -193,7 +193,7 @@ python3 /Game_Code/main.py
 ## How to Play (App) <a name="how_to_play"></a>
 Download the app from the releases page: [https://github.com/apmckelvey/boat-man-shooters/releases](https://github.com/apmckelvey/boat-man-shooters/releases)
 
-### Build-it-Yoursef From the Code
+### Option 1: Build-it-Yoursef (macOS) From the Code
 
 1. Install the dependencies as described in section 3.1 as well as the dependency `nuitka`:
 
@@ -257,6 +257,10 @@ python3 -m nuitka --standalone \
 This will create a folder called `dist` in the repository folder with the built app.
 
 > *NOTE:* Replace `"/Directory/to/repository"` with the actual directory to the repository. Also, these directions are assuming you are running Python verison 3 or higher.
+
+### Option 2: Build-it-Yourself (macOS, Windows, Linux)
+
+explain how to use workflow file (`build-boat-man-shooters.yml`) to build the app for all operating systems
 
 # Legal Stuff <a name="legal_stuff"></a>
 
