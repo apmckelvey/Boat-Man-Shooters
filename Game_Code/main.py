@@ -100,7 +100,7 @@ async def main():
             y=int(HEIGHT * 0.45),
             unpressed_path='../Graphics/UI Interface/Buttons/Join Game Button/join-game-button-unpressed.png',
             pressed_path='../Graphics/UI Interface/Buttons/Join Game Button/join-game-button-pressed.png',
-            scale=0.32,
+            scale=0.40,
             action=lambda: set_loading_game(True)
         ),
         ButtonSubmit(
@@ -108,7 +108,7 @@ async def main():
             y=int(HEIGHT * 0.58),
             unpressed_path='../Graphics/UI Interface/Buttons/Settings Button/settings-button-unpressed.png',
             pressed_path='../Graphics/UI Interface/Buttons/Settings Button/settings-button-pressed.png',
-            scale=0.32,
+            scale=0.40,
             action=open_settings_action
         )
     ]
