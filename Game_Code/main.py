@@ -92,8 +92,7 @@ async def main():
         nonlocal loading_game
         loading_game = value
 
-    # initialize menu buttons - positioned to fit within the dark menu panel
-    # plz fix y'all
+    # initialize menu buttons
     menu_buttons = [
         ButtonSubmit(
             x=WIDTH // 2,
@@ -138,7 +137,6 @@ async def main():
             if event.type == pygame.JOYAXISMOTION and controller_joystick:
                 global lt_rest, rt_rest
                 if lt_rest is None or rt_rest is None:
-                    # calibration
                     try:
                         lt_rest = controller_joystick.get_axis(4)
                         rt_rest = controller_joystick.get_axis(5)
@@ -152,21 +150,37 @@ async def main():
                     axis = event.axis
                     if axis == 4:
                         if (lt_rest is None or abs(value - lt_rest) > 0.6):
+                            # Create local cannonball
                             new_ball = CannonBall(player.x, player.y, player.rotation, "left")
                             cannon_balls.append(new_ball)
                             cannon_sound.play()
+
+                            # Send to network
+                            if network:
+                                server_id = network.create_cannonball(new_ball.to_dict())
+                                if server_id:
+                                    new_ball.server_id = server_id
+
                             L_Can_fire = False
                             L_cooldown_end = current_time + cooldown
                             pygame.time.set_timer(pygame.USEREVENT + 1, int(cooldown * 1000), loops=1)
 
-                # right canon (RT)
+                # right cannon (RT)
                 if event.type == pygame.JOYAXISMOTION and event.axis in (4, 5) and R_Can_fire:
                     value = event.value
                     if axis == 5:
                         if (rt_rest is None or abs(value - rt_rest) > 0.6):
+                            # Create local cannonball
                             new_ball = CannonBall(player.x, player.y, player.rotation, "right")
                             cannon_balls.append(new_ball)
                             cannon_sound.play()
+
+                            # Send to network
+                            if network:
+                                server_id = network.create_cannonball(new_ball.to_dict())
+                                if server_id:
+                                    new_ball.server_id = server_id
+
                             R_Can_fire = False
                             R_cooldown_end = current_time + cooldown
                             pygame.time.set_timer(pygame.USEREVENT + 2, int(cooldown * 1000), loops=1)
@@ -182,14 +196,30 @@ async def main():
             # keyboard fallback cannons
             if event.type == pygame.KEYDOWN and game_state == "GAME":
                 if event.key == pygame.K_q and L_Can_fire:
-                    cannon_balls.append(CannonBall(player.x, player.y, player.rotation, "left"))
+                    new_ball = CannonBall(player.x, player.y, player.rotation, "left")
+                    cannon_balls.append(new_ball)
                     cannon_sound.play()
+
+                    # Send to network
+                    if network:
+                        server_id = network.create_cannonball(new_ball.to_dict())
+                        if server_id:
+                            new_ball.server_id = server_id
+
                     L_Can_fire = False
                     L_cooldown_end = current_time + cooldown
                     pygame.time.set_timer(pygame.USEREVENT + 1, int(cooldown * 1000), loops=1)
                 if event.key == pygame.K_e and R_Can_fire:
-                    cannon_balls.append(CannonBall(player.x, player.y, player.rotation, "right"))
+                    new_ball = CannonBall(player.x, player.y, player.rotation, "right")
+                    cannon_balls.append(new_ball)
                     cannon_sound.play()
+
+                    # Send to network
+                    if network:
+                        server_id = network.create_cannonball(new_ball.to_dict())
+                        if server_id:
+                            new_ball.server_id = server_id
+
                     R_Can_fire = False
                     R_cooldown_end = current_time + cooldown
                     pygame.time.set_timer(pygame.USEREVENT + 2, int(cooldown * 1000), loops=1)
@@ -227,14 +257,23 @@ async def main():
             # Update menu buttons with events
             for button in menu_buttons:
                 button.update(events)
-            # Pass buttons to renderer so they can be drawn on the menu
             renderer.render_menu(current_time, menu_buttons)
+
         elif game_state == "GAME":
             keys = pygame.key.get_pressed()
             player.update(dt, keys, controller_joystick)
 
-            # update cannonballs
+            # update local cannonballs
             cannon_balls = [b for b in cannon_balls if b.update(dt)]
+
+            # update remote cannonballs
+            if network:
+                remote_balls = network.get_remote_cannonballs()
+                for ball in remote_balls:
+                    ball.update(dt)
+                    # Add to display list if not already there
+                    if ball.server_id and ball.server_id not in [cb.server_id for cb in cannon_balls if cb.server_id]:
+                        cannon_balls.append(ball)
 
             # items
             collision = item_manager.check_collision(player.x, player.y, player_radius=0.15)
@@ -259,7 +298,8 @@ async def main():
 
                 if inescape_menu:
                     renderer.escape_menu(player)
-                # remaining cooldown fraction; 1 = fully cooling, 0 = ready
+
+                # cooldown fractions
                 left_frac = 0.0
                 right_frac = 0.0
                 if L_cooldown_end and L_cooldown_end > current_time:
@@ -268,8 +308,8 @@ async def main():
                     right_frac = min(max((R_cooldown_end - current_time) / cooldown, 0.0), 1.0)
 
                 renderer.draw_health_and_cannon_cd(player, left_cd_frac=left_frac, right_cd_frac=right_frac)
-            except:
-                pass
+            except Exception as e:
+                print(f"Overlay error: {e}")
 
             # disconnected alert
             if not getattr(network, 'connected', True):
