@@ -47,7 +47,7 @@ class Renderer:
         camera_x = WORLD_WIDTH / 2.0
         camera_y = WORLD_HEIGHT / 2.0
 
-        self.program['time']. value = float(time)
+        self.program['time'].value = float(time)
         self.program['wakeFade'].value = 0.0
         self.program['cameraPos'].value = (float(camera_x), float(camera_y))
         self.program['viewportSize'].value = (float(self.viewport_width), float(self.viewport_height))
@@ -70,14 +70,14 @@ class Renderer:
 
         if self.overlay_font_large:
             try:
-                surf. blit(resized_image, (WIDTH // 2 - 250, HEIGHT - HEIGHT))
+                surf.blit(resized_image, (WIDTH // 2 - 250, HEIGHT - HEIGHT))
             except Exception:
                 pass
 
         # Draw menu buttons to the overlay surface BEFORE uploading to GPU
         if menu_buttons:
             for button in menu_buttons:
-                button. draw(surf)
+                button.draw(surf)
 
         data = pygame.image.tobytes(surf, 'RGBA', True)
         w, h = surf.get_size()
@@ -118,7 +118,7 @@ class Renderer:
                 self.item_textures[item_type] = texture
 
                 try:
-                    self.program[f'itemTexture{item_type}']. value = 2 + item_type
+                    self.program[f'itemTexture{item_type}'].value = 2 + item_type
                     print(f"Bound itemTexture{item_type} to unit {2 + item_type}")
                 except Exception as e:
                     print(f"Warning: Could not bind itemTexture{item_type}: {e}")
@@ -136,11 +136,11 @@ class Renderer:
 
     def _load_boat_texture(self):
         try:
-            boat_image = pygame.image.load("../Graphics/Sprites/Boats/player. png").convert_alpha()
+            boat_image = pygame.image.load("../Graphics/Sprites/Boats/player.png").convert_alpha()
             self.boat_width, self.boat_height = boat_image.get_size()
             self.boat_aspect = float(self.boat_width) / float(self.boat_height) if self.boat_height else 1.0
             boat_data = pygame.image.tobytes(boat_image, "RGBA", True)
-            print(f"Loaded boat. png ({self.boat_width}x{self.boat_height}), aspect={self.boat_aspect:. 3f}")
+            print(f"Loaded boat.png ({self.boat_width}x{self.boat_height}), aspect={self.boat_aspect:.3f}")
         except Exception:
             print("boat.png not found — creating placeholder")
             self.boat_width, self.boat_height = 64, 64
@@ -151,7 +151,7 @@ class Renderer:
             boat_data = pygame.image.tobytes(surf, "RGBA", True)
 
         self.boat_texture = self.ctx.texture((self.boat_width, self.boat_height), 4, boat_data)
-        self.boat_texture. filter = (moderngl.LINEAR, moderngl.LINEAR)
+        self.boat_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
 
         try:
             enemy_image = pygame.image.load("../Graphics/Sprites/Boats/enemy.png").convert_alpha()
@@ -169,7 +169,7 @@ class Renderer:
 
     def _compile_shaders(self):
         self.program = self.ctx.program(vertex_shader=vertex_shader, fragment_shader=fragment_shader)
-        self.boat_texture. use(location=0)
+        self.boat_texture.use(location=0)
         self.enemy_texture.use(location=1)
         self.program['boatTexture'].value = 0
         try:
@@ -228,9 +228,9 @@ void main() {
             pygame.freetype.init()
             font_paths = [
                 os.path.join(os.path.dirname(__file__), "..", "Assets", "DynaPuff Font", "DynaPuffFont.ttf"),
-                os.path.join(os.path.dirname(__file__), "..", "DynaPuffFont. ttf"),
+                os.path.join(os.path.dirname(__file__), "..", "DynaPuffFont.ttf"),
                 os.path.join(os.getcwd(), "Assets", "DynaPuff Font", "DynaPuffFont.ttf"),
-                os.path.join(os. getcwd(), "DynaPuffFont.ttf"),
+                os.path.join(os.getcwd(), "DynaPuffFont.ttf"),
             ]
 
             found_ttf = None
@@ -246,26 +246,26 @@ void main() {
                 try:
                     self.overlay_font_large = pygame.freetype.Font(found_ttf, 63)
                     self.overlay_font_small = pygame.freetype.Font(found_ttf, 27)
-                    self.nametag_font = pygame.freetype. Font(found_ttf, 18)
-                    self.setting_font = pygame.freetype. Font(found_ttf, 40)
+                    self.nametag_font = pygame.freetype.Font(found_ttf, 18)
+                    self.setting_font = pygame.freetype.Font(found_ttf, 40)
                 except Exception:
                     self.overlay_font_large = pygame.freetype.SysFont("DynaPuff", 63)
                     self.overlay_font_small = pygame.freetype.SysFont("DynaPuff", 27)
-                    self.nametag_font = pygame.freetype. SysFont("DynaPuff", 18)
+                    self.nametag_font = pygame.freetype.SysFont("DynaPuff", 18)
                     self.setting_font = pygame.freetype.SysFont("DynaPuff", 40)
             else:
                 try:
                     self.overlay_font_large = pygame.freetype.SysFont("DynaPuff", 63)
                     self.overlay_font_small = pygame.freetype.SysFont("DynaPuff", 27)
                     self.nametag_font = pygame.freetype.SysFont("DynaPuff", 18)
-                    self.setting_font = pygame. freetype.SysFont("DynaPuff", 40)
+                    self.setting_font = pygame.freetype.SysFont("DynaPuff", 40)
                 except Exception:
                     self.overlay_font_large = pygame.freetype.SysFont(None, 63)
                     self.overlay_font_small = pygame.freetype.SysFont(None, 27)
                     self.nametag_font = pygame.freetype.SysFont(None, 18)
                     self.setting_font = pygame.freetype.SysFont(None, 40)
         except Exception:
-            self. overlay_font_large = None
+            self.overlay_font_large = None
             self.overlay_font_small = None
             self.nametag_font = None
             self.setting_font = None
@@ -292,14 +292,14 @@ void main() {
 
         self.program['time'].value = float(time)
         self.program['boatPosition'].value = (float(player.x), float(player.y))
-        self.program['boatRotation'].value = float(player. rotation)
+        self.program['boatRotation'].value = float(player.rotation)
         self.program['boatVelocity'].value = (float(player.velocity_x), float(player.velocity_y))
         self.program['wakeFade'].value = float(player.wake_fade)
         self.program['cameraPos'].value = (float(player.camera_x), float(player.camera_y))
         self.program['viewportSize'].value = (float(self.viewport_width), float(self.viewport_height))
         self.program['worldSize'].value = (float(WORLD_WIDTH), float(WORLD_HEIGHT))
 
-        display_list = list(other_players_display. values())[:10]
+        display_list = list(other_players_display.values())[:10]
         num_other = len(display_list)
         self.program['numOtherPlayers'].value = num_other
 
@@ -313,23 +313,23 @@ void main() {
             pos_array[idx * 2 + 0] = float(e['x'])
             pos_array[idx * 2 + 1] = float(e['y'])
             rot_array[idx] = float(e['rot'])
-            speed_array[idx] = float(max(0.0, min(2.5, e. get('speed', 0.0))))
+            speed_array[idx] = float(max(0.0, min(2.5, e.get('speed', 0.0))))
             sway_phase_array[idx] = float(e.get('sway_phase', 0.0))
             sway_amp_array[idx] = float(e.get('sway_amp', 1.0))
 
         try:
-            self.program. get("otherBoatPositions").write(pos_array. tobytes())
+            self.program.get("otherBoatPositions").write(pos_array.tobytes())
             self.program.get("otherBoatRotations").write(rot_array.tobytes())
             self.program.get("otherBoatSpeeds").write(speed_array.tobytes())
             self.program.get("otherBoatSwayPhases").write(sway_phase_array.tobytes())
             self.program.get("otherBoatSwayAmps").write(sway_amp_array.tobytes())
         except Exception:
             try:
-                self.program['otherBoatPositions'].value = tuple(pos_array. tolist())
-                self.program['otherBoatRotations'].value = tuple(rot_array. tolist())
+                self.program['otherBoatPositions'].value = tuple(pos_array.tolist())
+                self.program['otherBoatRotations'].value = tuple(rot_array.tolist())
                 self.program['otherBoatSpeeds'].value = tuple(speed_array.tolist())
-                self. program['otherBoatSwayPhases'].value = tuple(sway_phase_array.tolist())
-                self.program['otherBoatSwayAmps']. value = tuple(sway_amp_array.tolist())
+                self.program['otherBoatSwayPhases'].value = tuple(sway_phase_array.tolist())
+                self.program['otherBoatSwayAmps'].value = tuple(sway_amp_array.tolist())
             except Exception:
                 pass
         if item_manager and not self.item_textures_loaded:
@@ -380,13 +380,13 @@ void main() {
 
             for item in visible_items:
                 screen_x, screen_y = self.world_to_screen(
-                    item.x, item. y,
+                    item.x, item.y,
                     player.camera_x, player.camera_y,
                     WIDTH, HEIGHT
                 )
 
                 if item.image:
-                    img_width, img_height = item. image.get_size()
+                    img_width, img_height = item.image.get_size()
                     scale_factor = 80
                     draw_x = int(screen_x - img_width * scale_factor / (2 * img_width))
                     draw_y = int(screen_y - img_height * scale_factor / (2 * img_height))
@@ -417,7 +417,7 @@ void main() {
         for pid, p in other_players_display.items():
             mx, my = world_to_map(p['x'], p['y'])
             if map_rect.collidepoint(mx, my):
-                pygame. draw.circle(surf, (255, 50, 50), (int(mx), int(my)), 4)
+                pygame.draw.circle(surf, (255, 50, 50), (int(mx), int(my)), 4)
 
         px, py = world_to_map(player.x, player.y)
         px = max(map_rect.left + 2, min(map_rect.right - 2, px))
@@ -430,7 +430,7 @@ void main() {
         try:
             if self.overlay_texture is None:
                 self.overlay_texture = self.ctx.texture((w, h), 4, data)
-                self.overlay_texture. filter = (moderngl.LINEAR, moderngl.LINEAR)
+                self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
             else:
                 self.overlay_texture.write(data)
 
@@ -471,13 +471,13 @@ void main() {
 
         try:
             if self.overlay_texture is None:
-                self. overlay_texture = self.ctx. texture((w, h), 4, data)
+                self.overlay_texture = self.ctx.texture((w, h), 4, data)
                 self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
             else:
                 try:
                     self.overlay_texture.write(data)
                 except Exception:
-                    self. overlay_texture.release()
+                    self.overlay_texture.release()
                     self.overlay_texture = self.ctx.texture((w, h), 4, data)
                     self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
 
@@ -487,7 +487,7 @@ void main() {
             except Exception:
                 pass
 
-            self.ctx. enable(moderngl.BLEND)
+            self.ctx.enable(moderngl.BLEND)
             self.overlay_vao.render(mode=moderngl.TRIANGLE_STRIP)
         except Exception:
             return
@@ -534,12 +534,12 @@ void main() {
         try:
             if self.overlay_texture is None:
                 self.overlay_texture = self.ctx.texture((w, h), 4, data)
-                self. overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
+                self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
             else:
                 try:
                     self.overlay_texture.write(data)
                 except Exception:
-                    self. overlay_texture.release()
+                    self.overlay_texture.release()
                     self.overlay_texture = self.ctx.texture((w, h), 4, data)
                     self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
 
@@ -581,7 +581,7 @@ void main() {
                 pass
 
         try:
-            sx, sy = self.world_to_screen(player.x, player.y, player.camera_x, player. camera_y, WIDTH, HEIGHT)
+            sx, sy = self.world_to_screen(player.x, player.y, player.camera_x, player.camera_y, WIDTH, HEIGHT)
             local_label = None
             if isinstance(names, dict):
                 local_label = names.get('local')
@@ -604,14 +604,14 @@ void main() {
 
         try:
             if self.overlay_texture is None:
-                self. overlay_texture = self.ctx. texture((w, h), 4, data)
+                self.overlay_texture = self.ctx.texture((w, h), 4, data)
                 self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
             else:
                 try:
                     self.overlay_texture.write(data)
                 except Exception:
                     self.overlay_texture.release()
-                    self.overlay_texture = self. ctx.texture((w, h), 4, data)
+                    self.overlay_texture = self.ctx.texture((w, h), 4, data)
                     self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
 
             self.overlay_texture.use(location=2)
@@ -654,7 +654,7 @@ void main() {
         try:
             if self.overlay_texture is None:
                 self.overlay_texture = self.ctx.texture((WIDTH, HEIGHT), 4)
-                self.overlay_texture. filter = (moderngl.LINEAR, moderngl.LINEAR)
+                self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
 
             self.overlay_texture.write(data)
             self.overlay_texture.use(location=2)
@@ -663,7 +663,7 @@ void main() {
                 self.overlay_program['overlayTexture'].value = 2
                 self.ctx.enable(moderngl.BLEND)
                 if hasattr(self, 'overlay_vao'):
-                    self.overlay_vao.render(mode=moderngl. TRIANGLE_STRIP)
+                    self.overlay_vao.render(mode=moderngl.TRIANGLE_STRIP)
 
         except Exception as e:
             print(f"Error drawing cannon balls: {e}")
@@ -707,12 +707,12 @@ void main() {
                 color = (r, g, 0, 220)
 
             if fill_h > 0:
-                pygame. draw.rect(surf, color, (base_x, fill_y, cd_bar_w, fill_h))
+                pygame.draw.rect(surf, color, (base_x, fill_y, cd_bar_w, fill_h))
 
             try:
                 label = 'READY' if frac <= 0.001 else f"{int(frac * 100)}%"
                 if self.nametag_font:
-                    lbl_surf, _ = self. nametag_font.render(label, (255, 255, 255))
+                    lbl_surf, _ = self.nametag_font.render(label, (255, 255, 255))
                     surf.blit(lbl_surf, lbl_surf.get_rect(center=(base_x + cd_bar_w // 2, top_y + cd_bar_height + 14)))
             except Exception:
                 pass
@@ -726,27 +726,27 @@ void main() {
         data = pygame.image.tobytes(surf, 'RGBA', True)
         w, h = surf.get_size()
 
-        chosen_picture = self. health_images.get('green')
+        chosen_picture = self.health_images.get('green')
 
         try:
-            if self. overlay_texture is None:
-                self.overlay_texture = self. ctx.texture((w, h), 4, data)
+            if self.overlay_texture is None:
+                self.overlay_texture = self.ctx.texture((w, h), 4, data)
                 self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
             else:
                 try:
                     self.overlay_texture.write(data)
                 except Exception:
                     self.overlay_texture.release()
-                    self. overlay_texture = self.ctx. texture((w, h), 4, data)
-                    self. overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
+                    self.overlay_texture = self.ctx.texture((w, h), 4, data)
+                    self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
 
             self.overlay_texture.use(location=2)
             try:
-                self.overlay_program['overlayTexture']. value = 2
+                self.overlay_program['overlayTexture'].value = 2
             except Exception:
                 pass
 
-            self. ctx.enable(moderngl. BLEND)
+            self.ctx.enable(moderngl.BLEND)
             self.overlay_vao.render(mode=moderngl.TRIANGLE_STRIP)
         except Exception:
             return
@@ -768,7 +768,7 @@ void main() {
 
         if self.overlay_font_large:
             try:
-                surf. blit(resized_image, menu_rect)
+                surf.blit(resized_image, menu_rect)
             except Exception:
                 pass
 
@@ -783,7 +783,7 @@ void main() {
                     shadow_surf, _ = self.setting_font.render(list_of_buttons[i], (0, 0, 0))
                     shadow_rect = shadow_surf.get_rect(center=(xcor // 2 + 2, ycor // 2 + i * 60 - 62))
                     box_rect = pygame.draw.rect(surf, (255, 255, 255, 100), shadow_rect, 2)
-                    surf. blit(shadow_surf, shadow_rect)
+                    surf.blit(shadow_surf, shadow_rect)
                     label_surf, _ = self.setting_font.render(list_of_buttons[i], (255, 255, 255))
                     label_rect = label_surf.get_rect(center=(xcor // 2, ycor // 2 + i * 60 - 60))
                     surf.blit(label_surf, label_rect)
@@ -810,16 +810,16 @@ void main() {
         w, h = surf.get_size()
 
         try:
-            if self. overlay_texture is None:
-                self.overlay_texture = self. ctx.texture((w, h), 4, data)
-                self.overlay_texture.filter = (moderngl.LINEAR, moderngl. LINEAR)
+            if self.overlay_texture is None:
+                self.overlay_texture = self.ctx.texture((w, h), 4, data)
+                self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
             else:
                 try:
                     self.overlay_texture.write(data)
                 except Exception:
                     self.overlay_texture.release()
                     self.overlay_texture = self.ctx.texture((w, h), 4, data)
-                    self.overlay_texture. filter = (moderngl.LINEAR, moderngl.LINEAR)
+                    self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
 
             self.overlay_texture.use(location=2)
             try:
