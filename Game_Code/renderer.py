@@ -8,10 +8,10 @@ import os
 #imports from other filez
 from config import WIDTH, HEIGHT
 from shaders import vertex_shader, fragment_shader, overlay_fragment, overlay_vertex
-
 class Renderer:
     def __init__(self, ctx):
         self.menu_boolean = False
+        self.cancel_button = False
         self.ctx = ctx
         self.viewport_width = 2.3
         self.viewport_height = 1.3
@@ -24,7 +24,6 @@ class Renderer:
         self.item_textures_loaded = False
         self._overlay_surf = None
         self._overlay_surf_size = (WIDTH, HEIGHT)
-
         self.health_images = {}
         try:
             self.health_images['green'] = pygame.image.load("../Graphics/Overlay/boat-health-green.png").convert_alpha()
@@ -821,6 +820,12 @@ class Renderer:
                     elif word == "Main Menu" and self.menu_boolean is False:
                         self.game_state = "MENU"
                         self.menu_boolean = True
+                    elif word == "Settings":
+                        print("Settings")
+                    elif word == "Cancel":
+                        self.cancel_button = True
+
+
 
 
 

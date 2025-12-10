@@ -113,13 +113,16 @@ async def main():
     ]
 
     while running:
+        cancel_button = renderer.cancel_button
         menu_boolean = renderer.menu_boolean
         if menu_boolean is True:
             print(menu_boolean)
             game_state = "MENU"
             renderer.menu_boolean = False
             inescape_menu = False
-
+        if cancel_button is True:
+            inescape_menu = False
+            renderer.cancel_button = False
         dt = clock.get_time() / 1000.0
         if dt <= 0:
             dt = 1.0 / TARGET_FPS
