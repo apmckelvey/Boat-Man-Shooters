@@ -115,9 +115,10 @@ async def main():
     while running:
         menu_boolean = renderer.menu_boolean
         if menu_boolean is True:
-            menu_boolean = False
             print(menu_boolean)
             game_state = "MENU"
+            renderer.menu_boolean = False
+            inescape_menu = False
 
         dt = clock.get_time() / 1000.0
         if dt <= 0:
