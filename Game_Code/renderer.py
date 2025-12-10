@@ -4,6 +4,7 @@ import numpy as np
 import pygame
 import pygame.freetype
 import os
+import math
 
 #imports from other filez
 from config import WIDTH, HEIGHT
