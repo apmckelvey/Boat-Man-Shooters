@@ -18,8 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
     setTheme(current === 'dark' ? 'light' : 'dark');
   });
 
-  // Fetch and display commits (MODIFIED to also fetch the summary)
+  // Fetch and display commits (MODIFIED)
   fetchCommits();
+  // Fetch and display AI Summary (NEW)
   fetchAISummary();
 });
 
@@ -28,7 +29,7 @@ async function fetchCommits() {
   if (!timeline) return;
 
   try {
-    // MODIFIED: Request only 3 commits
+    // FIX: Request exactly 3 commits to respect the requirement
     const response = await fetch('https://api.github.com/repos/apmckelvey/boat-man-shooters/commits?per_page=3');
     const commits = await response.json();
 
@@ -39,9 +40,10 @@ async function fetchCommits() {
 
     const ul = document.createElement('ul');
 
-    // Only display the 3 commits requested
-    commits.slice(0, 3).forEach(commit => {
+    // Display the commits
+    commits.forEach(commit => {
       const li = document.createElement('li');
+      // Ensure we use the author's commit date/name, not committer's (GitHub sometimes changes committer for merges)
       const date = new Date(commit.commit.author.date).toLocaleDateString();
       li.innerHTML = `
         <span class="date">${date}:</span>
@@ -62,7 +64,7 @@ async function fetchAISummary() {
   const aiCard = document.getElementById('ai-insight');
   const aiText = document.getElementById('ai-text');
 
-  // The path 'data/ai_summary.json' is correct because main.js is in 'docs/'
+  // Path is relative to index.html in the docs/ folder
   try {
     const response = await fetch('data/ai_summary.json');
 
@@ -73,7 +75,7 @@ async function fetchAISummary() {
     aiCard.style.display = 'block';
 
   } catch (error) {
-    console.warn('AI Summary missing (This is normal on the first deploy):', error);
+    console.warn('AI Summary file not available yet (check GitHub Actions for run status):', error);
     // Hide the card if no data exists yet
     aiCard.style.display = 'none';
   }

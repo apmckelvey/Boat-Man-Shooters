@@ -1,4 +1,6 @@
-name: Gemini AI Update
+# This workflow has two jobs: one to generate the summary, and one to deploy the page.
+# This prevents the bot from making commits to your history.
+name: Generate AI Summary and Deploy Pages
 
 on:
   push:
@@ -6,15 +8,19 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write     # Required for the deploy-pages action
+  id-token: write  # Required for the deploy-pages action
 
 jobs:
-  build-and-summarize:
+  # 1. GENERATE THE SUMMARY FILE
+  generate-summary:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
         with:
-          # Fetch enough history for the git log/diff to work
+          # Fetch enough history for the python script to analyze the last 3 commits
           fetch-depth: 5
 
       - name: Set up Python
@@ -23,22 +29,28 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        # The script only needs the 'google-generativeai' library
         run: pip install google-generativeai
 
       - name: Run Gemini Generator
         env:
-          # This securely loads the secret you must set in GitHub Settings
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        # The script creates docs/data/ai_summary.json
         run: python scripts/generate_summary.py
-
-      - name: Commit AI Summary
-        run: |
-          git config --global user.name 'Gemini Bot'
-          git config --global user.email 'bot@boatmanshooters.com'
-          # Add the generated JSON file, which is saved in the docs folder
-          git add docs/data/ai_summary.json
-          # Commit the change, but only if there was a change (|| exit 0 prevents failure)
-          git commit -m "update: Gemini AI summary" || exit 0
-          # Push the new file back to the main branch
-          git push
+        
+      # Upload the entire docs folder (including the newly generated JSON) as a Pages Artifact
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'docs'
+          
+  # 2. DEPLOY THE WEBSITE
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: generate-summary # Wait for the summary to be generated and uploaded
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

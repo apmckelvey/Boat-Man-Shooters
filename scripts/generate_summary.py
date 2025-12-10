@@ -9,6 +9,7 @@ def get_git_changes():
     """Gets the last 3 commit messages."""
     try:
         # Get last 3 commits
+        # Note: We fetch from the local repository copy checked out by the Action.
         return subprocess.check_output(
             ["git", "log", "-n", "3", "--pretty=format:%s"], text=True
         )
@@ -25,6 +26,7 @@ def generate_update():
     if api_key:
         try:
             genai.configure(api_key=api_key)
+            # Use the faster, cost-effective model for summaries
             model = genai.GenerativeModel('gemini-1.5-flash')
 
             prompt = f"""
@@ -57,13 +59,12 @@ def generate_update():
 if __name__ == "__main__":
     summary = generate_update()
 
-    # --- IMPORTANT: Save to the docs/data folder for GitHub Pages ---
+    # IMPORTANT: Save to the docs/data folder for GitHub Pages
     output_dir = os.path.join("docs", "data")
     os.makedirs(output_dir, exist_ok=True)
 
     # Save the summary into a JSON file
     with open(os.path.join(output_dir, "ai_summary.json"), "w") as f:
-        # Note: Added indentation for readability
         json.dump({"summary": summary}, f, indent=2)
 
     print(f"Summary saved to {output_dir}/ai_summary.json")
