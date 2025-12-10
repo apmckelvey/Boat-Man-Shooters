@@ -261,7 +261,7 @@ This will create a folder called `dist` in the repository folder with the built 
 
 > *NOTE:* Replace `"/Directory/to/repository"` with the actual directory to the repository. Also, these directions are assuming you are running Python verison 3 or higher.
 
-### Option 2: Build-it-Yourself (macOS, Windows, Linux)  
+### Option 2: Build-it-Yourself (`macOS`, `Windows`, `Linux`)  
 
 You can use the repository's GitHub Actions workflow (`build-boat-man-shooters.yml`) to automatically build standalone executables for macOS, Windows, and Linux using Nuitka. This runs entirely in the cloud on GitHub's servers—no local installation, dependencies, or code changes required on your part.  
 The workflow triggers automatically on pushes to the main branch and uploads the built apps as artifacts (downloadable files) to each workflow run.  
@@ -269,13 +269,13 @@ How to get the builds yourself (without editing the repo):
 
 1. Go to the repository's Actions tab: [https://github.com/apmckelvey/boat-man-shooters/actions](https://github.com/apmckelvey/boat-man-shooters/actions)  
 
-2. In the left sidebar, select the workflow named Build Boat Man Shooters (Nuitka).  
+2. In the left sidebar, select the workflow named `Build App With Nuitka`.  
 
 3. You will see a list of past workflow runs. Look for the most recent successful run (marked with a green checkmark).  
 
 4. Click on that run to open its details.  
 
-5. Scroll down to the Artifacts section at the bottom of the page.  
+5. Scroll down to the `Artifacts` section at the bottom of the page.  
 
 6. Download the artifact that matches your operating system:  
  
