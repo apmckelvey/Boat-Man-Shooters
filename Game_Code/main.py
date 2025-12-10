@@ -97,7 +97,7 @@ async def main():
     menu_buttons = [
         ButtonSubmit(
             x=WIDTH // 2,
-            y=int(HEIGHT * 0.45 + 10),
+            y=int(HEIGHT * 0.45),
             unpressed_path='../Graphics/UI Interface/Buttons/Join Game Button/join-game-button-unpressed.png',
             pressed_path='../Graphics/UI Interface/Buttons/Join Game Button/join-game-button-pressed.png',
             scale=0.32,

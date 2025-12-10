@@ -66,11 +66,11 @@ class Renderer:
         surf = self._get_overlay_surface()
 
         menu_image = pygame.image.load("../Graphics/UI Interface/Menus/main-menu.png").convert_alpha()
-        resized_image = pygame.transform.smoothscale(menu_image, (250, 333))
+        resized_image = pygame.transform.smoothscale(menu_image, (300, 400))
 
         if self.overlay_font_large:
             try:
-                surf.blit(resized_image, (WIDTH // 2 - 125, HEIGHT // 2 - 200))
+                surf.blit(resized_image, (WIDTH // 2 - 150, HEIGHT // 2 - 250))
             except Exception:
                 pass
 
