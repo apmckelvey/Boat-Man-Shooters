@@ -1,19 +1,18 @@
-# module imports
+#module imports
 import moderngl
 import numpy as np
 import pygame
 import pygame.freetype
 import os
-import math  # Added for cannonball rendering
+import math
 
-# imports from other filez
+#imports from other filez
 from config import WIDTH, HEIGHT
 from shaders import vertex_shader, fragment_shader, overlay_fragment, overlay_vertex
-
-
 class Renderer:
     def __init__(self, ctx):
         self.menu_boolean = False
+        self.cancel_button = False
         self.ctx = ctx
         self.viewport_width = 2.3
         self.viewport_height = 1.3
@@ -26,14 +25,11 @@ class Renderer:
         self.item_textures_loaded = False
         self._overlay_surf = None
         self._overlay_surf_size = (WIDTH, HEIGHT)
-
         self.health_images = {}
         try:
             self.health_images['green'] = pygame.image.load("../Graphics/Overlay/boat-health-green.png").convert_alpha()
-            self.health_images['yellow'] = pygame.image.load(
-                "../Graphics/Overlay/boat-health-yellow.png").convert_alpha()
-            self.health_images['orange'] = pygame.image.load(
-                "../Graphics/Overlay/boat-health-orange.png").convert_alpha()
+            self.health_images['yellow'] = pygame.image.load("../Graphics/Overlay/boat-health-yellow.png").convert_alpha()
+            self.health_images['orange'] = pygame.image.load("../Graphics/Overlay/boat-health-orange.png").convert_alpha()
             self.health_images['red'] = pygame.image.load("../Graphics/Overlay/boat-health-red.png").convert_alpha()
         except Exception:
             def _placeholder(c):
@@ -78,7 +74,7 @@ class Renderer:
             except Exception:
                 pass
 
-        # draw menu buttons to the overlay surface BEFORE uploading to GPU
+        #draw menu buttons to the overlay surface BEFORE uploading to GPU
         if menu_buttons:
             for button in menu_buttons:
                 button.draw(surf)
@@ -269,7 +265,7 @@ class Renderer:
         self._overlay_surf.fill((0, 0, 0, 0))
         return self._overlay_surf
 
-    def render(self, time, player, other_players_display, item_manager=None, cannon_balls=None):
+    def render(self, time, player, other_players_display, item_manager=None):
         from config import WORLD_WIDTH, WORLD_HEIGHT
 
         self.program['time'].value = float(time)
@@ -353,9 +349,25 @@ class Renderer:
         self.ctx.clear(0.0, 0.35, 0.75)
         self.vao.render(mode=moderngl.TRIANGLE_STRIP)
 
-        # Draw cannonballs if provided
-        if cannon_balls:
-            self.draw_cannon_balls(cannon_balls, player)
+        if item_manager:
+            visible_items = item_manager.get_visible_items(
+                player.camera_x,
+                player.camera_y,
+                visible_radius=5.0
+            )
+
+            for item in visible_items:
+                screen_x, screen_y = self.world_to_screen(
+                    item.x, item.y,
+                    player.camera_x, player.camera_y,
+                    WIDTH, HEIGHT
+                )
+
+                if item.image:
+                    img_width, img_height = item.image.get_size()
+                    scale_factor = 80
+                    draw_x = int(screen_x - img_width * scale_factor / (2 * img_width))
+                    draw_y = int(screen_y - img_height * scale_factor / (2 * img_height))
 
     def draw_minimap(self, player, other_players_display):
         try:
@@ -409,7 +421,7 @@ class Renderer:
         except Exception:
             pass
 
-    def draw_overlay(self, main_text: str, sub_text: str = "", alpha: float = 1.0):
+    def draw_overlay(self, main_text:  str, sub_text: str = "", alpha: float = 1.0):
         if not getattr(self, 'overlay_program', None) or not getattr(self, 'overlay_vao', None):
             return
 
@@ -672,7 +684,7 @@ class Renderer:
         except Exception as e:
             print(f"Error drawing cannon balls: {e}")
 
-    def draw_health_and_cannon_cd(self, player, left_cd_frac: float = 0.0, right_cd_frac: float = 0.0):
+    def draw_health_and_cannon_cd(self, player, left_cd_frac:  float = 0.0, right_cd_frac: float = 0.0):
         try:
             from config import WIDTH, HEIGHT
         except Exception:
@@ -786,7 +798,7 @@ class Renderer:
                     word = list_of_buttons[i]
                     shadow_surf, _ = self.setting_font.render(list_of_buttons[i], (0, 0, 0))
                     shadow_rect = shadow_surf.get_rect(center=(xcor // 2 + 2, ycor // 2 + i * 60 - 62))
-                    box_rect = pygame.draw.rect(surf, (255, 255, 255, 100), shadow_rect, 2)
+                    box_rect = pygame.draw.rect(surf, (255, 255, 255, 0), shadow_rect, 2)
                     surf.blit(shadow_surf, shadow_rect)
                     label_surf, _ = self.setting_font.render(list_of_buttons[i], (255, 255, 255))
                     label_rect = label_surf.get_rect(center=(xcor // 2, ycor // 2 + i * 60 - 60))
@@ -809,6 +821,14 @@ class Renderer:
                     elif word == "Main Menu" and self.menu_boolean is False:
                         self.game_state = "MENU"
                         self.menu_boolean = True
+                    elif word == "Settings":
+                        print("Settings")
+                    elif word == "Cancel":
+                        self.cancel_button = True
+
+
+
+
 
         data = pygame.image.tobytes(surf, 'RGBA', True)
         w, h = surf.get_size()
@@ -835,4 +855,3 @@ class Renderer:
             self.overlay_vao.render(mode=moderngl.TRIANGLE_STRIP)
         except Exception:
             return
-

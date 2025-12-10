@@ -12,8 +12,7 @@
   </a>
 </p>
 
-***App Building Status***:  [![Build Boat Man Shooters (Nuitka)](https://github.com/apmckelvey/boat-man-shooters/actions/workflows/build-boat-man-shooters.yml/badge.svg)](https://github.com/apmckelvey/boat-man-shooters/actions/workflows/build-boat-man-shooters.yml)  
-
+***App Building Status***:  [![Build App With Nuitka](https://github.com/apmckelvey/boat-man-shooters/actions/workflows/app-build.yml/badge.svg)](https://github.com/apmckelvey/boat-man-shooters/actions/workflows/app-build.yml)
 ## Table of Contents
 
 1. [Overview](#overview)  
