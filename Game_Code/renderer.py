@@ -609,25 +609,63 @@ class Renderer:
         except Exception:
             WIDTH, HEIGHT = 1280, 720
 
+        if not cannon_balls:
+            return  # Don't create overlay if no cannonballs
+
         surf = self._get_overlay_surface()
 
-        for ball in cannon_balls:
+        # Sort cannonballs by distance from camera for better rendering
+        sorted_balls = sorted(
+            cannon_balls,
+            key=lambda b: ((b.x - player.camera_x) ** 2 + (b.y - player.camera_y) ** 2),
+            reverse=True  # Draw farthest first
+        )
+
+        for ball in sorted_balls:
             screen_x, screen_y = self.world_to_screen(
                 ball.x, ball.y,
                 player.camera_x, player.camera_y,
                 WIDTH, HEIGHT
             )
 
-            if hasattr(ball, 'image') and ball.image:
-                img_rect = ball.image.get_rect()
-                draw_x = int(screen_x - img_rect.width / 2)
-                draw_y = int(screen_y - img_rect.height / 2)
-                surf.blit(ball.image, (draw_x, draw_y))
-            else:
-                pygame.draw.circle(surf, (255, 255, 255), (int(screen_x), int(screen_y)), 8)
+            # Only draw if on screen
+            if 0 <= screen_x <= WIDTH and 0 <= screen_y <= HEIGHT:
+                if hasattr(ball, 'image') and ball.image:
+                    img_rect = ball.image.get_rect()
+                    draw_x = int(screen_x - img_rect.width / 2)
+                    draw_y = int(screen_y - img_rect.height / 2)
 
+                    # Add a slight trail effect for movement
+                    if hasattr(ball, 'velocity_x') and hasattr(ball, 'velocity_y'):
+                        speed = math.sqrt(ball.velocity_x ** 2 + ball.velocity_y ** 2)
+                        if speed > 0.5:
+                            # Create a subtle motion blur effect
+                            trail_length = min(8, int(speed * 3))
+                            for i in range(trail_length, 0, -1):
+                                alpha = int(100 * (i / trail_length))
+                                offset_x = -ball.velocity_x * i * 0.01
+                                offset_y = -ball.velocity_y * i * 0.01
+                                trail_x = int(screen_x + offset_x - img_rect.width / 2)
+                                trail_y = int(screen_y + offset_y - img_rect.height / 2)
+                                temp_surf = ball.image.copy()
+                                temp_surf.set_alpha(alpha)
+                                surf.blit(temp_surf, (trail_x, trail_y))
+
+                    surf.blit(ball.image, (draw_x, draw_y))
+                else:
+                    # Fallback: draw a simple circle
+                    radius = 8
+                    # Add a glow effect
+                    for r in range(radius + 3, radius, -1):
+                        alpha = int(50 * (1 - (r - radius) / 3))
+                        color = (255, 200, 100, alpha) if ball.side == "left" else (100, 200, 255, alpha)
+                        pygame.draw.circle(surf, color, (int(screen_x), int(screen_y)), r)
+                    # Main circle
+                    color = (255, 150, 50) if ball.side == "left" else (50, 150, 255)
+                    pygame.draw.circle(surf, color, (int(screen_x), int(screen_y)), radius)
+
+        # Upload to GPU
         data = pygame.image.tobytes(surf, 'RGBA', True)
-        w, h = surf.get_size()
 
         try:
             if self.overlay_texture is None:

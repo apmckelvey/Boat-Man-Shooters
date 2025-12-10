@@ -318,6 +318,12 @@ Under the following license:
 Under the following license:  
 [https://pixabay.com/service/license-summary/](https://pixabay.com/service/license-summary/)  
 
+*Loading GIF* **load-33** by BlenderTimer found on [Pixabay](https://pixabay.com/):
+[https://pixabay.com/gifs/load-loading-process-wait-delay-33/](https://pixabay.com/gifs/load-loading-process-wait-delay-33/)
+Under the following license:  
+[https://pixabay.com/service/license-summary/](https://pixabay.com/service/license-summary/)  
+
+
 *Sprites (Including Player and Enemy)* Made by **Liam Blackmon**
 
 ## License <a name="license"></a>
