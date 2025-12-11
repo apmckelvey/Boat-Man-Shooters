@@ -5,10 +5,13 @@ import pygame
 import pygame.freetype
 import os
 import math  # Added for cannonball rendering
-
+from pygame import mixer
 # imports from other filez
 from config import WIDTH, HEIGHT
 from shaders import vertex_shader, fragment_shader, overlay_fragment, overlay_vertex
+pygame.init()
+
+button_sound = pygame.mixer.Sound('../Assets/Sounds/Button Sounds/button-submit/button-submit.mp3')
 
 
 class Renderer:
@@ -806,13 +809,37 @@ class Renderer:
                 surf.blit(color_surf, color_rect)
                 if pygame.mouse.get_pressed()[0]:
                     if word == "Quit":
+                        text_color = (200, 200, 0)
+                        word = list_of_buttons[index]
+                        color_surf, _ = self.setting_font.render(word, text_color)
+                        color_rect = color_surf.get_rect(center=(xcor // 2, ycor // 2 + index * 60 - 60))
+                        surf.blit(color_surf, color_rect)
+                        button_sound.play()
                         pygame.quit()
                     elif word == "Main Menu" and self.menu_boolean is False:
+                        text_color = (200, 200, 0)
+                        word = list_of_buttons[index]
+                        color_surf, _ = self.setting_font.render(word, text_color)
+                        color_rect = color_surf.get_rect(center=(xcor // 2, ycor // 2 + index * 60 - 60))
+                        surf.blit(color_surf, color_rect)
+                        button_sound.play()
                         self.game_state = "MENU"
                         self.menu_boolean = True
                     elif word == "Settings":
+                        text_color = (200, 200, 0)
+                        word = list_of_buttons[index]
+                        color_surf, _ = self.setting_font.render(word, text_color)
+                        color_rect = color_surf.get_rect(center=(xcor // 2, ycor // 2 + index * 60 - 60))
+                        surf.blit(color_surf, color_rect)
+                        button_sound.play()
                         print("Settings")
                     elif word == "Cancel":
+                        text_color = (200, 200, 0)
+                        word = list_of_buttons[index]
+                        color_surf, _ = self.setting_font.render(word, text_color)
+                        color_rect = color_surf.get_rect(center=(xcor // 2, ycor // 2 + index * 60 - 60))
+                        surf.blit(color_surf, color_rect)
+                        button_sound.play()
                         self.cancel_button = True
 
 
