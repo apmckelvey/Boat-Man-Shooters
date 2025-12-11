@@ -1,16 +1,10 @@
-"""
-we need to make the loading screen before the main menu render with the logo and the .gif before it
- and the one after the main menu into the game as “Loading… (##%)"
-"""
-
 # module imports
 import pygame
 import moderngl
 import asyncio
 import math
 import random
-import imageio.v3 as iio # for .gif rendering --> we need to impliment it
-import numpy as np
+import renderer
 
 # imports from other files
 from config import *
@@ -23,20 +17,6 @@ from cannonball import CannonBall
 from buttons import ButtonSubmit
 
 pygame.init()
-
-# pre-load GIF frames for splash/loading screens (not implimented y'all)
-try:
-    gif_path = '../Graphics/Loading/progress.gif'  # Updated path
-    gif_frames = [pygame.image.frombuffer(frame.tobytes(), frame.shape[1::-1], 'RGBA') for frame in iio.imiter(gif_path)]
-    gif_durations = iio.immeta(gif_path).get('duration', [100])  # ms per frame
-    if isinstance(gif_durations, int):
-        gif_durations = [gif_durations] * len(gif_frames)
-    print(f"Loaded {len(gif_frames)} frames from progress.gif")
-except Exception as e:
-    print(f"GIF load failed: {e} - using fallback")
-    gif_frames = None
-    gif_durations = None
-
 # controller initialization
 pygame.joystick.init()
 controller_joystick = None
@@ -49,12 +29,12 @@ if pygame.joystick.get_count() > 0:
         print(f"Controller error: {e}")
         controller_joystick = None
 
-# music & sounds
+# music
 pygame.mixer.music.load('../Assets/Sounds/music.mp3')
 pygame.mixer.music.play(-1)
 cannon_sound = pygame.mixer.Sound('../Assets/Sounds/Game Sounds/cannon.mp3')
 
-# icon/window
+# icon/window name
 icon = pygame.image.load('../Logos/icon.png')
 pygame.display.set_icon(icon)
 pygame.display.set_caption("Boat Man Shooters")
@@ -70,12 +50,8 @@ clock = pygame.time.Clock()
 ctx = moderngl.create_context()
 renderer = Renderer(ctx)
 
-# pass GIF data to renderer
-renderer.gif_frames = gif_frames
-renderer.gif_durations = gif_durations
-
-# game state
-game_state = "SPLASH" #(loading)
+# game state vars
+game_state = renderer.game_state
 
 player = None
 network = None
@@ -83,7 +59,7 @@ prediction = None
 item_manager = None
 menu_buttons = []
 
-# cannon vars
+# cannon logic vars
 cannon_balls = []
 L_Can_fire = True
 R_Can_fire = True
@@ -91,51 +67,78 @@ cooldown = 1.0
 L_cooldown_end = 0.0
 R_cooldown_end = 0.0
 
-# controller trigger rest values
+# trigger rest values (calibrated on first frame)
 lt_rest = None
 rt_rest = None
 inescape_menu = False
 escape_was_pressed = False
 
-# timing
-splash_start_time = pygame.time.get_ticks() / 1000.0
-load_start_time = None
-SCREEN_DURATION = 3.0  # seconds
-
 
 def open_settings_action():
+    """CALLBACK FUNCTION for settings button"""
     print("Settings button clicked")
 
 
 async def main():
     global game_state, player, network, prediction, item_manager
-    global L_Can_fire, R_Can_fire, lt_rest, rt_rest, cannon_balls, L_cooldown_end, R_cooldown_end
-    global inescape_menu, escape_was_pressed, menu_buttons
-    global splash_start_time, load_start_time
+    global L_Can_fire, R_Can_fire, lt_rest, rt_rest, cannon_balls, L_cooldown_end, R_cooldown_end, inescape_menu, escape_was_pressed, menu_buttons
 
+    fullscreen = False
     running = True
     start_ticks = pygame.time.get_ticks()
     loading_game = False
 
     def set_loading_game(value):
-        global load_start_time
         nonlocal loading_game
         loading_game = value
-        if value:
-            load_start_time = pygame.time.get_ticks() / 1000.0
+
+    # initialize menu buttons
+    menu_buttons = [
+        ButtonSubmit(
+            x=WIDTH // 2,
+            y=int(HEIGHT * 0.45),
+            unpressed_path='../Graphics/UI Interface/Buttons/Join Game Button/join-game-button-unpressed.png',
+            pressed_path='../Graphics/UI Interface/Buttons/Join Game Button/join-game-button-pressed.png',
+            scale=0.32,
+            action=lambda: set_loading_game(True)
+        ),
+        ButtonSubmit(
+            x=WIDTH // 2,
+            y=int(HEIGHT * 0.58),
+            unpressed_path='../Graphics/UI Interface/Buttons/Settings Button/settings-button-unpressed.png',
+            pressed_path='../Graphics/UI Interface/Buttons/Settings Button/settings-button-pressed.png',
+            scale=0.32,
+            action=open_settings_action
+        )
+    ]
 
     while running:
-        current_time = (pygame.time.get_ticks() - start_ticks) / 1000.0
+        cancel_button = renderer.cancel_button
+        menu_boolean = renderer.menu_boolean
+        if menu_boolean is True:
+            print(menu_boolean)
+            game_state = "MENU"
+            renderer.menu_boolean = False
+            inescape_menu = False
+        if cancel_button is True:
+            inescape_menu = False
+            renderer.cancel_button = False
+
         dt = clock.get_time() / 1000.0
-        if dt <= 0: dt = 1.0 / TARGET_FPS
-        if dt > 0.25: dt = 0.25
+        if dt <= 0:
+            dt = 1.0 / TARGET_FPS
+        if dt > 0.25:
+            dt = 0.25
+
+        current_time = (pygame.time.get_ticks() - start_ticks) / 1000.0
 
         events = pygame.event.get()
+
         for event in events:
             if event.type == pygame.QUIT:
                 running = False
 
-            # controller trigger calibration
+            # triggers calibration
             if event.type == pygame.JOYAXISMOTION and controller_joystick:
                 if lt_rest is None or rt_rest is None:
                     try:
@@ -144,141 +147,140 @@ async def main():
                     except:
                         pass
 
-            # cannon firing (only in GAME state)
             if game_state == "GAME":
-                if event.type == pygame.JOYAXISMOTION and event.axis in (4, 5):
+                # Left cannon (LT)
+                if event.type == pygame.JOYAXISMOTION and event.axis in (4, 5) and L_Can_fire:
                     value = event.value
-                    if event.axis == 4 and L_Can_fire and (lt_rest is None or abs(value - lt_rest) > 0.6):
-                        new_ball = CannonBall(player.x, player.y, player.rotation, "left")
-                        cannon_balls.append(new_ball)
-                        cannon_sound.play()
-                        if network:
-                            server_id = network.create_cannonball(new_ball.to_dict())
-                            if server_id:
-                                new_ball.server_id = server_id
-                        L_Can_fire = False
-                        L_cooldown_end = current_time + cooldown
-                        pygame.time.set_timer(pygame.USEREVENT + 1, int(cooldown * 1000), loops=1)
+                    axis = event.axis
+                    if axis == 4:
+                        if (lt_rest is None or abs(value - lt_rest) > 0.6):
+                            new_ball = CannonBall(player.x, player.y, player.rotation, "left")
+                            cannon_balls.append(new_ball)
+                            cannon_sound.play()
+                            if network:
+                                server_id = network.create_cannonball(new_ball.to_dict())
+                                if server_id:
+                                    new_ball.server_id = server_id
+                            L_Can_fire = False
+                            L_cooldown_end = current_time + cooldown
+                            pygame.time.set_timer(pygame.USEREVENT + 1, int(cooldown * 1000), loops=1)
 
-                    if event.axis == 5 and R_Can_fire and (rt_rest is None or abs(value - rt_rest) > 0.6):
-                        new_ball = CannonBall(player.x, player.y, player.rotation, "right")
-                        cannon_balls.append(new_ball)
-                        cannon_sound.play()
-                        if network:
-                            server_id = network.create_cannonball(new_ball.to_dict())
-                            if server_id:
-                                new_ball.server_id = server_id
-                        R_Can_fire = False
-                        R_cooldown_end = current_time + cooldown
-                        pygame.time.set_timer(pygame.USEREVENT + 2, int(cooldown * 1000), loops=1)
+                # Right cannon (RT)
+                if event.type == pygame.JOYAXISMOTION and event.axis in (4, 5) and R_Can_fire:
+                    value = event.value
+                    if axis == 5:
+                        if (rt_rest is None or abs(value - rt_rest) > 0.6):
+                            new_ball = CannonBall(player.x, player.y, player.rotation, "right")
+                            cannon_balls.append(new_ball)
+                            cannon_sound.play()
+                            if network:
+                                server_id = network.create_cannonball(new_ball.to_dict())
+                                if server_id:
+                                    new_ball.server_id = server_id
+                            R_Can_fire = False
+                            R_cooldown_end = current_time + cooldown
+                            pygame.time.set_timer(pygame.USEREVENT + 2, int(cooldown * 1000), loops=1)
 
-                if event.type == pygame.USEREVENT + 1:
-                    L_Can_fire = True
-                if event.type == pygame.USEREVENT + 2:
-                    R_Can_fire = True
+            # cooldown reset
+            if event.type == pygame.USEREVENT + 1:
+                L_Can_fire = True
+                L_cooldown_end = 0.0
+            if event.type == pygame.USEREVENT + 2:
+                R_Can_fire = True
+                R_cooldown_end = 0.0
 
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_q and L_Can_fire:
-                        new_ball = CannonBall(player.x, player.y, player.rotation, "left")
-                        cannon_balls.append(new_ball)
-                        cannon_sound.play()
-                        if network:
-                            server_id = network.create_cannonball(new_ball.to_dict())
-                            if server_id:
-                                new_ball.server_id = server_id
-                        L_Can_fire = False
-                        L_cooldown_end = current_time + cooldown
-                        pygame.time.set_timer(pygame.USEREVENT + 1, int(cooldown * 1000), loops=1)
+            # keyboard fallback cannons
+            if event.type == pygame.KEYDOWN and game_state == "GAME":
+                if event.key == pygame.K_q and L_Can_fire:
+                    new_ball = CannonBall(player.x, player.y, player.rotation, "left")
+                    cannon_balls.append(new_ball)
+                    cannon_sound.play()
+                    if network:
+                        server_id = network.create_cannonball(new_ball.to_dict())
+                        if server_id:
+                            new_ball.server_id = server_id
+                    L_Can_fire = False
+                    L_cooldown_end = current_time + cooldown
+                    pygame.time.set_timer(pygame.USEREVENT + 1, int(cooldown * 1000), loops=1)
 
-                    if event.key == pygame.K_e and R_Can_fire:
-                        new_ball = CannonBall(player.x, player.y, player.rotation, "right")
-                        cannon_balls.append(new_ball)
-                        cannon_sound.play()
-                        if network:
-                            server_id = network.create_cannonball(new_ball.to_dict())
-                            if server_id:
-                                new_ball.server_id = server_id
-                        R_Can_fire = False
-                        R_cooldown_end = current_time + cooldown
-                        pygame.time.set_timer(pygame.USEREVENT + 2, int(cooldown * 1000), loops=1)
+                if event.key == pygame.K_e and R_Can_fire:
+                    new_ball = CannonBall(player.x, player.y, player.rotation, "right")
+                    cannon_balls.append(new_ball)
+                    cannon_sound.play()
+                    if network:
+                        server_id = network.create_cannonball(new_ball.to_dict())
+                        if server_id:
+                            new_ball.server_id = server_id
+                    R_Can_fire = False
+                    R_cooldown_end = current_time + cooldown
+                    pygame.time.set_timer(pygame.USEREVENT + 2, int(cooldown * 1000), loops=1)
 
-                    if event.key == pygame.K_ESCAPE and not escape_was_pressed:
-                        inescape_menu = not inescape_menu
-                        escape_was_pressed = True
+                if event.key == pygame.K_ESCAPE and not escape_was_pressed:
+                    inescape_menu = not inescape_menu
+                    escape_was_pressed = True
 
-                if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_ESCAPE:
                     escape_was_pressed = False
 
-        if game_state == "SPLASH":
-            elapsed = current_time - splash_start_time
-            if elapsed >= SCREEN_DURATION:
-                game_state = "MENU"
-                menu_buttons = [
-                    ButtonSubmit(WIDTH // 2, int(HEIGHT * 0.45),
-                                 '../Graphics/UI Interface/Buttons/Join Game Button/join-game-button-unpressed.png',
-                                 '../Graphics/UI Interface/Buttons/Join Game Button/join-game-button-pressed.png',
-                                 scale=0.32, action=lambda: set_loading_game(True)),
-                    ButtonSubmit(WIDTH // 2, int(HEIGHT * 0.58),
-                                 '../Graphics/UI Interface/Buttons/Settings Button/settings-button-unpressed.png',
-                                 '../Graphics/UI Interface/Buttons/Settings Button/settings-button-pressed.png',
-                                 scale=0.32, action=open_settings_action)
-                ]
-            renderer.render_splash_screen(current_time, is_startup=True)
-
-        elif game_state == "MENU":
+        # game loop
+        if game_state == "MENU":
             if loading_game:
-                elapsed = current_time - load_start_time if load_start_time else 0
-                if elapsed >= SCREEN_DURATION:
-                    item_manager = ItemManager(num_items=15)
-                    renderer.setup_item_textures(item_manager)
+                # Initialize game
+                item_manager = ItemManager(num_items=15)
+                renderer.setup_item_textures(item_manager)  # <-- IMPORTANT: added this line
 
-                    fallback_x, fallback_y = 2.0, 2.0
-                    player = Player(fallback_x, fallback_y)
-                    for _ in range(50):
-                        rx = random.randint(1, WORLD_WIDTH - 1)
-                        ry = random.randint(1, WORLD_HEIGHT - 1)
-                        if not item_manager.check_collision(rx, ry, player_radius=0.5):
-                            player = Player(rx, ry)
-                            break
+                fallback_x, fallback_y = 2.0, 2.0
+                player = Player(fallback_x, fallback_y)
 
-                    network = NetworkManager(player)
-                    prediction = PredictionManager()
-                    cannon_balls = []
-                    print(f"{network.PLAYER_NAME} joined game")
+                for _ in range(50):
+                    random_x = random.randint(1, WORLD_WIDTH - 1)
+                    random_y = random.randint(1, WORLD_HEIGHT - 1)
+                    if not item_manager.check_collision(random_x, random_y, player_radius=0.5):
+                        player = Player(random_x, random_y)
+                        break
 
-                    game_state = "GAME"
-                    loading_game = False
-                    load_start_time = None
-                else:
-                    renderer.render_splash_screen(current_time, is_startup=False)
-            else:
-                for button in menu_buttons:
-                    button.update(events)
-                renderer.render_menu(current_time, menu_buttons)
+                network = NetworkManager(player)
+                prediction = PredictionManager()
+                cannon_balls = []
+                print(f"{network.PLAYER_NAME} joined game")
+
+                game_state = "GAME"
+                loading_game = False
+
+            # Update menu buttons
+            for button in menu_buttons:
+                button.update(events)
+            renderer.render_menu(current_time, menu_buttons)
 
         elif game_state == "GAME":
             keys = pygame.key.get_pressed()
             player.update(dt, keys, controller_joystick)
 
+            # update local cannonballs
             cannon_balls = [b for b in cannon_balls if b.update(dt)]
 
+            # update remote cannonballs
             if network:
                 remote_balls = network.get_remote_cannonballs()
                 for ball in remote_balls:
                     ball.update(dt)
                 for remote_ball in remote_balls:
-                    if remote_ball.server_id not in [cb.server_id for cb in cannon_balls if hasattr(cb, 'server_id')]:
+                    if remote_ball.server_id not in [cb.server_id for cb in cannon_balls if hasattr(cb, 'server_id') and cb.server_id]:
                         cannon_balls.append(remote_ball)
 
+            # items
             collision = item_manager.check_collision(player.x, player.y, player_radius=0.15)
             if collision:
                 item_manager.resolve_collision(player, collision)
 
             prediction.update_predictions(dt, network.other_players)
 
+            # === RENDERING ===
             renderer.render(current_time, player, prediction.other_players_display, item_manager)
-            renderer.draw_cannon_balls(cannon_balls, player)
+            renderer.draw_cannon_balls(cannon_balls, player)  # <-- now correctly called
 
+            # overlay elements
             try:
                 names = {'local': getattr(network, 'PLAYER_NAME', 'You')}
                 for pid, data in network.other_players.items():
@@ -290,12 +292,15 @@ async def main():
                 if inescape_menu:
                     renderer.escape_menu(player)
 
+                # cooldown fractions
                 left_frac = max(0.0, min((L_cooldown_end - current_time) / cooldown, 1.0)) if L_cooldown_end > current_time else 0.0
                 right_frac = max(0.0, min((R_cooldown_end - current_time) / cooldown, 1.0)) if R_cooldown_end > current_time else 0.0
+
                 renderer.draw_health_and_cannon_cd(player, left_cd_frac=left_frac, right_cd_frac=right_frac)
             except Exception as e:
                 print(f"Overlay error: {e}")
 
+            # disconnected alert
             if not getattr(network, 'connected', True):
                 t = pygame.time.get_ticks() / 1000.0
                 alpha = 0.6 + math.sin(t * 4) * 0.2

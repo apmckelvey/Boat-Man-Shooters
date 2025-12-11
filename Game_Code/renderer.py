@@ -26,9 +26,6 @@ class Renderer:
         self._overlay_surf = None
         self._overlay_surf_size = (WIDTH, HEIGHT)
         self.health_images = {}
-        self.game_state = "MENU"
-        self.gif_frames = None      #will be set from main.py
-        self.gif_durations = None   #so will this one :)
         try:
             self.health_images['green'] = pygame.image.load("../Graphics/Overlay/boat-health-green.png").convert_alpha()
             self.health_images['yellow'] = pygame.image.load("../Graphics/Overlay/boat-health-yellow.png").convert_alpha()
@@ -613,15 +610,15 @@ class Renderer:
             WIDTH, HEIGHT = 1280, 720
 
         if not cannon_balls:
-            return  # don't create overlay if no cannonballs
+            return  # Don't create overlay if no cannonballs
 
         surf = self._get_overlay_surface()
 
-        # sort cannonballs by distance from camera for better rendering
+        # Sort cannonballs by distance from camera for better rendering
         sorted_balls = sorted(
             cannon_balls,
             key=lambda b: ((b.x - player.camera_x) ** 2 + (b.y - player.camera_y) ** 2),
-            reverse=True  # draw farthest first
+            reverse=True  # Draw farthest first
         )
 
         for ball in sorted_balls:
@@ -631,18 +628,18 @@ class Renderer:
                 WIDTH, HEIGHT
             )
 
-            # only draw if on screen
+            # Only draw if on screen
             if 0 <= screen_x <= WIDTH and 0 <= screen_y <= HEIGHT:
                 if hasattr(ball, 'image') and ball.image:
                     img_rect = ball.image.get_rect()
                     draw_x = int(screen_x - img_rect.width / 2)
                     draw_y = int(screen_y - img_rect.height / 2)
 
-                    # add a slight trail effect for movement
+                    # Add a slight trail effect for movement
                     if hasattr(ball, 'velocity_x') and hasattr(ball, 'velocity_y'):
                         speed = math.sqrt(ball.velocity_x ** 2 + ball.velocity_y ** 2)
                         if speed > 0.5:
-                            # create a subtle motion blur effect
+                            # Create a subtle motion blur effect
                             trail_length = min(8, int(speed * 3))
                             for i in range(trail_length, 0, -1):
                                 alpha = int(100 * (i / trail_length))
@@ -656,18 +653,18 @@ class Renderer:
 
                     surf.blit(ball.image, (draw_x, draw_y))
                 else:
-                    # fallback: draw a simple circle
+                    # Fallback: draw a simple circle
                     radius = 8
-                    # add a glow effect
+                    # Add a glow effect
                     for r in range(radius + 3, radius, -1):
                         alpha = int(50 * (1 - (r - radius) / 3))
                         color = (255, 200, 100, alpha) if ball.side == "left" else (100, 200, 255, alpha)
                         pygame.draw.circle(surf, color, (int(screen_x), int(screen_y)), r)
-                    # main circle
+                    # Main circle
                     color = (255, 150, 50) if ball.side == "left" else (50, 150, 255)
                     pygame.draw.circle(surf, color, (int(screen_x), int(screen_y)), radius)
 
-        # upload to GPU!
+        # Upload to GPU
         data = pygame.image.tobytes(surf, 'RGBA', True)
 
         try:
@@ -858,190 +855,3 @@ class Renderer:
             self.overlay_vao.render(mode=moderngl.TRIANGLE_STRIP)
         except Exception:
             return
-    def _get_current_gif_frame(self, time):
-        if not self.gif_frames or len(self.gif_frames) == 0:
-            return None
-        if len(self.gif_frames) == 1:
-            return self.gif_frames[0]
-
-        total_duration = sum(self.gif_durations or [100]) / 1000.0  # seconds
-        t = time % total_duration
-        accumulated = 0.0
-        for i, dur in enumerate(self.gif_durations or [100]):
-            accumulated += dur / 1000.0
-            if t < accumulated:
-                return self.gif_frames[i]
-        return self.gif_frames[-1]
-
-    def render_loading_screen(self, time, progress):
-
-        from config import WIDTH, HEIGHT, WORLD_WIDTH, WORLD_HEIGHT
-
-        # render water background (same as menu)
-        camera_x = WORLD_WIDTH / 2.0
-        camera_y = WORLD_HEIGHT / 2.0
-
-        self.program['time'].value = float(time)
-        self.program['wakeFade'].value = 0.0
-        self.program['cameraPos'].value = (float(camera_x), float(camera_y))
-        self.program['viewportSize'].value = (float(self.viewport_width), float(self.viewport_height))
-        self.program['worldSize'].value = (float(WORLD_WIDTH), float(WORLD_HEIGHT))
-        self.program['numOtherPlayers'].value = 0
-
-        try:
-            self.program['numItems'].value = 0
-        except Exception:
-            pass
-
-        self.ctx.clear(0.0, 0.35, 0.75)
-        self.vao.render(mode=moderngl.TRIANGLE_STRIP)
-
-        # get overlay surface
-        surf = self._get_overlay_surface()
-
-        # load and draw bordered logo (centered, scaled to ~350x350 as in escape_menu)
-        try:
-            logo_image = pygame.image.load("../Graphics/Loading/logo.png").convert_alpha()
-            logo_scaled = pygame.transform.smoothscale(logo_image, (350, 350))
-            logo_rect = logo_scaled.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))  # Slightly above center
-            surf.blit(logo_scaled, logo_rect)
-        except Exception as e:
-            print(f"Logo load error: {e}")
-            # fallback: Draw a placeholder circle
-            pygame.draw.circle(surf, (255, 255, 255, 200), (WIDTH // 2, HEIGHT // 2 - 50), 175)
-
-        # animated loading text (simulates GIF with rotating dots)
-        if self.overlay_font_large:
-            try:
-                # base text
-                base_text = "Loading"
-                full_text = f"{base_text}... ({int(progress * 100)}%)"
-
-                # shadow
-                shadow_surf, _ = self.overlay_font_large.render(full_text, (0, 0, 0))
-                shadow_rect = shadow_surf.get_rect(center=(WIDTH // 2 + 2, HEIGHT // 2 + 100 + 2))
-                surf.blit(shadow_surf, shadow_rect)
-
-                # main text (white)
-                text_surf, _ = self.overlay_font_large.render(full_text, (255, 255, 255))
-                text_rect = text_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 100))
-                surf.blit(text_surf, text_rect)
-            except Exception as e:
-                print(f"Loading text render error: {e}")
-
-        # upload overlay to GPU (same as other overlay methods)
-        data = pygame.image.tobytes(surf, 'RGBA', True)
-        w, h = surf.get_size()
-
-        try:
-            if self.overlay_texture is None:
-                self.overlay_texture = self.ctx.texture((w, h), 4, data)
-                self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
-            else:
-                try:
-                    self.overlay_texture.write(data)
-                except Exception:
-                    self.overlay_texture.release()
-                    self.overlay_texture = self.ctx.texture((w, h), 4, data)
-                    self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
-
-            self.overlay_texture.use(location=2)
-            try:
-                self.overlay_program['overlayTexture'].value = 2
-            except Exception:
-                pass
-
-            self.ctx.enable(moderngl.BLEND)
-            self.overlay_vao.render(mode=moderngl.TRIANGLE_STRIP)
-        except Exception:
-            pass
-    def _get_current_gif_frame(self, time):
-        if not self.gif_frames or len(self.gif_frames) == 0:
-            return None
-        if len(self.gif_frames) == 1:
-            return self.gif_frames[0]
-
-        total_duration = sum(self.gif_durations or [100]) / 1000.0  # seconds
-        t = time % total_duration
-        accumulated = 0.0
-        for i, dur in enumerate(self.gif_durations or [100]):
-            accumulated += dur / 1000.0
-            if t < accumulated:
-                return self.gif_frames[i]
-        return self.gif_frames[-1]
-
-    def render_splash_screen(self, time, is_startup=True):
-        from config import WIDTH, HEIGHT, WORLD_WIDTH, WORLD_HEIGHT
-
-        # water background (same as menu)
-        camera_x = WORLD_WIDTH / 2.0
-        camera_y = WORLD_HEIGHT / 2.0
-
-        self.program['time'].value = float(time)
-        self.program['wakeFade'].value = 0.0
-        self.program['cameraPos'].value = (float(camera_x), float(camera_y))
-        self.program['viewportSize'].value = (float(self.viewport_width), float(self.viewport_height))
-        self.program['worldSize'].value = (float(WORLD_WIDTH), float(WORLD_HEIGHT))
-        self.program['numOtherPlayers'].value = 0
-        try:
-            self.program['numItems'].value = 0
-        except Exception:
-            pass
-
-        self.ctx.clear(0.0, 0.35, 0.75)
-        self.vao.render(mode=moderngl.TRIANGLE_STRIP)
-
-        surf = self._get_overlay_surface()
-
-        # logo - uses ../Graphics/Loading/logo.png for startup splash
-        logo_path = "../Graphics/Loading/logo.png"
-        try:
-            logo_img = pygame.image.load(logo_path).convert_alpha()
-            logo_scaled = pygame.transform.smoothscale(logo_img, (400, 400))
-            logo_rect = logo_scaled.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 80))
-            surf.blit(logo_scaled, logo_rect)
-        except Exception as e:
-            print(f"Logo load error ({logo_path}): {e}")
-            # Fallback placeholder
-            pygame.draw.circle(surf, (200, 200, 255), (WIDTH // 2, HEIGHT // 2 - 80), 200)
-
-        # animated progress.gif from ../Graphics/Loading/progress.gif
-        gif_frame = self._get_current_gif_frame(time)
-        if gif_frame:
-            gif_scaled = pygame.transform.smoothscale(gif_frame, (200, 200))
-            gif_rect = gif_scaled.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 120))
-            surf.blit(gif_scaled, gif_rect)
-        else:
-            # fallback animated text
-            if self.overlay_font_large:
-                dots = "." * ((int(time * 4) % 4) + 1)
-                text = f"Loading{dots}"
-                txt_surf, _ = self.overlay_font_large.render(text, (255, 255, 255))
-                txt_rect = txt_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 120))
-                surf.blit(txt_surf, txt_rect)
-
-        # upload overlay to GPU
-        data = pygame.image.tobytes(surf, 'RGBA', True)
-        w, h = surf.get_size()
-        try:
-            if self.overlay_texture is None:
-                self.overlay_texture = self.ctx.texture((w, h), 4, data)
-                self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
-            else:
-                try:
-                    self.overlay_texture.write(data)
-                except Exception:
-                    self.overlay_texture.release()
-                    self.overlay_texture = self.ctx.texture((w, h), 4, data)
-                    self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
-
-            self.overlay_texture.use(location=2)
-            try:
-                self.overlay_program['overlayTexture'].value = 2
-            except Exception:
-                pass
-
-            self.ctx.enable(moderngl.BLEND)
-            self.overlay_vao.render(mode=moderngl.TRIANGLE_STRIP)
-        except Exception:
-            pass
