@@ -12,6 +12,14 @@ REFER TO THE BUTTON-TEST.HTML FOR THE PREFERRED BUTTON ANIMATIONS
 #module imports
 import pygame
 import math
+import os
+import sys
+
+#file path initialization
+if sys.platform == 'darwin' and 'Contents/MacOS' in sys.argv[0]:
+    BASE_DIR = os.path.join(os.dirname(sys.argv[0]), '..', 'Resources')
+else:
+    BASE_DIR = os.path.dirname(sys.argv[0])
 
 class ButtonSubmit:
     def __init__(self, x, y, unpressed_path, pressed_path, scale, action=None):
@@ -46,8 +54,8 @@ class ButtonSubmit:
         self.press_hold_duration = 0.1
 
         try:
-            self.press_sound = pygame.mixer.Sound('../Assets/Sounds/Button Sounds/button-submit/button-submit-press.mp3')
-            self.unpress_sound = pygame.mixer.Sound('../Assets/Sounds/Button Sounds/button-submit/button-submit-unpress.mp3')
+            self.press_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, '../Assets/Sounds/Button Sounds/button-submit/button-submit-press.mp3'))
+            self.unpress_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, '../Assets/Sounds/Button Sounds/button-submit/button-submit-unpress.mp3'))
         except:
             self.press_sound = None
             self.unpress_sound = None
@@ -124,8 +132,8 @@ class ButtonBack:
         self.base_scale = scale
 
         # Load images without conversion first
-        unpressed_img = pygame.image.load("../Graphics/UI Interface/Buttons/Back Button/button-back-unpressed.png")
-        pressed_img = pygame.image.load("../Graphics/UI Interface/Buttons/Back Button/button-back-pressed.png")
+        unpressed_img = pygame.image.load(os.path.join(BASE_DIR, "../Graphics/UI Interface/Buttons/Back Button/button-back-unpressed.png"))
+        pressed_img = pygame.image.load(os.path.join(BASE_DIR, "../Graphics/UI Interface/Buttons/Back Button/button-back-pressed.png"))
 
         # Store original images for high-quality scaling
         self.unpressed_original = unpressed_img. convert_alpha()

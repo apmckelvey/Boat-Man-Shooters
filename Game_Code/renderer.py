@@ -5,6 +5,13 @@ import pygame
 import pygame.freetype
 import os
 import math
+import sys
+
+#file path initialization
+if sys.platform == 'darwin' and 'Contents/MacOS' in sys.argv[0]:
+    BASE_DIR = os.path.join(os.dirname(sys.argv[0]), '..', 'Resources')
+else:
+    BASE_DIR = os.path.dirname(sys.argv[0])
 
 #imports from other filez
 from config import WIDTH, HEIGHT
@@ -30,10 +37,10 @@ class Renderer:
         self.gif_frames = None      #will be set from main.py
         self.gif_durations = None   #so will this one :)
         try:
-            self.health_images['green'] = pygame.image.load("../Graphics/Overlay/boat-health-green.png").convert_alpha()
-            self.health_images['yellow'] = pygame.image.load("../Graphics/Overlay/boat-health-yellow.png").convert_alpha()
-            self.health_images['orange'] = pygame.image.load("../Graphics/Overlay/boat-health-orange.png").convert_alpha()
-            self.health_images['red'] = pygame.image.load("../Graphics/Overlay/boat-health-red.png").convert_alpha()
+            self.health_images['green'] = pygame.image.load(os.path.join(BASE_DIR, "../Graphics/Overlay/boat-health-green.png")).convert_alpha()
+            self.health_images['yellow'] = pygame.image.load(os.path.join(BASE_DIR, "../Graphics/Overlay/boat-health-yellow.png")).convert_alpha()
+            self.health_images['orange'] = pygame.image.load(os.path.join(BASE_DIR, "../Graphics/Overlay/boat-health-orange.png")).convert_alpha()
+            self.health_images['red'] = pygame.image.load(os.path.join(BASE_DIR, "../Graphics/Overlay/boat-health-red.png")).convert_alpha()
         except Exception:
             def _placeholder(c):
                 s = pygame.Surface((48, 12), pygame.SRCALPHA)
@@ -68,7 +75,7 @@ class Renderer:
 
         surf = self._get_overlay_surface()
 
-        menu_image = pygame.image.load("../Graphics/UI Interface/Menus/main-menu.png").convert_alpha()
+        menu_image = pygame.image.load(os.path.join(BASE_DIR, "../Graphics/UI Interface/Menus/main-menu.png")).convert_alpha()
         resized_image = pygame.transform.smoothscale(menu_image, (300, 400))
 
         if self.overlay_font_large:
@@ -139,7 +146,7 @@ class Renderer:
 
     def _load_boat_texture(self):
         try:
-            boat_image = pygame.image.load("../Graphics/Sprites/Boats/player.png").convert_alpha()
+            boat_image = pygame.image.load(os.path.join(BASE_DIR, "../Graphics/Sprites/Boats/player.png")).convert_alpha()
             self.boat_width, self.boat_height = boat_image.get_size()
             self.boat_aspect = float(self.boat_width) / float(self.boat_height) if self.boat_height else 1.0
             boat_data = pygame.image.tobytes(boat_image, "RGBA", True)
@@ -157,7 +164,7 @@ class Renderer:
         self.boat_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
 
         try:
-            enemy_image = pygame.image.load("../Graphics/Sprites/Boats/enemy.png").convert_alpha()
+            enemy_image = pygame.image.load(os.path.join(BASE_DIR, "../Graphics/Sprites/Boats/enemy.png")).convert_alpha()
             ew, eh = enemy_image.get_size()
             enemy_data = pygame.image.tobytes(enemy_image, "RGBA", True)
             self.enemy_width, self.enemy_height = ew, eh
@@ -781,7 +788,7 @@ class Renderer:
         xcor = WIDTH
         ycor = HEIGHT
 
-        settings_image = pygame.image.load("../Logos/logo-borderless.png").convert_alpha()
+        settings_image = pygame.image.load(os.path.join(BASE_DIR, "../Logos/logo-borderless.png")).convert_alpha()
         resized_image = pygame.transform.smoothscale(settings_image, (350, 350))
         menu_rect = surf.get_rect(center=(WIDTH // 1.17, HEIGHT // 2.25))
 
@@ -901,7 +908,7 @@ class Renderer:
 
         # load and draw bordered logo (centered, scaled to ~350x350 as in escape_menu)
         try:
-            logo_image = pygame.image.load("../Graphics/Loading/logo.png").convert_alpha()
+            logo_image = pygame.image.load(os.path.join(BASE_DIR, "../Graphics/Loading/logo.png")).convert_alpha()
             logo_scaled = pygame.transform.smoothscale(logo_image, (350, 350))
             logo_rect = logo_scaled.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))  # Slightly above center
             surf.blit(logo_scaled, logo_rect)
@@ -996,7 +1003,7 @@ class Renderer:
         # logo - uses ../Graphics/Loading/logo.png for startup splash
         logo_path = "../Graphics/Loading/logo.png"
         try:
-            logo_img = pygame.image.load(logo_path).convert_alpha()
+            logo_img = pygame.image.load(os.path.join(BASE_DIR, logo_path)).convert_alpha()
             logo_scaled = pygame.transform.smoothscale(logo_img, (400, 400))
             logo_rect = logo_scaled.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 80))
             surf.blit(logo_scaled, logo_rect)

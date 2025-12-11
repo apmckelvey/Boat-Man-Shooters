@@ -1,5 +1,13 @@
 import pygame
 import math
+import os
+import sys
+
+#file path initialization
+if sys.platform == 'darwin' and 'Contents/MacOS' in sys.argv[0]:
+    BASE_DIR = os.path.join(os.dirname(sys.argv[0]), '..', 'Resources')
+else:
+    BASE_DIR = os.path.dirname(sys.argv[0])
 
 
 class CannonBall:
@@ -15,7 +23,7 @@ class CannonBall:
         self.is_remote = server_id is not None  # If created by another player
 
         try:
-            img = pygame.image.load("../Graphics/Sprites/Cannonballs/cannonball.png").convert_alpha()
+            img = pygame.image.load(os.path.join(BASE_DIR, "../Graphics/Sprites/Cannonballs/cannonball.png")).convert_alpha()
             self.image = pygame.transform.scale(img, (32, 32))
         except:
             self.image = pygame.Surface((32, 32), pygame.SRCALPHA)
@@ -87,7 +95,7 @@ class EnemyCannonBall:
         self.is_remote = server_id is not None  # If created by another player
 
         try:
-            img = pygame.image.load("../Graphics/Sprites/Cannonballs/cannonball-enemy.png.png").convert_alpha()
+            img = pygame.image.load(os.path.join(BASE_DIR, "../Graphics/Sprites/Cannonballs/cannonball-enemy.png.png")).convert_alpha()
             self.image = pygame.transform.scale(img, (32, 32))
         except:
             self.image = pygame.Surface((32, 32), pygame.SRCALPHA)

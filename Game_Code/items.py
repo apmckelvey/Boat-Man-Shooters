@@ -1,5 +1,13 @@
 import pygame
 import math
+import os
+import sys
+
+#file path initialization
+if sys.platform == 'darwin' and 'Contents/MacOS' in sys.argv[0]:
+    BASE_DIR = os.path.join(os.dirname(sys.argv[0]), '..', 'Resources')
+else:
+    BASE_DIR = os.path.dirname(sys.argv[0])
 
 
 class Item:
@@ -51,7 +59,7 @@ class ItemManager:
     def _load_item_images(self):
         for i in range(1, 6):  # item1 through item5
             try:
-                image = pygame.image.load(f"../Graphics/Map-Items/Rocks/rock{i}.png").convert_alpha()
+                image = pygame.image.load(os.path.join(BASE_DIR, f"../Graphics/Map-Items/Rocks/rock{i}.png")).convert_alpha()
                 # Scale image if needed (optional)
                 # image = pygame.transform.scale(image, (64, 64))
                 self.images[i] = image

@@ -2,6 +2,15 @@ import math
 import pygame
 from utils import lerp_angle, smoothstep
 from config import SPRINT, WORLD_WIDTH, WORLD_HEIGHT
+import os
+import sys
+
+#file path initialization
+if sys.platform == 'darwin' and 'Contents/MacOS' in sys.argv[0]:
+    BASE_DIR = os.path.join(os.dirname(sys.argv[0]), '..', 'Resources')
+else:
+    BASE_DIR = os.path.dirname(sys.argv[0])
+
 
 class Player:
     def __init__(self, x, y):
@@ -38,12 +47,12 @@ class Player:
         self.r3_pressed = False
 
         #motor sound
-        self.motor_sound = pygame.mixer.Sound('../Assets/Sounds/Game Sounds/motor.mp3')
+        self.motor_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, '../Assets/Sounds/Game Sounds/motor.mp3'))
         self.motor_sound.set_volume(0.25)
         self.motor_sound.play(loops=-1)
 
         #engine sound
-        self.engine_sound = pygame.mixer.Sound('../Assets/Sounds/Game Sounds/boat.mp3')
+        self.engine_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, '../Assets/Sounds/Game Sounds/boat.mp3'))
         self.engine_sound.set_volume(1.0)
         self.engine_channel = None
         self.engine_fade_ms = 120

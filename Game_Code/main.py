@@ -11,6 +11,14 @@ import math
 import random
 import imageio.v3 as iio # for .gif rendering --> we need to impliment it
 import numpy as np
+import os
+import sys
+
+#file path initialization
+if sys.platform == 'darwin' and 'Contents/MacOS' in sys.argv[0]:
+    BASE_DIR = os.path.join(os.dirname(sys.argv[0]), '..', 'Resources')
+else:
+    BASE_DIR = os.path.dirname(sys.argv[0])
 
 # imports from other files
 from config import *
@@ -28,7 +36,7 @@ pygame.init()
 try:
     gif_path = '../Graphics/Loading/progress.gif'  # Updated path
     gif_frames = [pygame.image.frombuffer(frame.tobytes(), frame.shape[1::-1], 'RGBA') for frame in iio.imiter(gif_path)]
-    gif_durations = iio.immeta(gif_path).get('duration', [100])  # ms per frame
+    gif_durations = iio.immeta(os.path.join(BASE_DIR, gif_path)).get('duration', [100])  # ms per frame
     if isinstance(gif_durations, int):
         gif_durations = [gif_durations] * len(gif_frames)
     print(f"Loaded {len(gif_frames)} frames from progress.gif")
@@ -50,12 +58,12 @@ if pygame.joystick.get_count() > 0:
         controller_joystick = None
 
 # music & sounds
-pygame.mixer.music.load('../Assets/Sounds/music.mp3')
+pygame.mixer.music.load(os.path.join(BASE_DIR, '../Assets/Sounds/music.mp3'))
 pygame.mixer.music.play(-1)
-cannon_sound = pygame.mixer.Sound('../Assets/Sounds/Game Sounds/cannon.mp3')
+cannon_sound = pygame.mixer.Sound(os.path.join(BASE_DIR, '../Assets/Sounds/Game Sounds/cannon.mp3'))
 
 # icon/window
-icon = pygame.image.load('../Logos/icon.png')
+icon = pygame.image.load(os.path.join(BASE_DIR, '../Logos/icon.png'))
 pygame.display.set_icon(icon)
 pygame.display.set_caption("Boat Man Shooters")
 
@@ -215,12 +223,12 @@ async def main():
                 game_state = "MENU"
                 menu_buttons = [
                     ButtonSubmit(WIDTH // 2, int(HEIGHT * 0.45),
-                                 '../Graphics/UI Interface/Buttons/Join Game Button/join-game-button-unpressed.png',
-                                 '../Graphics/UI Interface/Buttons/Join Game Button/join-game-button-pressed.png',
+                                 os.path.join(BASE_DIR, '../Graphics/UI Interface/Buttons/Join Game Button/join-game-button-unpressed.png'),
+                                 os.path.join(BASE_DIR, '../Graphics/UI Interface/Buttons/Join Game Button/join-game-button-pressed.png'),
                                  scale=0.32, action=lambda: set_loading_game(True)),
                     ButtonSubmit(WIDTH // 2, int(HEIGHT * 0.58),
-                                 '../Graphics/UI Interface/Buttons/Settings Button/settings-button-unpressed.png',
-                                 '../Graphics/UI Interface/Buttons/Settings Button/settings-button-pressed.png',
+                                 os.path.join(BASE_DIR, '../Graphics/UI Interface/Buttons/Settings Button/settings-button-unpressed.png'),
+                                 os.path.join(BASE_DIR, '../Graphics/UI Interface/Buttons/Settings Button/settings-button-pressed.png'),
                                  scale=0.32, action=open_settings_action)
                 ]
             renderer.render_splash_screen(current_time, is_startup=True)
