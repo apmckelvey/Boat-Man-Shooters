@@ -6,7 +6,9 @@ import pygame.freetype
 import os
 import math
 import sys
+pygame.init()
 
+button_sound = pygame.mixer.Sound('../Assets/Sounds/Button Sounds/button-submit/button-submit.mp3')
 #file path initialization
 if sys.platform == 'darwin' and 'Contents/MacOS' in sys.argv[0]:
     BASE_DIR = os.path.join(os.dirname(sys.argv[0]), '..', 'Resources')
@@ -788,7 +790,7 @@ class Renderer:
         xcor = WIDTH
         ycor = HEIGHT
 
-        settings_image = pygame.image.load(os.path.join(BASE_DIR, "../Logos/logo-borderless.png")).convert_alpha()
+        settings_image = pygame.image.load("../Logos/logo-borderless.png").convert_alpha()
         resized_image = pygame.transform.smoothscale(settings_image, (350, 350))
         menu_rect = surf.get_rect(center=(WIDTH // 1.17, HEIGHT // 2.25))
 
@@ -826,6 +828,11 @@ class Renderer:
                 color_rect = color_surf.get_rect(center=(xcor // 2, ycor // 2 + index * 60 - 60))
                 surf.blit(color_surf, color_rect)
                 if pygame.mouse.get_pressed()[0]:
+                    text_color = (200, 200, 0)
+                    color_surf, _ = self.setting_font.render(word, text_color)
+                    color_rect = color_surf.get_rect(center=(xcor // 2, ycor // 2 + index * 60 - 60))
+                    surf.blit(color_surf, color_rect)
+                    button_sound.play()
                     if word == "Quit":
                         pygame.quit()
                     elif word == "Main Menu" and self.menu_boolean is False:
@@ -865,6 +872,7 @@ class Renderer:
             self.overlay_vao.render(mode=moderngl.TRIANGLE_STRIP)
         except Exception:
             return
+
     def _get_current_gif_frame(self, time):
         if not self.gif_frames or len(self.gif_frames) == 0:
             return None
