@@ -9,7 +9,6 @@ import moderngl
 import asyncio
 import math
 import random
-import imageio.v3 as iio # for .gif rendering --> we need to impliment it
 import numpy as np
 import os
 import sys
@@ -32,18 +31,6 @@ from buttons import ButtonSubmit
 
 pygame.init()
 
-# pre-load GIF frames for splash/loading screens (not implimented y'all)
-try:
-    gif_path = '../Graphics/Loading/progress.gif'  # Updated path
-    gif_frames = [pygame.image.frombuffer(frame.tobytes(), frame.shape[1::-1], 'RGBA') for frame in iio.imiter(gif_path)]
-    gif_durations = iio.immeta(os.path.join(BASE_DIR, gif_path)).get('duration', [100])  # ms per frame
-    if isinstance(gif_durations, int):
-        gif_durations = [gif_durations] * len(gif_frames)
-    print(f"Loaded {len(gif_frames)} frames from progress.gif")
-except Exception as e:
-    print(f"GIF load failed: {e} - using fallback")
-    gif_frames = None
-    gif_durations = None
 
 # controller initialization
 pygame.joystick.init()
@@ -78,9 +65,7 @@ clock = pygame.time.Clock()
 ctx = moderngl.create_context()
 renderer = Renderer(ctx)
 
-# pass GIF data to renderer
-renderer.gif_frames = gif_frames
-renderer.gif_durations = gif_durations
+
 
 # game state
 game_state = "SPLASH" #(loading)
@@ -108,7 +93,7 @@ escape_was_pressed = False
 # timing
 splash_start_time = pygame.time.get_ticks() / 1000.0
 load_start_time = None
-SCREEN_DURATION = 3.0  # seconds
+SCREEN_DURATION = 5  # seconds
 
 
 def open_settings_action():
@@ -231,15 +216,17 @@ async def main():
                                  os.path.join(BASE_DIR, '../Graphics/UI Interface/Buttons/Settings Button/settings-button-pressed.png'),
                                  scale=0.32, action=open_settings_action)
                 ]
-            renderer.render_splash_screen(current_time, is_startup=True)
+            renderer.render_splash_screen(current_time)
 
         elif game_state == "MENU":
             if loading_game:
-                elapsed = current_time - load_start_time if load_start_time else 0
+                now = pygame.time.get_ticks() / 1000.0
+                elapsed = (now - load_start_time) if load_start_time else 0
+                progress = min(elapsed / SCREEN_DURATION, 1.0)
+
                 if elapsed >= SCREEN_DURATION:
                     item_manager = ItemManager(num_items=15)
                     renderer.setup_item_textures(item_manager)
-
                     fallback_x, fallback_y = 2.0, 2.0
                     player = Player(fallback_x, fallback_y)
                     for _ in range(50):
@@ -253,17 +240,19 @@ async def main():
                     prediction = PredictionManager()
                     cannon_balls = []
                     print(f"{network.PLAYER_NAME} joined game")
-
                     game_state = "GAME"
                     loading_game = False
                     load_start_time = None
+
                 else:
-                    renderer.render_splash_screen(current_time, is_startup=False)
+                    renderer.render_loading_screen(current_time, progress)
+
             else:
+
                 for button in menu_buttons:
                     button.update(events)
-                renderer.render_menu(current_time, menu_buttons)
 
+                renderer.render_menu(current_time, menu_buttons)
         elif game_state == "GAME":
             keys = pygame.key.get_pressed()
             player.update(dt, keys, controller_joystick)

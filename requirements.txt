@@ -4,4 +4,3 @@ asyncio
 uuid
 supabase
 numpy
-imageio

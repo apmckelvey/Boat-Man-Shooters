@@ -3,6 +3,7 @@ import uuid
 from threading import Thread
 from supabase import create_client, Client
 from config import *
+from datetime import datetime, timezone
 
 
 class NetworkManager:
@@ -137,10 +138,10 @@ class NetworkManager:
                 # Fetch new cannonballs every 100ms
                 if now - last_fetch >= 0.1:
                     # Get cannonballs created in the last 1.5 seconds (buffer for network latency)
-                    cutoff = now - 1.5
+                    cutoff_dt = datetime.fromtimestamp(now - 1.5, tz=timezone.utc)
                     resp = self.supabase.table("cannonballs") \
                         .select("*") \
-                        .gt("created_at", f"{cutoff:.3f}") \
+                        .gt("created_at", cutoff_dt.isoformat()) \
                         .neq("player_id", self.PLAYER_ID) \
                         .execute()
 
