@@ -93,7 +93,7 @@ escape_was_pressed = False
 # timing
 splash_start_time = pygame.time.get_ticks() / 1000.0
 load_start_time = None
-SCREEN_DURATION = 5  # seconds
+SCREEN_DURATION = 1.5  # seconds
 
 
 def open_settings_action():
@@ -118,6 +118,16 @@ async def main():
             load_start_time = pygame.time.get_ticks() / 1000.0
 
     while running:
+        cancel_button = renderer.cancel_button
+        menu_boolean = renderer.menu_boolean
+        if menu_boolean is True:
+            print(menu_boolean)
+            game_state = "MENU"
+            renderer.menu_boolean = False
+            inescape_menu = False
+        if cancel_button is True:
+            inescape_menu = False
+            renderer.cancel_button = False
         current_time = (pygame.time.get_ticks() - start_ticks) / 1000.0
         dt = clock.get_time() / 1000.0
         if dt <= 0: dt = 1.0 / TARGET_FPS
