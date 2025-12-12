@@ -32,7 +32,7 @@
    
 # Overview <a name="overview"></a>
 
-This is a online multiple player game where the intention is to shoot other boats and to stay alive. It is a constant lobby in which there can be a winner at any given time, given who is surviving. 
+This is an online multiple player game where the intention is to shoot other boats and to stay alive. It is a constant lobby in which there can be a winner at any given time, given who is surviving. 
 
 ## Features <a name="features"></a>
 
@@ -69,7 +69,7 @@ This is a online multiple player game where the intention is to shoot other boat
 ```
 
 ## Logic <a name="logic"></a>
-<img src="Documentation/Game Logic Flowchart.png" alt="Game Logic Flowchart">
+<img src="Game Logic Flowchart.png" alt="Game Logic Flowchart">
 
 ## Code <a name="code"></a>
 
