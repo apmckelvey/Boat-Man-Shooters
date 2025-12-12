@@ -93,7 +93,7 @@ escape_was_pressed = False
 # timing
 splash_start_time = pygame.time.get_ticks() / 1000.0
 load_start_time = None
-SCREEN_DURATION = 5  # seconds
+SCREEN_DURATION = 3  # seconds
 
 
 def open_settings_action():
