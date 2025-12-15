@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const setTheme = (theme) => {
     html.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
-    icon.src = theme === 'light' ? 'moon.png' : 'sun.png';
+    icon.src = theme === 'light' ? 'Images/moon.png' : 'Images/sun.png';
   };
 
   const saved = localStorage.getItem('theme');
