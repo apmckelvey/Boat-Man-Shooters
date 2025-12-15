@@ -3,6 +3,7 @@ import uuid
 from threading import Thread
 from supabase import create_client, Client
 from config import *
+from queue import Queue, Empty
 
 
 class NetworkManager:
@@ -20,6 +21,8 @@ class NetworkManager:
         self.consecutive_failures = 0
 
         self.supabase = None
+        # Queue for non-blocking cannonball sends
+        self._cannonball_send_queue: Queue = Queue()
         self._attempt_connection()
         Thread(target=self._network_loop, daemon=True).start()
         Thread(target=self._cannonball_loop, daemon=True).start()
@@ -105,35 +108,26 @@ class NetworkManager:
             print(f"❌ Delete exception: {e}")
 
     def create_cannonball(self, cannonball_data):
-        """Send a cannonball to Supabase"""
+        #Queue a cannonball to send in the background to avoid UI stutter.
         try:
             if not self.connected or not self.supabase:
-                print("❌ Cannot create cannonball: Not connected")
+                print("❌ Cannot queue cannonball: Not connected")
                 return None
 
-            # Add player_id to cannonball data
+            #add player_id to cannonball data
             cannonball_data["player_id"] = self.PLAYER_ID
 
-            print(f"🎯 Creating cannonball:")
-            print(f"   From player: {self.PLAYER_ID[:8]}")
-            print(f"   Position: ({cannonball_data['x']:.2f}, {cannonball_data['y']:.2f})")
-            print(f"   Side: {cannonball_data['side']}")
-
-            # Send to Supabase
-            response = self.supabase.table("cannonballs").insert(cannonball_data).execute()
-
-            if hasattr(response, 'data') and response.data:
-                server_id = response.data[0]['id']
-                print(f"✅ Cannonball saved with ID: {server_id[:8]}")
-                return server_id
-            else:
-                print(f"❌ Failed to save cannonball")
-                if hasattr(response, 'error'):
-                    print(f"   Error: {response.error}")
-                return None
+            #enqueue for background send
+            self._cannonball_send_queue.put_nowait(cannonball_data)
+            print(
+                f"📤 Queued cannonball from {self.PLAYER_ID[:8]} at "
+                f"({cannonball_data['x']:.2f}, {cannonball_data['y']:.2f}) side={cannonball_data['side']}"
+            )
+            #return immediately; server_id (if needed) can be resolved later when fetched back
+            return None
 
         except Exception as e:
-            print(f"💥 Cannonball creation error: {e}")
+            print(f"💥 Cannonball queueing error: {e}")
             return None
 
     def _cannonball_loop(self):
@@ -148,7 +142,29 @@ class NetworkManager:
 
                 now = time.time()
 
-                # Fetch new cannonballs every 250ms
+                #first, flush any queued local cannonballs (non-blocking)
+                flushed = 0
+                while True:
+                    try:
+                        data = self._cannonball_send_queue.get_nowait()
+                    except Empty:
+                        break
+                    try:
+                        resp = self.supabase.table("cannonballs").insert(data).execute()
+                        if hasattr(resp, 'data') and resp.data:
+                            sid = resp.data[0].get('id', '')
+                            print(f"✅ Sent cannonball (ID: {sid[:8]}) to server")
+                        else:
+                            print("❌ Failed to send cannonball (no response data)")
+                    except Exception as e:
+                        print(f"❌ Error sending cannonball: {e}")
+                    finally:
+                        flushed += 1
+                if flushed:
+                    #small yield to avoid hogging in bursty scenarios
+                    time.sleep(0.001)
+
+                #fetch new cannonballs every 250ms
                 if now - last_fetch >= 0.25:
                     try:
                         # Get cannonballs created in the last 5.5 seconds

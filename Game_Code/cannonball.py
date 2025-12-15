@@ -5,6 +5,24 @@ from datetime import datetime
 
 
 class CannonBall:
+    #cache a single base image to avoid disk I/O on every shot
+    _base_image = None
+
+    @classmethod
+    def _get_base_image(cls):
+        #load and cache the base cannonball image ONCE
+        #returns a Surface that callers should .copy() before mutating (alpha, etc.).
+        if cls._base_image is None:
+            try:
+                img = pygame.image.load("../Graphics/Sprites/Cannonballs/cannonball.png").convert_alpha()
+                cls._base_image = pygame.transform.scale(img, (32, 32))
+            except Exception:
+                #fallback simple circle if asset not found
+                surf = pygame.Surface((32, 32), pygame.SRCALPHA)
+                pygame.draw.circle(surf, (200, 200, 200), (16, 16), 16)
+                cls._base_image = surf
+        return cls._base_image
+
     def __init__(self, x, y, rotation, side, velocity_x=None, velocity_y=None, server_id=None, created_at=None,
                  is_remote=False):
         self.x = x
@@ -33,13 +51,8 @@ class CannonBall:
         # Calculate initial age
         self.age = time.time() - self.created_at
 
-        # Load image
-        try:
-            img = pygame.image.load("../Graphics/Sprites/Cannonballs/cannonball.png").convert_alpha()
-            self.image = pygame.transform.scale(img, (32, 32))
-        except:
-            self.image = pygame.Surface((32, 32), pygame.SRCALPHA)
-            pygame.draw.circle(self.image, (200, 200, 200), (16, 16), 16)
+        #use cached image and keep a per-instance copy for alpha adjustments
+        self.image = self._get_base_image().copy()
 
         offset_distance = 0.18
         angle_offset = 1.5 if side == "left" else -1.5
