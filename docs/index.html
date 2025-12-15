@@ -8,7 +8,7 @@
   <meta name="keywords" content="boat man shooters, multiplayer game, boat combat, online game, pygame">
   <meta property="og:title" content="Boat Man Shooters">
   <meta property="og:description" content="An online, multiplayer boat combat game. Still a beautiful disaster in development.">
-  <meta property="og:image" content="logo.png">
+  <meta property="og:image" content="https://raw.githubusercontent.com/apmckelvey/boat-man-shooters/main/Images/logo.png">
   <meta property="og:url" content="https://apmckelvey.github.io/boat-man-shooters/">
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@700&display=swap" rel="stylesheet">
@@ -33,7 +33,8 @@
         <li><a href="#how-to-play">How to Play</a></li>
         <li><a href="#downloads">Downloads</a></li>
         <li><a href="#features">Features</a></li>
-        <li><a href="#media">Media</a></li> <li><a href="#timeline">Progress Timeline</a></li>
+        <li><a href="#media">Media</a></li>
+        <li><a href="#timeline">Progress Timeline</a></li>
         <li><a href="#documentation">Documentation</a></li>
       </ul>
     </nav>
@@ -115,13 +116,15 @@
     <section id="media" class="media-section">
       <h2 class="section-title">Gameplay Preview</h2>
       <div class="video-container">
-        <video controls autoplay loop muted class="responsive-video">
-          <source src="../Documentation%20Pictures/video.mp4" type="video/mp4">
+        <!-- Fixed: Use raw GitHub URL for direct video access. Update branch/path if your video is on 'main' or in a different folder without spaces. -->
+        <video controls autoplay loop muted class="responsive-video" poster="Images/logo.png">
+          <source src="https://raw.githubusercontent.com/apmckelvey/boat-man-shooters/Pre-Release/Documentation%20Pictures/video.mp4" type="video/mp4">
           <p>Your browser doesn't support HTML5 video. But trust us, it's good!</p>
         </video>
       </div>
       <p class="video-caption">A quick look at the current chaotic, real-time multiplayer combat.</p>
     </section>
+
     <section id="timeline" class="timeline">
       <h2 class="section-title">Progress Timeline</h2>
       <div id="commit-timeline"></div>
@@ -130,10 +133,11 @@
     <section id="documentation" class="documentation">
       <h2 class="section-title">Documentation</h2>
       <figure class="diagram-figure">
-        <img src="../Documentation%20Pictures/Features.png" alt="In-game features diagram showing Minimap, Player, Enemy, Cannonball, Health Status, Cannonball Cooldown, and Sprint Cooldown" class="responsive-diagram">
+        <!-- Fixed: Use raw GitHub URL. Update branch/path as needed (recommend renaming folder to remove space). -->
+        <img src="https://raw.githubusercontent.com/apmckelvey/boat-man-shooters/Pre-Release/Documentation%20Pictures/Features.png" alt="In-game features diagram showing Minimap, Player, Enemy, Cannonball, Health Status, Cannonball Cooldown, and Sprint Cooldown" class="responsive-diagram">
         <figcaption>In-Game UI Element Diagram</figcaption>
       </figure>
-      <p>For detailed instructions, build guides, and more, check out the <a href="https://github.com/apmckelvey/boat-man-shooters/blob/main/ReadME.md" target="_blank">ReadME.md</a> on GitHub.</p>
+      <p>For detailed instructions, build guides, and more, check out the <a href="https://github.com/apmckelvey/boat-man-shooters/blob/main/README.md" target="_blank">README.md</a> on GitHub.</p>
       <p>Contribute to the project or report issues directly on the <a href="https://github.com/apmckelvey/boat-man-shooters" target="_blank">repository</a>.</p>
     </section>
 
