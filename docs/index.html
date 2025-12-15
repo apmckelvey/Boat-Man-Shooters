@@ -32,6 +32,7 @@
       <ul>
         <li><a href="#how-to-play">How to Play</a></li>
         <li><a href="#downloads">Downloads</a></li>
+        <li><a href="#release">Latest Release</a></li>
         <li><a href="#features">Features</a></li>
         <li><a href="#media">Media</a></li>
         <li><a href="#timeline">Progress Timeline</a></li>
@@ -103,6 +104,26 @@
       </div>
     </section>
 
+    <!-- New Section: Latest Release (Pre-release) -->
+    <section id="release" class="release-section">
+      <h2 class="section-title">Latest Release: v1-beta (Pre-release)</h2>
+      <div class="card" style="max-width: 1000px; margin: 0 auto;">
+        <h3>Boat Man Shooters v1-beta</h3>
+        <p><strong>Released:</strong> December 15, 2025</p>
+        <p><strong>Status:</strong> <span style="color: var(--accent); font-weight: bold;">Pre-release (Beta)</span></p>
+        <p>This is the first public beta release! Due to some build issues with relative paths, no pre-built executables are included yet.</p>
+        <p><strong>How to play:</strong></p>
+        <ul>
+          <li>Install dependencies: <code>pip install pygame-ce asyncio imageio moderngl numpy supabase</code></li>
+          <li>Important: Uninstall standard pygame if installed (<code>pip uninstall pygame</code>)</li>
+          <li>Clone the repo: <code>git clone https://github.com/apmckelvey/boat-man-shooters.git</code></li>
+          <li>Navigate to the game code: <code>cd boat-man-shooters/Game_Code</code></li>
+          <li>Run: <code>python main.py</code></li>
+        </ul>
+        <a href="https://github.com/apmckelvey/boat-man-shooters/releases/tag/v1-beta" class="dl-btn" target="_blank" style="display: inline-block; margin-top: 1rem;">View Full Release Notes on GitHub</a>
+      </div>
+    </section>
+
     <h2 class="section-title">Key Features</h2>
     <section id="features" class="features">
       <div class="feature-card done"><h4>Online multiplayer game</h4><p>Constant lobby, real-time chaos, leaderboard that actually works.</p></div>
@@ -116,7 +137,6 @@
     <section id="media" class="media-section">
       <h2 class="section-title">Gameplay Preview</h2>
       <div class="video-container">
-        <!-- Fixed: Use raw GitHub URL for direct video access. Update branch/path if your video is on 'main' or in a different folder without spaces. -->
         <video controls autoplay loop muted class="responsive-video" poster="Images/logo.png">
           <source src="https://raw.githubusercontent.com/apmckelvey/boat-man-shooters/Pre-Release/Documentation%20Pictures/video.mp4" type="video/mp4">
           <p>Your browser doesn't support HTML5 video. But trust us, it's good!</p>
@@ -133,8 +153,7 @@
     <section id="documentation" class="documentation">
       <h2 class="section-title">Documentation</h2>
       <figure class="diagram-figure">
-        <!-- Fixed: Use raw GitHub URL. Update branch/path as needed (recommend renaming folder to remove space). -->
-        <img src="https://raw.githubusercontent.com/apmckelvey/boat-man-shooters/Pre-Release/Documentation%20Pictures/Features.png" alt="In-game features diagram showing Minimap, Player, Enemy, Cannonball, Health Status, Cannonball Cooldown, and Sprint Cooldown" class="responsive-diagram">
+        <img src="https://raw.githubusercontent.com/apmckelvey/boat-man-shooters/Pre-Release/Documentation%20Pictures/features.png" alt="In-game features diagram showing Minimap, Player, Enemy, Cannonball, Health Status, Cannonball Cooldown, and Sprint Cooldown" class="responsive-diagram">
         <figcaption>In-Game UI Element Diagram</figcaption>
       </figure>
       <p>For detailed instructions, build guides, and more, check out the <a href="https://github.com/apmckelvey/boat-man-shooters/blob/main/README.md" target="_blank">README.md</a> on GitHub.</p>
