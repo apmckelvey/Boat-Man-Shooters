@@ -295,7 +295,10 @@ async def main():
 
             # death check and transition
             if hasattr(player, 'dead') and player.dead:
+                L_Can_fire = True
+                R_Can_fire = True
                 game_state = "DEAD"
+
                 # disconnect from supabase
                 if network:
                     try:
