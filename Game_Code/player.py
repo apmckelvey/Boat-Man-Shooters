@@ -16,8 +16,9 @@ class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.rotation = 0.0
-        self.target_rotation = 0.0
+        #make player face up (bow)
+        self.rotation = -math.pi / 2
+        self.target_rotation = -math.pi / 2
 
         self.speed = 1.0
         self.backward_speed = 0.25
@@ -57,7 +58,15 @@ class Player:
         self.engine_channel = None
         self.engine_fade_ms = 120
 
+        #gameplay: health
+        self.max_health = 4
+        self.health = self.max_health
+        self.dead = False
+
     def update(self, dt, keys, controller=None):
+        if self.dead:
+            #when dead, no updates to movement
+            return
         #input collection vars
         move_input = 0.0
         turn_input = 0.0
@@ -157,3 +166,30 @@ class Player:
     def stop(self):
         if self.motor_sound: self.motor_sound.stop()
         if self.engine_channel: self.engine_channel.stop()
+
+    def take_damage(self, amount: int = 1):
+        if self.dead:
+            return
+        self.health = max(0, self.health - int(amount))
+        if self.health <= 0:
+            self.dead = True
+
+    def reset(self, x: float, y: float):
+        #RESET PLAYER TO NEW GAME
+        self.x = x
+        self.y = y
+        self.camera_x = x
+        self.camera_y = y
+        #reset facing vertical (bow up)
+        self.rotation = -math.pi / 2
+        self.target_rotation = -math.pi / 2
+        self.current_velocity = 0.0
+        self.target_velocity = 0.0
+        self.velocity_x = 0.0
+        self.velocity_y = 0.0
+        self.wake_fade = 0.0
+        self.sprint = SPRINT
+        self.display_sprint = SPRINT
+        self.sprinting = False
+        self.health = self.max_health
+        self.dead = False

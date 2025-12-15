@@ -75,6 +75,7 @@ network = None
 prediction = None
 item_manager = None
 menu_buttons = []
+death_buttons = []
 
 # cannon vars
 cannon_balls = []
@@ -103,7 +104,7 @@ def open_settings_action():
 async def main():
     global game_state, player, network, prediction, item_manager
     global L_Can_fire, R_Can_fire, lt_rest, rt_rest, cannon_balls, L_cooldown_end, R_cooldown_end
-    global inescape_menu, escape_was_pressed, menu_buttons
+    global inescape_menu, escape_was_pressed, menu_buttons, death_buttons
     global splash_start_time, load_start_time
 
     running = True
@@ -267,7 +268,22 @@ async def main():
             keys = pygame.key.get_pressed()
             player.update(dt, keys, controller_joystick)
 
-            cannon_balls = [b for b in cannon_balls if b.update(dt)]
+            # update cannonballs and check collisions with player
+            updated_balls = []
+            for b in cannon_balls:
+                alive = b.update(dt)
+                if not alive:
+                    continue
+                # collision check (world units)
+                dx = b.x - player.x
+                dy = b.y - player.y
+                # expand hit radius a bit to better match visual boat size
+                if (dx * dx + dy * dy) <= (0.18 * 0.18):
+                    # hit: remove one health per cannonball hit
+                    player.take_damage(1)
+                    continue  # do not keep this ball
+                updated_balls.append(b)
+            cannon_balls = updated_balls
 
             if network:
                 remote_balls = network.get_remote_cannonballs()
@@ -277,13 +293,68 @@ async def main():
                     if remote_ball.server_id not in [cb.server_id for cb in cannon_balls if hasattr(cb, 'server_id')]:
                         cannon_balls.append(remote_ball)
 
+            # death check and transition
+            if hasattr(player, 'dead') and player.dead:
+                game_state = "DEAD"
+                # disconnect from supabase
+                if network:
+                    try:
+                        network.stop()
+                    except Exception:
+                        pass
+                    network = None
+                # create death menu buttons
+                def try_again_action():
+                    global load_start_time
+                    load_start_time = pygame.time.get_ticks() / 1000.0
+                    # clear any stray balls
+                    cannon_balls.clear()
+                    # start restart loading
+                    global game_state
+                    game_state = "RESTART_LOADING"
+
+                def main_menu_action():
+                    global game_state, menu_buttons
+                    # go back to main menu
+                    game_state = "MENU"
+                    # rebuild menu buttons
+                    menu_buttons = [
+                        ButtonSubmit(WIDTH // 2, int(HEIGHT * 0.45),
+                                     os.path.join(BASE_DIR, '../Graphics/UI Interface/Buttons/Join Game Button/join-game-button-unpressed.png'),
+                                     os.path.join(BASE_DIR, '../Graphics/UI Interface/Buttons/Join Game Button/join-game-button-pressed.png'),
+                                     scale=0.32, action=lambda: set_loading_game(True)),
+                        ButtonSubmit(WIDTH // 2, int(HEIGHT * 0.58),
+                                     os.path.join(BASE_DIR, '../Graphics/UI Interface/Buttons/Settings Button/settings-button-unpressed.png'),
+                                     os.path.join(BASE_DIR, '../Graphics/UI Interface/Buttons/Settings Button/settings-button-pressed.png'),
+                                     scale=0.32, action=open_settings_action)
+                    ]
+
+                #place buttons side-by-side on menu
+                btn_y = int(HEIGHT * 0.4)
+                offset = 160
+                death_buttons = [
+                    ButtonSubmit(WIDTH // 2 - offset, btn_y,
+                                 os.path.join(BASE_DIR, '../Graphics/UI Interface/Buttons/Try Again Button/try-again-button-unpressed.png'),
+                                 os.path.join(BASE_DIR, '../Graphics/UI Interface/Buttons/Try Again Button/try-again-button-pressed.png'),
+                                 scale=0.32, action=try_again_action),
+                    ButtonSubmit(WIDTH // 2 + offset, btn_y,
+                                 os.path.join(BASE_DIR, '../Graphics/UI Interface/Buttons/Main Menu Button/main-menu-button-unpressed.png'),
+                                 os.path.join(BASE_DIR, '../Graphics/UI Interface/Buttons/Main Menu Button/main-menu-button-pressed.png'),
+                                 scale=0.32, action=main_menu_action)
+                ]
+
             collision = item_manager.check_collision(player.x, player.y, player_radius=0.15)
             if collision:
                 item_manager.resolve_collision(player, collision)
 
-            prediction.update_predictions(dt, network.other_players)
+            #safely update predictions only when network is available
+            if prediction and network:
+                try:
+                    prediction.update_predictions(dt, getattr(network, 'other_players', {}))
+                except Exception as e:
+                    print(f"Prediction update error: {e}")
 
-            renderer.render(current_time, player, prediction.other_players_display, item_manager)
+            renderer.render(current_time, player, getattr(prediction, 'other_players_display', {}), item_manager)
             renderer.draw_cannon_balls(cannon_balls, player)
 
             try:
@@ -307,6 +378,51 @@ async def main():
                 t = pygame.time.get_ticks() / 1000.0
                 alpha = 0.6 + math.sin(t * 4) * 0.2
                 renderer.draw_overlay("DISCONNECTED", "Reconnecting...", alpha)
+
+        elif game_state == "DEAD":
+            #render world first so water background remains visible
+            try:
+                renderer.render(current_time, player, getattr(prediction, 'other_players_display', {}), item_manager)
+            except Exception:
+                pass
+            #process death menu buttons
+            for b in death_buttons:
+                b.update(events)
+            renderer.render_death_menu(current_time, death_buttons)
+
+        elif game_state == "RESTART_LOADING":
+            now = pygame.time.get_ticks() / 1000.0
+            elapsed = (now - load_start_time) if load_start_time else 0
+            progress = min(elapsed / SCREEN_DURATION, 1.0)
+
+            if elapsed >= SCREEN_DURATION:
+                #reinitialize world and player
+                item_manager = ItemManager(num_items=15)
+                renderer.setup_item_textures(item_manager)
+                #spawn new player at a free location
+                fallback_x, fallback_y = 2.0, 2.0
+                if player is None:
+                    player = Player(fallback_x, fallback_y)
+                #try to find a free spawn
+                for _ in range(50):
+                    rx = random.randint(1, WORLD_WIDTH - 1)
+                    ry = random.randint(1, WORLD_HEIGHT - 1)
+                    if not item_manager.check_collision(rx, ry, player_radius=0.5):
+                        player.reset(rx, ry)
+                        break
+                else:
+                    player.reset(fallback_x, fallback_y)
+
+                #restart network connection
+                network = NetworkManager(player)
+                prediction = PredictionManager()
+                cannon_balls = []
+                print("Restarting game after death")
+                game_state = "GAME"
+                load_start_time = None
+                death_buttons = []
+            else:
+                renderer.render_loading_screen(current_time, progress)
 
         pygame.display.flip()
         clock.tick(TARGET_FPS)

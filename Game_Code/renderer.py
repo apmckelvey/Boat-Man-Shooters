@@ -54,6 +54,13 @@ class Renderer:
             self.health_images['orange'] = _placeholder((240, 150, 80))
             self.health_images['red'] = _placeholder((240, 80, 80))
 
+        # Ensure the HUD boat icon points up: rotate 90° CCW for all variants
+        try:
+            for k in list(self.health_images.keys()):
+                self.health_images[k] = pygame.transform.rotate(self.health_images[k], 90)
+        except Exception:
+            pass
+
     def render_menu(self, time, menu_buttons=None):
         from config import WIDTH, HEIGHT, WORLD_WIDTH, WORLD_HEIGHT
 
@@ -735,10 +742,79 @@ class Renderer:
         pygame.draw.rect(surf, (255, 255, 255, 100), (left_x, top_y, cd_bar_w, cd_bar_height), 2)
         pygame.draw.rect(surf, (255, 255, 255, 100), (right_x, top_y, cd_bar_w, cd_bar_height), 2)
 
+        #draw health indicator between cooldown bars
+        if hasattr(player, 'health'):
+            hp = int(getattr(player, 'health', 4))
+            key = 'green' if hp >= 4 else ('yellow' if hp == 3 else ('orange' if hp == 2 else 'red'))
+            img = self.health_images.get(key)
+            if img:
+                #target size to fit between bars
+                available_w = (right_x - (left_x + cd_bar_w)) - 10
+                target_w = max(40, min(available_w, 100))
+                scale = target_w / img.get_width()
+                target_h = int(img.get_height() * scale)
+                scaled = pygame.transform.smoothscale(img, (int(target_w), target_h))
+                center_x = left_x + cd_bar_w + (right_x - (left_x + cd_bar_w)) // 2
+                center_y = top_y + cd_bar_height // 2
+                rect = scaled.get_rect(center=(center_x, center_y))
+                surf.blit(scaled, rect)
+
         data = pygame.image.tobytes(surf, 'RGBA', True)
         w, h = surf.get_size()
 
-        chosen_picture = self.health_images.get('green')
+        chosen_picture = None  # handled above :)
+
+        try:
+            if self.overlay_texture is None:
+                self.overlay_texture = self.ctx.texture((w, h), 4, data)
+                self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
+            else:
+                try:
+                    self.overlay_texture.write(data)
+                except Exception:
+                    self.overlay_texture.release()
+                    self.overlay_texture = self.ctx.texture((w, h), 4, data)
+                    self.overlay_texture.filter = (moderngl.LINEAR, moderngl.LINEAR)
+
+            self.overlay_texture.use(location=2)
+            try:
+                self.overlay_program['overlayTexture'].value = 2
+            except Exception:
+                pass
+
+            self.ctx.enable(moderngl.BLEND)
+            self.overlay_vao.render(mode=moderngl.TRIANGLE_STRIP)
+        except Exception:
+            return
+
+    def render_death_menu(self, time, death_buttons=None):
+        from config import WIDTH, HEIGHT
+
+        surf = self._get_overlay_surface()
+
+        #darken background
+        overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 180))
+        surf.blit(overlay, (0, 0))
+
+        #draw "you died" menu centered
+        try:
+            died_image = pygame.image.load(os.path.join(BASE_DIR, "../Graphics/UI Interface/Menus/you-died-menu.png")).convert_alpha()
+            max_w = int(WIDTH * 0.45)
+            scale = min(1.0, max_w / died_image.get_width())
+            img = pygame.transform.smoothscale(died_image, (int(died_image.get_width() * scale), int(died_image.get_height() * scale)))
+            rect = img.get_rect(center=(WIDTH // 2, int(HEIGHT * 0.35)))
+            surf.blit(img, rect)
+        except Exception:
+            pass
+
+        # draw buttons
+        if death_buttons:
+            for b in death_buttons:
+                b.draw(surf)
+
+        data = pygame.image.tobytes(surf, 'RGBA', True)
+        w, h = surf.get_size()
 
         try:
             if self.overlay_texture is None:
