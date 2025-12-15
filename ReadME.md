@@ -256,7 +256,7 @@ This will create a folder called `dist` in the repository folder with the built 
 
 > *NOTE:* Replace `"/Directory/to/repository"` with the actual directory to the repository. Also, these directions are assuming you are running Python verison 3 or higher.
 
-### Option 2: Build-it-Yourself (`macOS`, `Windows`, `Linux`)  
+### Option 3: Build-it-Yourself (`macOS`, `Windows`, `Linux`)  
 
 You can use the repository's GitHub Actions workflow (`build-boat-man-shooters.yml`) to automatically build standalone executables for macOS, Windows, and Linux using Nuitka. This runs entirely in the cloud on GitHub's servers—no local installation, dependencies, or code changes required on your part.  
 The workflow triggers automatically on pushes to the main branch and uploads the built apps as artifacts (downloadable files) to each workflow run.  
