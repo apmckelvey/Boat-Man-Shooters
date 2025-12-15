@@ -104,3 +104,71 @@ html[data-theme="light"] #theme-toggle img{width:30px;height:30px}
   .navbar ul { flex-direction: column; }
   .navbar li { margin: 10px 0; }
 }
+
+/* NEW STYLES FOR MEDIA & DOCUMENTATION */
+
+.media-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px;
+  margin: 60px 0;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.video-container {
+  max-width: 800px; /* Adjust to fit the video aspect ratio well */
+  margin: 0 auto 20px;
+  background: black;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.responsive-video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.video-caption {
+  font-size: 1rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.diagram-figure {
+  margin: 20px auto 40px; /* Add margin around the figure */
+  max-width: 100%;
+}
+
+.responsive-diagram {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,.2);
+}
+
+.diagram-figure figcaption {
+  margin-top: 10px;
+  font-style: italic;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* Updated documentation section to accommodate the diagram */
+.documentation {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px;
+  margin: 60px 0;
+  box-shadow: var(--shadow);
+  /* Removed 'text-align: center;' to let the diagram figure handle centering */
+}
+
+.documentation p {
+  text-align: center;
+}
