@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-  <a href="https://apmckelvey.github.io/boat-man-shooters/">
+  <a href="https://apmckelvey.github.io/Boat-Man-Shooters/">
     <img src="https://img.shields.io/badge/DOWNLOAD%20BOAT%20MAN%20SHOOTERS-1C7CFF?style=for-the-badge&logo=github&logoColor=white&labelColor=0969da" 
          alt="DOWNLOAD BOAT MAN SHOOTERS" 
          height="100">
