@@ -4,14 +4,14 @@
 </p>
 
 <p align="center">
-  <a href="https://apmckelvey.github.io/Boat-Man-Shooters/">
+  <a href="https://danoob8157.github.io/Boat-Man-Shooters/">
     <img src="https://img.shields.io/badge/DOWNLOAD%20BOAT%20MAN%20SHOOTERS-1C7CFF?style=for-the-badge&logo=github&logoColor=white&labelColor=0969da" 
          alt="DOWNLOAD BOAT MAN SHOOTERS" 
          height="100">
   </a>
 </p>
 
-***App Building Status***:  [![Build App With Nuitka](https://github.com/apmckelvey/boat-man-shooters/actions/workflows/app-build.yml/badge.svg)](https://github.com/apmckelvey/boat-man-shooters/actions/workflows/app-build.yml)
+***App Building Status***:  [![Build App With Nuitka](https://github.com/DaNoob8157/boat-man-shooters/actions/workflows/app-build.yml/badge.svg)](https://github.com/DaNoob8157/boat-man-shooters/actions/workflows/app-build.yml)
 ## Table of Contents
 
 1. [Overview](#overview)  
@@ -164,7 +164,7 @@ pip3 install -r requirements.txt
 ## How to Run (Python Files) <a name="how_to_run"></a>
 1. Clone the repository with the following command:
 ```Bash
-git clone https://github.com/apmckelvey/boat-man-shooters.git
+git clone https://github.com/DaNoob8157/boat-man-shooters.git
 ```
 
 2. `cd` into the repository folder:
@@ -188,8 +188,8 @@ python3 /Game_Code/main.py
 ### Option 1: Download Release  
 
 Download the app for your desired operating system:   
-**Website:** [https://apmckelvey.github.io/boat-man-shooters/](https://apmckelvey.github.io/boat-man-shooters/)  
-**Releases Page:** [https://github.com/apmckelvey/boat-man-shooters/releases](https://github.com/apmckelvey/boat-man-shooters/releases)    
+**Website:** [https://DaNoob8157.github.io/boat-man-shooters/](https://DaNoob8157.github.io/boat-man-shooters/)  
+**Releases Page:** [https://github.com/DaNoob8157/boat-man-shooters/releases](https://github.com/DaNoob8157/boat-man-shooters/releases)    
 
 ### Option 2: Build-it-Yoursef (macOS ONLY) From the Code  
 
@@ -209,7 +209,7 @@ pip3 install nuitka
 
 2. Clone the repository with the following command:
 ```Bash
-git clone https://github.com/apmckelvey/boat-man-shooters.git
+git clone https://github.com/DaNoob8157/boat-man-shooters.git
 ```
 
 3. `cd` into the repository folder:
@@ -225,7 +225,7 @@ python -m nuitka --standalone \
   --macos-create-app-bundle \
   --macos-app-icon=MyIcon.icns \
   --product-name="Boat Man Shooters" \
-  --macos-signed-app-name=com.apmckelvey.BoatManShooters \
+  --macos-signed-app-name=com.DaNoob8157.BoatManShooters \
   --include-data-dir=Assets=Assets \
   --include-data-dir=Graphics=Graphics \
   --include-data-dir=Logos=Logos \
@@ -242,7 +242,7 @@ python3 -m nuitka --standalone \
   --macos-create-app-bundle \
   --macos-app-icon=MyIcon.icns \
   --product-name="Boat Man Shooters" \
-  --macos-signed-app-name=com.apmckelvey.BoatManShooters \
+  --macos-signed-app-name=com.DaNoob8157.BoatManShooters \
   --include-data-dir=Assets=Assets \
   --include-data-dir=Graphics=Graphics \
   --include-data-dir=Logos=Logos \
@@ -262,7 +262,7 @@ You can use the repository's GitHub Actions workflow (`build-boat-man-shooters.y
 The workflow triggers automatically on pushes to the main branch and uploads the built apps as artifacts (downloadable files) to each workflow run.  
 How to get the builds yourself (without editing the repo):  
 
-1. Go to the repository's Actions tab: [https://github.com/apmckelvey/boat-man-shooters/actions](https://github.com/apmckelvey/boat-man-shooters/actions)  
+1. Go to the repository's Actions tab: [https://github.com/DaNoob8157/boat-man-shooters/actions](https://github.com/DaNoob8157/boat-man-shooters/actions)  
 
 2. In the left sidebar, select the workflow named `Build App With Nuitka`.  
 

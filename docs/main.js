@@ -27,7 +27,7 @@ async function fetchCommits() {
   if (!timeline) return;
 
   try {
-    const response = await fetch('https://api.github.com/repos/apmckelvey/boat-man-shooters/commits?per_page=5');
+    const response = await fetch('https://api.github.com/repos/DaNoob8157/boat-man-shooters/commits?per_page=5');
     const commits = await response.json();
 
     if (!Array.isArray(commits) || commits.length === 0) {

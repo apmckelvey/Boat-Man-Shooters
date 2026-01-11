@@ -39,7 +39,7 @@ jobs:
             --macos-create-app-bundle \
             --macos-app-icon=MyIcon.icns \
             --product-name="Boat Man Shooters" \
-            --macos-signed-app-name=com.apmckelvey.BoatManShooters \
+            --macos-signed-app-name=com.alexander-mckelvey.BoatManShooters \
             --include-data-dir=Assets=Assets \
             --include-data-dir=Graphics=Graphics \
             --include-data-dir=Logos=Logos \
